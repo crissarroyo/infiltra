@@ -35,6 +35,9 @@ const AVATARS = [
     { id: 'av-5', emoji: '🧑' }, { id: 'av-6', emoji: '👨' },
     { id: 'av-7', emoji: '👩‍💼' }, { id: 'av-8', emoji: '👨‍💼' },
     { id: 'av-9', emoji: '🥷' }, { id: 'av-10', emoji: '🦸' }
+    { id: 'avatar-11', emoji: '👤', name: 'Female Forensic Scientist', image: 'assets/avatars/avatar-11.svg' }
+    { id: 'avatar-12', emoji: '👤', name: 'Female Private Detective', image: 'assets/avatars/avatar-12.svg' }
+    { id: 'avatar-16', emoji: '👤', name: 'Male Veteran Police Inspector', image: 'assets/avatars/avatar-16.svg' }
 ];
 
 const FRAMES = [
@@ -132,17 +135,22 @@ function saveProfile() {
 
 function initAvatars() {
     const grid = document.getElementById('avatar-grid');
-    grid.innerHTML = AVATARS.map(a => 
-        `<div class="avatar-option ${a.id === G.avatar ? 'selected' : ''}" data-id="${a.id}">${a.emoji}</div>`
-    ).join('');
-
-    grid.addEventListener('click', e => {
-        const opt = e.target.closest('.avatar-option');
-        if (opt) {
-            G.avatar = opt.dataset.id;
-            grid.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
-            opt.classList.add('selected');
+    grid.innerHTML = '';
+    
+    AVATARS.forEach(avatar => {
+        const div = document.createElement('div');
+        div.className = 'avatar-option' + (avatar.id === state.selectedAvatar ? ' selected' : '');
+        
+        // Usar imagen si existe, sino emoji
+        if (avatar.image) {
+            div.innerHTML = `<img src="${avatar.image}" alt="${avatar.name}">`;
+        } else {
+            div.innerHTML = `<span class="avatar-placeholder">${avatar.emoji}</span>`;
         }
+        
+        div.onclick = () => selectAvatar(avatar.id);
+        div.dataset.id = avatar.id;
+        grid.appendChild(div);
     });
 }
 
