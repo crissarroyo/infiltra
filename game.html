@@ -75,6 +75,7 @@
             <div id="screen-role" class="screen">
                 <div class="game-card">
                     <div class="card-header"><h1>TU ROL SECRETO</h1><p id="role-instruction">Toca la carta para revelar</p></div>
+                    <div class="starter-info" id="starter-info" style="display:none"></div>
                     <div class="role-display">
                         <div class="role-card blurred" id="role-card">
                             <div class="role-icon" id="role-icon">❓</div>
@@ -85,7 +86,10 @@
                     <div class="points-box" id="points-box" style="display:none"><h4>Recuerda - Sistema de Puntos</h4><ul id="points-list"></ul></div>
                     <div class="timer" id="timer" style="display:none">00:00</div>
                     <p class="status-text" id="wait-message">Espera a que el host inicie la ronda...</p>
-                    <div class="btn-group"><button class="btn btn-primary" id="btn-start-round" style="display:none"><span>⏱</span> Iniciar Ronda</button></div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="btn-start-round" style="display:none"><span>⏱</span> Iniciar Ronda</button>
+                        <button class="btn btn-secondary" id="btn-skip-word" style="display:none"><span>🔄</span> Cambiar Palabra</button>
+                    </div>
                 </div>
             </div>
             <div id="screen-voting" class="screen">
