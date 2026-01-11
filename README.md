@@ -46,7 +46,7 @@ Funciona en cualquier dispositivo con navegador web moderno:
 ## ❓ Preguntas Frecuentes
 
 **¿Cuántos jugadores se necesitan?**
-De 3 a 20 jugadores. Recomendamos 5 o más para mejor experiencia.
+De 3 a 10 jugadores. Recomendamos 5 o más para mejor experiencia.
 
 **¿Es gratis?**
 Sí, completamente gratis.
@@ -58,7 +58,7 @@ No, solo ingresa tu nombre y juega.
 
 ## 📬 Contacto
 
-¿Encontraste un bug o tienes sugerencias? Abre un Issue en este repositorio.
+¿Encontraste un bug o tienes sugerencias? Envíanos un correo explicando toda la experiencia.
 
 ---
 
