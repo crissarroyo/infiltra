@@ -1,5 +1,5 @@
 /**
- * INFILTRA - Game Logic v0.9.6
+ * INFILTRA - Game Logic v0.9.7
  * 
  * Correcciones:
  * - maxPlayers/scores se sincronizan correctamente
@@ -24,16 +24,21 @@ const POINTS = {
 };
 
 const DB = {
-    "Animales 🦁": ["León", "Tigre", "Elefante", "Cebra", "Delfín", "Lobo", "Gorila", "Águila", "Jirafa", "Oso", "Zorro", "Panda"],
-    "Comida 🍕": ["Pizza", "Tacos", "Sushi", "Hamburguesa", "Pasta", "Ensalada", "Helado", "Pollo", "Pescado", "Chocolate"],
-    "Países 🌎": ["México", "Japón", "Brasil", "España", "Francia", "Italia", "Alemania", "Australia", "Argentina", "Canadá"],
-    "Profesiones 👨‍⚕️": ["Médico", "Abogado", "Ingeniero", "Profesor", "Chef", "Piloto", "Arquitecto", "Programador", "Fotógrafo"],
-    "Deportes ⚽": ["Fútbol", "Baloncesto", "Tenis", "Natación", "Boxeo", "Golf", "Voleibol", "Surf", "Ciclismo"],
-    "Ciudades 🏙️": ["París", "Tokio", "Nueva York", "Londres", "Roma", "Berlín", "Madrid", "Dubai", "Barcelona"],
-    "Frutas 🍎": ["Manzana", "Banana", "Naranja", "Uva", "Fresa", "Piña", "Mango", "Sandía", "Kiwi"],
-    "Vehículos 🚗": ["Coche", "Bicicleta", "Avión", "Barco", "Tren", "Helicóptero", "Motocicleta", "Camión"],
-    "Instrumentos 🎸": ["Guitarra", "Piano", "Batería", "Violín", "Flauta", "Trompeta", "Saxofón", "Arpa"],
-    "Películas 🎥": ["Titanic", "Star Wars", "Avatar", "Frozen", "Shrek", "Batman", "Avengers", "Coco"]
+    "Animales": ["León", "Tigre", "Elefante", "Cebra", "Delfín", "Lobo", "Gorila", "Águila", "Jirafa", "Oso", "Zorro", "Panda", "Tiburón", "Canguro", "Hipopótamo", "Serpiente", "Cocodrilo", "Pájaro", "Mono", "Tortuga", "Rinoceronte", "Pingüino"],
+    "Comida": ["Pizza", "Tacos", "Sushi", "Hamburguesa", "Pasta", "Ensalada", "Helado", "Pollo", "Pescado", "Chocolate", "Empanadas", "Ramen", "Curry", "Paella", "Burrito", "Croissant", "Queso", "Arroz", "Sopa", "Frutas secas", "Tarta"],
+    "Países": ["México", "Japón", "Brasil", "España", "Francia", "Italia", "Alemania", "Australia", "Argentina", "Canadá", "China", "India", "Rusia", "Estados Unidos", "Reino Unido", "Sudáfrica", "Egipto", "Nueva Zelanda", "Corea del Sur", "Turquía"],
+    "Profesiones": ["Médico", "Abogado", "Ingeniero", "Profesor", "Chef", "Piloto", "Arquitecto", "Programador", "Fotógrafo", "Enfermero", "Diseñador", "Periodista", "Músico", "Actor", "Científico", "Veterinario", "Contador", "Psicólogo", "Bombero", "Policía"],
+    "Deportes": ["Fútbol", "Baloncesto", "Tenis", "Natación", "Boxeo", "Golf", "Voleibol", "Surf", "Ciclismo", "Atletismo", "Esquí", "Karate", "Béisbol", "Rugby", "Gimnasia", "Escalada", "Patinaje", "Hockey", "Fútbol americano", "Taekwondo"],
+    "Ciudades": ["París", "Tokio", "Nueva York", "Londres", "Roma", "Berlín", "Madrid", "Dubai", "Barcelona", "México DF", "Sídney", "Río de Janeiro", "Los Ángeles", "Toronto", "Estambul", "Singapur", "Ámsterdam", "Seúl", "Viena", "Buenos Aires"],
+    "Frutas": ["Manzana", "Banana", "Naranja", "Uva", "Fresa", "Piña", "Mango", "Sandía", "Kiwi", "Melón", "Pera", "Durazno", "Cereza", "Limón", "Papaya", "Granada", "Coco", "Higo", "Mora", "Frambuesa"],
+    "Vehículos": ["Coche", "Bicicleta", "Avión", "Barco", "Tren", "Helicóptero", "Motocicleta", "Camión", "Submarino", "Cohete", "Autobús", "Patineta", "Tractor", "Yate", "Monopatín eléctrico", "Caravana", "Todoterreno", "Furgoneta", "Globo aerostático", "Kayak"],
+    "Instrumentos": ["Guitarra", "Piano", "Batería", "Violín", "Flauta", "Trompeta", "Saxofón", "Arpa", "Bajo", "Ukelele", "Acordeón", "Cello", "Clarinete", "Órgano", "Tambor", "Armónica", "Xilófono", "Tuba", "Gaita", "Sitar"],
+    "Películas": ["Titanic", "Star Wars", "Avatar", "Frozen", "Shrek", "Batman", "Avengers", "Coco", "Inception", "The Matrix", "Jurassic Park", "Harry Potter", "The Lion King", "Pulp Fiction", "Forrest Gump", "Interstellar", "Parasite", "Toy Story", "Black Panther", "La La Land"],
+    "Colores": ["Rojo", "Azul", "Verde", "Amarillo", "Naranja", "Morado", "Rosa", "Negro", "Blanco", "Gris", "Café", "Turquesa", "Violeta", "Índigo", "Celeste", "Magenta", "Dorado", "Plateado", "Beige", "Lavanda"],
+    "Planetas": ["Mercurio", "Venus", "Tierra", "Marte", "Júpiter", "Saturno", "Urano", "Neptuno", "Plutón", "Luna (satélite)"],
+    "Elementos Químicos": ["Hidrógeno", "Oxígeno", "Carbono", "Nitrógeno", "Helio", "Hierro", "Oro", "Plata", "Calcio", "Sodio", "Potasio", "Cloro", "Fósforo", "Azufre", "Magnesio", "Aluminio", "Cobre", "Zinc", "Plomo", "Uranio"],
+    "Idiomas": ["Español", "Inglés", "Chino", "Francés", "Árabe", "Ruso", "Alemán", "Japonés", "Portugués", "Hindi", "Italiano", "Coreano", "Turco", "Sueco", "Holandés", "Polaco", "Griego", "Hebreo", "Swahili", "Quechua"],
+    "Superhéroes": ["Superman", "Batman", "Spider-Man", "Wonder Woman", "Iron Man", "Captain America", "Thor", "Hulk", "Black Widow", "Flash", "Aquaman", "Green Lantern", "Doctor Strange", "Black Panther", "Wolverine", "Deadpool", "Captain Marvel", "Ant-Man", "Shazam", "Supergirl"]
 };
 
 const AVATARS = [
@@ -718,6 +723,14 @@ function refreshPlayers() {
     });
 }
 
+// Helper para renderizar avatar (emoji o imagen)
+function renderAvatar(avatar, size = 40) {
+    if (avatar.image) {
+        return `<img src="${avatar.image}" alt="${avatar.id}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;" onerror="this.outerHTML='${avatar.emoji}'">`;
+    }
+    return avatar.emoji;
+}
+
 function renderPlayerList() {
     const list = document.getElementById('player-list');
     const countEl = document.getElementById('player-count');
@@ -740,7 +753,7 @@ function renderPlayerList() {
 
         return `
             <div class="player-item">
-                <div class="player-avatar">${avatar.emoji}</div>
+                <div class="player-avatar">${renderAvatar(avatar)}</div>
                 <div class="player-info">
                     <div class="player-name">${p.name}${isMe ? ' (Tú)' : ''}</div>
                     ${isHostPlayer ? '<div class="player-tag">Host</div>' : ''}
@@ -1282,7 +1295,7 @@ function renderVotingList() {
 
         return `
             <div class="vote-item">
-                <div class="player-avatar">${avatar.emoji}</div>
+                <div class="player-avatar">${renderAvatar(avatar)}</div>
                 <div class="player-info">
                     <div class="player-name">${p?.name || id}</div>
                 </div>
@@ -1837,10 +1850,12 @@ function updateSpectatorRoles() {
 
     list.innerHTML = Object.entries(G.fullRoles).map(([id, role]) => {
         const p = G.players[id];
+        const avatar = AVATARS.find(a => a.id === p?.avatar) || AVATARS[0];
         const isActive = G.activePlayers.includes(id);
 
         return `
             <div class="player-item" style="opacity: ${isActive ? 1 : 0.5}">
+                <div class="player-avatar">${renderAvatar(avatar, 32)}</div>
                 <div class="player-info">
                     <div class="player-name">${p?.name || id}</div>
                     <div class="player-tag">${role.role} - ${role.word}</div>
@@ -1857,11 +1872,13 @@ function updateSpectatorVotes() {
 
     list.innerHTML = G.activePlayers.map(id => {
         const p = G.players[id];
+        const avatar = AVATARS.find(a => a.id === p?.avatar) || AVATARS[0];
         const votes = G.votes[id] || 0;
         const hasVoted = G.votedPlayers.has(id);
 
         return `
             <div class="player-item">
+                <div class="player-avatar">${renderAvatar(avatar, 32)}</div>
                 <div class="player-info">
                     <div class="player-name">${p?.name || id}</div>
                     <div class="player-tag">${hasVoted ? 'Ha votado' : 'Pendiente'}</div>
