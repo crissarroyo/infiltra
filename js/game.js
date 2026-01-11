@@ -1,5 +1,5 @@
 /**
- * INFILTRA - Game Logic v2.0
+ * INFILTRA - Game Logic v0.9.5
  * Con correcciones de bugs y puntuación histórica
  */
 
@@ -30,13 +30,18 @@ const DB = {
 };
 
 const AVATARS = [
-    { id: 'av-1', emoji: '🕵️' }, { id: 'av-2', emoji: '🕵️‍♀️' },
-    { id: 'av-3', emoji: '👤' }, { id: 'av-4', emoji: '👩' },
-    { id: 'av-5', emoji: '🧑' }, { id: 'av-6', emoji: '👨' },
-    { id: 'av-7', emoji: '👩‍💼' }, { id: 'av-8', emoji: '👨‍💼' },
-    { id: 'av-9', emoji: '🥷' }, { id: 'av-10', emoji: '🦸' }
-    { id: 'avatar-11', emoji: '👤', name: 'Female Forensic Scientist', image: 'assets/avatars/avatar-11.svg' }
-    { id: 'avatar-12', emoji: '👤', name: 'Female Private Detective', image: 'assets/avatars/avatar-12.svg' }
+    { id: 'av-1', emoji: '🕵️' }, 
+    { id: 'av-2', emoji: '🕵️‍♀️' },
+    { id: 'av-3', emoji: '👤' }, 
+    { id: 'av-4', emoji: '👩' },
+    { id: 'av-5', emoji: '🧑' }, 
+    { id: 'av-6', emoji: '👨' },
+    { id: 'av-7', emoji: '👩‍💼' }, 
+    { id: 'av-8', emoji: '👨‍💼' },
+    { id: 'av-9', emoji: '🥷' }, 
+    { id: 'av-10', emoji: '🦸' },
+    { id: 'avatar-11', emoji: '👤', name: 'Female Forensic Scientist', image: 'assets/avatars/avatar-11.svg' },
+    { id: 'avatar-12', emoji: '👤', name: 'Female Private Detective', image: 'assets/avatars/avatar-12.svg' },
     { id: 'avatar-16', emoji: '👤', name: 'Male Veteran Police Inspector', image: 'assets/avatars/avatar-16.svg' }
 ];
 
@@ -139,16 +144,19 @@ function initAvatars() {
     
     AVATARS.forEach(avatar => {
         const div = document.createElement('div');
-        div.className = 'avatar-option' + (avatar.id === state.selectedAvatar ? ' selected' : '');
+        div.className = 'avatar-option' + (avatar.id === G.avatar ? ' selected' : '');
         
-        // Usar imagen si existe, sino emoji
         if (avatar.image) {
-            div.innerHTML = `<img src="${avatar.image}" alt="${avatar.name}">`;
+            div.innerHTML = `<img src="${avatar.image}" alt="${avatar.name || ''}">`;
         } else {
-            div.innerHTML = `<span class="avatar-placeholder">${avatar.emoji}</span>`;
+            div.textContent = avatar.emoji;
         }
         
-        div.onclick = () => selectAvatar(avatar.id);
+        div.onclick = () => {
+            G.avatar = avatar.id;
+            grid.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+            div.classList.add('selected');
+        };
         div.dataset.id = avatar.id;
         grid.appendChild(div);
     });
