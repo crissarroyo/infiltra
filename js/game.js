@@ -1,7 +1,13 @@
 /**
- * INFILTRA - Game Logic v0.9.7.2
+ * INFILTRA - Game Logic v0.9.8.0
  * 
- * Correcciones:
+ * Cambios en v0.9.8.0:
+ * - Marcos (frames) visibles en todas las fases del juego
+ * - Función renderPlayerAvatar para mostrar avatar + marco
+ * - Mejor visualización de marcos en selección de perfil
+ * - Avatar por defecto corregido a 'avatar-11'
+ * 
+ * Correcciones anteriores (v0.9.7.2):
  * - maxPlayers/scores se sincronizan correctamente
  * - Host eliminado ve info de espectador inmediatamente
  * - En rondas adicionales NO se oculta el rol (ya lo conoces)
@@ -44,8 +50,9 @@ const DB = {
 const AVATARS = [
     { id: 'avatar-11', emoji: '🔎', image: 'assets/avatars/avatar-11.svg' },
     { id: 'avatar-12', emoji: '🔎', image: 'assets/avatars/avatar-12.svg' },
-    { id: 'avatar-12', emoji: '🔎', image: 'assets/avatars/avatar-13.svg' },
-    { id: 'avatar-16', emoji: '🔎', image: 'assets/avatars/avatar-16.svg' }
+    { id: 'avatar-13', emoji: '🔎', image: 'assets/avatars/avatar-13.svg' },
+    { id: 'avatar-16', emoji: '🔎', image: 'assets/avatars/avatar-16.svg' },
+    { id: 'avatar-17', emoji: '🔎', image: 'assets/avatars/avatar-17.svg' }
 ];
 
 const FRAMES = [
@@ -66,7 +73,7 @@ let G = {
     channel: null,
     myId: null,
     playerName: '',
-    avatar: 'av-1',
+    avatar: 'avatar-11',
     frame: 'fr-basic',
     isHost: false,
     hostId: null,
@@ -105,8 +112,6 @@ let G = {
     soundEnabled: true,
     previousScreen: 'screen-home',
     roleRevealed: false,
-    
-    // NUEVO: Flag para saber si es primera asignación de roles
     isFirstRound: true
 };
 
@@ -117,7 +122,7 @@ let G = {
 document.addEventListener('DOMContentLoaded', init);
 
 function init() {
-    console.log('Iniciando INFILTRA v3.0...');
+    console.log('Iniciando INFILTRA v0.9.8.0...');
     
     G.myId = sessionStorage.getItem('infiltra_myId');
     if (!G.myId) {
@@ -133,7 +138,7 @@ function init() {
     bindEvents();
     checkURLParams();
     
-    console.log('INFILTRA v3.0 iniciado correctamente');
+    console.log('INFILTRA v0.9.8.0 iniciado correctamente');
 }
 
 function loadProfile() {
@@ -197,10 +202,11 @@ function initFrames() {
     if (!grid) return;
     
     grid.innerHTML = FRAMES.map(f => 
-        `<div class="frame-option ${f.id === G.frame ? 'selected' : ''} ${f.locked ? 'locked' : ''}" 
-             data-id="${f.id}" style="border-color: ${f.color}">
-            ${!f.locked ? `<div style="width:24px;height:24px;border-radius:50%;border:3px solid ${f.color}"></div>` : ''}
-        </div>`
+        '<div class="frame-option ' + (f.id === G.frame ? 'selected' : '') + ' ' + (f.locked ? 'locked' : '') + '" ' +
+        'data-id="' + f.id + '" style="border: 4px solid ' + f.color + '; background: rgba(255,255,255,0.1);">' +
+        '<div style="width:30px;height:30px;border-radius:50%;border:3px solid ' + f.color + ';background:rgba(0,0,0,0.3);"></div>' +
+        (f.locked ? '<span style="position:absolute;font-size:12px;">🔒</span>' : '') +
+        '</div>'
     ).join('');
 
     grid.addEventListener('click', e => {
@@ -218,10 +224,10 @@ function initCategories() {
     if (!list) return;
     
     list.innerHTML = Object.keys(DB).map(cat => 
-        `<div class="category-item">
-            <input type="checkbox" id="cat-${cat}" value="${cat}" checked>
-            <label for="cat-${cat}">${cat}</label>
-        </div>`
+        '<div class="category-item">' +
+        '<input type="checkbox" id="cat-' + cat + '" value="' + cat + '" checked>' +
+        '<label for="cat-' + cat + '">' + cat + '</label>' +
+        '</div>'
     ).join('');
 }
 
@@ -306,10 +312,6 @@ function checkURLParams() {
     }
 }
 
-// ============================================
-// NAVEGACIÓN
-// ============================================
-
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const screen = document.getElementById(id);
@@ -378,7 +380,6 @@ function generateCode() {
 }
 
 function initPubNub() {
-    // Limpiar TODOS los intervalos antes de reconectar
     clearAllTimers();
     
     if (G.pubnub) {
@@ -419,7 +420,6 @@ function onStatus(status) {
             generateQR();
             setTimeout(() => publishConfig(), 300);
         } else {
-            // No soy host, pedir sync del estado actual
             setTimeout(() => requestSync(), 500);
         }
 
@@ -519,7 +519,7 @@ function onMessage(event) {
                 delete G.players[msg.targetId];
                 delete G.scores[msg.targetId];
                 renderPlayerList();
-                toast(`${msg.targetName} fue expulsado`, 'info');
+                toast(msg.targetName + ' fue expulsado', 'info');
             }
             break;
 
@@ -527,14 +527,12 @@ function onMessage(event) {
             handleSkipWord(msg);
             break;
             
-        // NUEVO: Solicitud de sync
         case 'request_sync':
             if (G.isHost) {
                 publishFullSync();
             }
             break;
             
-        // NUEVO: Sync completo del host
         case 'full_sync':
             handleFullSync(msg);
             break;
@@ -545,7 +543,6 @@ function onPresence(event) {
     console.log('Presencia:', event.action, event.uuid);
     
     if (event.action === 'join' && G.isHost && event.uuid !== G.myId) {
-        // Nuevo jugador entró, enviar config completo
         setTimeout(() => publishConfig(), 500);
     }
     
@@ -599,12 +596,11 @@ function publishConfig() {
             roundTime: G.roundTime,
             hostId: G.hostId,
             usedWords: G.usedWords,
-            scores: G.scores  // NUEVO: incluir scores
+            scores: G.scores
         }
     });
 }
 
-// NUEVO: Solicitar sync al host
 function requestSync() {
     if (!G.pubnub || G.isHost) return;
     
@@ -614,7 +610,6 @@ function requestSync() {
     });
 }
 
-// NUEVO: Publicar estado completo (solo host)
 function publishFullSync() {
     if (!G.pubnub || !G.isHost) return;
     
@@ -638,9 +633,7 @@ function publishFullSync() {
     });
 }
 
-// NUEVO: Manejar sync completo
 function handleFullSync(msg) {
-    // Solo actualizar si no soy host
     if (G.isHost) return;
     
     G.maxPlayers = msg.maxPlayers || G.maxPlayers;
@@ -650,7 +643,6 @@ function handleFullSync(msg) {
     G.usedWords = msg.usedWords || G.usedWords;
     G.scores = msg.scores || G.scores;
     
-    // Si el juego está en progreso
     if (msg.gamePhase && msg.gamePhase !== 'lobby' && msg.gamePhase !== 'home') {
         G.gamePhase = msg.gamePhase;
         G.activePlayers = msg.activePlayers || [];
@@ -660,12 +652,10 @@ function handleFullSync(msg) {
         G.charlatans = msg.charlatans || [];
         G.citizens = msg.citizens || [];
         
-        // Verificar si fui eliminado
         if (G.eliminated.includes(G.myId)) {
             G.isSpectator = true;
         }
         
-        // Obtener mi rol
         if (G.fullRoles[G.myId]) {
             G.myRole = G.fullRoles[G.myId];
         }
@@ -706,12 +696,13 @@ function refreshPlayers() {
                 if (!G.players[o.uuid]) {
                     G.players[o.uuid] = {
                         name: o.state?.name || o.uuid.substring(0, 8),
-                        avatar: o.state?.avatar || 'av-1',
+                        avatar: o.state?.avatar || 'avatar-11',
                         frame: o.state?.frame || 'fr-basic'
                     };
                 } else if (o.state) {
                     G.players[o.uuid].name = o.state.name || G.players[o.uuid].name;
                     G.players[o.uuid].avatar = o.state.avatar || G.players[o.uuid].avatar;
+                    G.players[o.uuid].frame = o.state.frame || G.players[o.uuid].frame;
                 }
 
                 if (G.scores[o.uuid] === undefined) {
@@ -724,12 +715,31 @@ function refreshPlayers() {
     });
 }
 
-// Helper para renderizar avatar (emoji o imagen)
-function renderAvatar(avatar, size = 40) {
+// ============================================
+// RENDERIZADO DE AVATARES CON MARCOS
+// ============================================
+
+function renderAvatar(avatar, size, frameId) {
+    size = size || 40;
+    const frame = frameId ? FRAMES.find(f => f.id === frameId) : null;
+    const frameStyle = frame ? 'border: 3px solid ' + frame.color + ';' : '';
+    
     if (avatar.image) {
-        return `<img src="${avatar.image}" alt="${avatar.id}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;" onerror="this.outerHTML='${avatar.emoji}'">`;
+        return '<img src="' + avatar.image + '" alt="' + avatar.id + '" style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;object-fit:cover;' + frameStyle + '" onerror="this.outerHTML=\'' + avatar.emoji + '\'">';
     }
-    return avatar.emoji;
+    
+    if (frame) {
+        return '<span style="display:inline-flex;align-items:center;justify-content:center;width:' + size + 'px;height:' + size + 'px;border-radius:50%;' + frameStyle + 'font-size:' + (size * 0.6) + 'px;">' + avatar.emoji + '</span>';
+    }
+    return '<span style="font-size:' + (size * 0.6) + 'px;">' + avatar.emoji + '</span>';
+}
+
+function renderPlayerAvatar(playerId, size) {
+    size = size || 40;
+    const p = G.players[playerId];
+    const avatar = AVATARS.find(a => a.id === p?.avatar) || AVATARS[0];
+    const frameId = p?.frame || 'fr-basic';
+    return renderAvatar(avatar, size, frameId);
 }
 
 function renderPlayerList() {
@@ -739,30 +749,27 @@ function renderPlayerList() {
     
     const playerIds = Object.keys(G.players);
 
-    if (countEl) countEl.textContent = `${playerIds.length}/${G.maxPlayers}`;
+    if (countEl) countEl.textContent = playerIds.length + '/' + G.maxPlayers;
 
     list.innerHTML = playerIds.map(id => {
         const p = G.players[id];
-        const avatar = AVATARS.find(a => a.id === p.avatar) || AVATARS[0];
         const isMe = id === G.myId;
         const isHostPlayer = id === G.hostId;
         const score = G.scores[id] || 0;
 
         const kickBtn = (G.isHost && !isMe && G.gamePhase === 'lobby') 
-            ? `<button class="btn-kick" onclick="kickPlayer('${id}')" title="Expulsar">✕</button>` 
+            ? '<button class="btn-kick" onclick="kickPlayer(\'' + id + '\')" title="Expulsar">✕</button>' 
             : '';
 
-        return `
-            <div class="player-item">
-                <div class="player-avatar">${renderAvatar(avatar)}</div>
-                <div class="player-info">
-                    <div class="player-name">${p.name}${isMe ? ' (Tú)' : ''}</div>
-                    ${isHostPlayer ? '<div class="player-tag">Host</div>' : ''}
-                </div>
-                <div class="player-score">${score}</div>
-                ${kickBtn}
-            </div>
-        `;
+        return '<div class="player-item">' +
+            '<div class="player-avatar">' + renderPlayerAvatar(id, 40) + '</div>' +
+            '<div class="player-info">' +
+            '<div class="player-name">' + p.name + (isMe ? ' (Tú)' : '') + '</div>' +
+            (isHostPlayer ? '<div class="player-tag">Host</div>' : '') +
+            '</div>' +
+            '<div class="player-score">' + score + '</div>' +
+            kickBtn +
+            '</div>';
     }).join('');
     
     const btnDistribute = document.getElementById('btn-distribute');
@@ -773,7 +780,7 @@ function kickPlayer(playerId) {
     if (!G.isHost || !G.pubnub) return;
     
     const playerName = G.players[playerId]?.name || 'Jugador';
-    if (confirm(`¿Expulsar a ${playerName} de la sala?`)) {
+    if (confirm('¿Expulsar a ' + playerName + ' de la sala?')) {
         G.pubnub.publish({
             channel: G.channel,
             message: {
@@ -873,7 +880,7 @@ function distributeRoles() {
     for (let i = 0; i < numImp && pool.length; i++) {
         const idx = Math.floor(Math.random() * pool.length);
         const id = pool.splice(idx, 1)[0];
-        roles[id] = { role: 'INFILTRADO', icon: '🎭', word: `Categoría: ${wordData.category}` };
+        roles[id] = { role: 'INFILTRADO', icon: '🎭', word: 'Categoría: ' + wordData.category };
         G.impostors.push(id);
     }
 
@@ -893,7 +900,7 @@ function distributeRoles() {
     G.eliminated = [];
     G.fullRoles = roles;
     G.gamePhase = 'roles';
-    G.isFirstRound = true;  // NUEVO: marcar como primera ronda
+    G.isFirstRound = true;
 
     G.starterPlayerId = G.activePlayers[Math.floor(Math.random() * G.activePlayers.length)];
 
@@ -926,7 +933,7 @@ function skipWord() {
         } else if (role.role === 'CHARLATÁN') {
             role.word = wordData.fakeWord;
         } else if (role.role === 'INFILTRADO') {
-            role.word = `Categoría: ${wordData.category}`;
+            role.word = 'Categoría: ' + wordData.category;
         }
     });
 
@@ -948,18 +955,15 @@ function skipWord() {
     });
 }
 
-// NUEVO: Manejar skip de palabra
 function handleSkipWord(msg) {
     G.fullRoles = msg.roles;
     G.starterPlayerId = msg.starterPlayerId;
     G.usedWords = msg.usedWords || G.usedWords;
     
-    // Actualizar mi rol
     if (G.fullRoles[G.myId]) {
         G.myRole = G.fullRoles[G.myId];
     }
     
-    // Resetear para que puedan ver la nueva palabra
     G.roleRevealed = false;
     
     const card = document.getElementById('role-card');
@@ -978,7 +982,7 @@ function handleSkipWord(msg) {
     
     if (starterInfo) {
         const starterName = G.players[G.starterPlayerId]?.name || 'Alguien';
-        starterInfo.textContent = `Inicia: ${starterName}`;
+        starterInfo.textContent = 'Inicia: ' + starterName;
         starterInfo.style.display = 'block';
     }
     
@@ -997,9 +1001,8 @@ function handleAssign(msg) {
     G.usedWords = msg.usedWords || G.usedWords;
     G.gamePhase = 'roles';
     G.isSpectator = false;
-    G.isFirstRound = msg.isFirstRound !== false;  // Por defecto true
+    G.isFirstRound = msg.isFirstRound !== false;
     
-    // Solo resetear roleRevealed si es primera ronda
     if (G.isFirstRound) {
         G.roleRevealed = false;
     }
@@ -1021,14 +1024,12 @@ function handleAssign(msg) {
         const starterInfo = document.getElementById('starter-info');
         
         if (G.isFirstRound) {
-            // Primera ronda: ocultar rol
             if (card) card.className = 'role-card blurred';
             if (roleIcon) roleIcon.textContent = '❓';
             if (roleTitle) roleTitle.textContent = 'SECRETO';
             if (roleWord) roleWord.textContent = '???';
             if (roleInst) roleInst.textContent = 'Toca la carta para revelar';
         } else {
-            // Rondas siguientes: mostrar rol directamente
             G.roleRevealed = true;
             if (card) {
                 card.classList.remove('blurred');
@@ -1050,7 +1051,7 @@ function handleAssign(msg) {
 
         if (starterInfo) {
             const starterName = G.players[G.starterPlayerId]?.name || 'Alguien';
-            starterInfo.textContent = `Inicia: ${starterName}`;
+            starterInfo.textContent = 'Inicia: ' + starterName;
             starterInfo.style.display = 'block';
         }
 
@@ -1090,21 +1091,15 @@ function showPointsReminder() {
 
     let html = '';
     if (G.myRole.role === 'CIUDADANO') {
-        html = `
-            <li><span class="points-value positive">+${POINTS.CITIZEN_SURVIVE}</span> Sobrevivir la partida</li>
-            <li><span class="points-value positive">+${POINTS.CITIZEN_CORRECT_VOTE}</span> Votar correctamente</li>
-            <li><span class="points-value negative">${POINTS.CITIZEN_WRONG_VOTE}</span> Votar incorrectamente</li>
-        `;
+        html = '<li><span class="points-value positive">+' + POINTS.CITIZEN_SURVIVE + '</span> Sobrevivir la partida</li>' +
+               '<li><span class="points-value positive">+' + POINTS.CITIZEN_CORRECT_VOTE + '</span> Votar correctamente</li>' +
+               '<li><span class="points-value negative">' + POINTS.CITIZEN_WRONG_VOTE + '</span> Votar incorrectamente</li>';
     } else if (G.myRole.role === 'INFILTRADO') {
-        html = `
-            <li><span class="points-value positive">+${POINTS.IMPOSTOR_WIN}</span> Ganar la partida</li>
-            <li><span class="points-value positive">+${POINTS.IMPOSTOR_SURVIVE_ROUND}</span> Sobrevivir cada ronda</li>
-        `;
+        html = '<li><span class="points-value positive">+' + POINTS.IMPOSTOR_WIN + '</span> Ganar la partida</li>' +
+               '<li><span class="points-value positive">+' + POINTS.IMPOSTOR_SURVIVE_ROUND + '</span> Sobrevivir cada ronda</li>';
     } else {
-        html = `
-            <li><span class="points-value positive">+${POINTS.CHARLATAN_SURVIVE}</span> Sobrevivir la partida</li>
-            <li><span class="points-value positive">+${POINTS.CITIZEN_CORRECT_VOTE}</span> Votar correctamente</li>
-        `;
+        html = '<li><span class="points-value positive">+' + POINTS.CHARLATAN_SURVIVE + '</span> Sobrevivir la partida</li>' +
+               '<li><span class="points-value positive">+' + POINTS.CITIZEN_CORRECT_VOTE + '</span> Votar correctamente</li>';
     }
 
     list.innerHTML = html;
@@ -1150,7 +1145,6 @@ function handleStartRound(msg) {
         return;
     }
     
-    // Limpiar cualquier timer anterior
     clearAllTimers();
     
     G.starterPlayerId = msg.starterPlayerId;
@@ -1158,11 +1152,10 @@ function handleStartRound(msg) {
     
     const starterInfo = document.getElementById('starter-info');
     if (starterInfo) {
-        starterInfo.textContent = `¡${starterName} inicia!`;
+        starterInfo.textContent = '¡' + starterName + ' inicia!';
         starterInfo.style.display = 'block';
     }
     
-    // Ocultar botones
     const btnStart = document.getElementById('btn-start-round');
     const btnSkip = document.getElementById('btn-skip-word');
     if (btnStart) btnStart.style.display = 'none';
@@ -1175,7 +1168,6 @@ function handleStartRound(msg) {
     }, 2000);
 }
 
-// NUEVO: Limpiar TODOS los timers
 function clearAllTimers() {
     if (G.timerInterval) {
         clearInterval(G.timerInterval);
@@ -1192,7 +1184,6 @@ function clearAllTimers() {
 }
 
 function startTimer(duration) {
-    // IMPORTANTE: Limpiar timer anterior primero
     if (G.timerInterval) {
         clearInterval(G.timerInterval);
         G.timerInterval = null;
@@ -1215,7 +1206,6 @@ function startTimer(duration) {
     G.timerInterval = setInterval(() => {
         remaining--;
         
-        // NUEVO: Prevenir números negativos
         if (remaining < 0) {
             clearInterval(G.timerInterval);
             G.timerInterval = null;
@@ -1239,14 +1229,13 @@ function startTimer(duration) {
 }
 
 function updateTimerDisplay(seconds) {
-    // Prevenir números negativos
     if (seconds < 0) seconds = 0;
     
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     const timer = document.getElementById('timer');
     if (timer) {
-        timer.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        timer.textContent = mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
     }
 }
 
@@ -1255,7 +1244,6 @@ function updateTimerDisplay(seconds) {
 // ============================================
 
 function startVoting() {
-    // Limpiar timer de ronda
     if (G.timerInterval) {
         clearInterval(G.timerInterval);
         G.timerInterval = null;
@@ -1276,11 +1264,10 @@ function startVoting() {
     startVoteTimer(30);
 
     if (G.isHost) {
-        // Limpiar timeout anterior
         if (G.voteTimeout) {
             clearTimeout(G.voteTimeout);
         }
-        G.voteTimeout = setTimeout(() => publishResults(), 32000); // 32 segundos para dar margen
+        G.voteTimeout = setTimeout(() => publishResults(), 32000);
     }
 }
 
@@ -1292,17 +1279,14 @@ function renderVotingList() {
 
     list.innerHTML = votable.map(id => {
         const p = G.players[id];
-        const avatar = AVATARS.find(a => a.id === p?.avatar) || AVATARS[0];
 
-        return `
-            <div class="vote-item">
-                <div class="player-avatar">${renderAvatar(avatar)}</div>
-                <div class="player-info">
-                    <div class="player-name">${p?.name || id}</div>
-                </div>
-                <button class="btn-vote" data-target="${id}">Votar</button>
-            </div>
-        `;
+        return '<div class="vote-item">' +
+            '<div class="player-avatar">' + renderPlayerAvatar(id, 40) + '</div>' +
+            '<div class="player-info">' +
+            '<div class="player-name">' + (p?.name || id) + '</div>' +
+            '</div>' +
+            '<button class="btn-vote" data-target="' + id + '">Votar</button>' +
+            '</div>';
     }).join('');
 
     list.querySelectorAll('.btn-vote').forEach(btn => {
@@ -1311,7 +1295,6 @@ function renderVotingList() {
 }
 
 function startVoteTimer(seconds) {
-    // Limpiar timer anterior
     if (G.voteTimerInterval) {
         clearInterval(G.voteTimerInterval);
         G.voteTimerInterval = null;
@@ -1319,19 +1302,18 @@ function startVoteTimer(seconds) {
     
     let remaining = seconds;
     const display = document.getElementById('vote-timer');
-    if (display) display.textContent = `00:${remaining.toString().padStart(2, '0')}`;
+    if (display) display.textContent = '00:' + remaining.toString().padStart(2, '0');
 
     G.voteTimerInterval = setInterval(() => {
         remaining--;
         
-        // Prevenir negativos
         if (remaining < 0) {
             clearInterval(G.voteTimerInterval);
             G.voteTimerInterval = null;
             return;
         }
         
-        if (display) display.textContent = `00:${remaining.toString().padStart(2, '0')}`;
+        if (display) display.textContent = '00:' + remaining.toString().padStart(2, '0');
 
         if (remaining <= 0) {
             clearInterval(G.voteTimerInterval);
@@ -1382,7 +1364,6 @@ function handleVote(voterId, targetId) {
             }
         });
 
-        // Todos votaron
         if (G.votedPlayers.size >= G.activePlayers.length) {
             if (G.voteTimeout) {
                 clearTimeout(G.voteTimeout);
@@ -1400,7 +1381,6 @@ function handleVote(voterId, targetId) {
 function publishResults() {
     if (!G.pubnub) return;
     
-    // Limpiar timers
     clearAllTimers();
 
     let maxVotes = 0;
@@ -1450,24 +1430,22 @@ function publishResults() {
         });
     }
 
-    // Enviar resultados
     G.pubnub.publish({
         channel: G.channel,
         message: {
             type: 'results',
             votes: G.votes,
-            eliminatedId,
+            eliminatedId: eliminatedId,
             eliminatedName: eliminatedId ? G.players[eliminatedId]?.name : null,
-            eliminatedRole,
-            isTie,
+            eliminatedRole: eliminatedRole,
+            isTie: isTie,
             scores: G.scores,
             activePlayers: G.activePlayers,
             impostors: G.impostors,
-            fullRoles: G.fullRoles  // NUEVO: incluir roles para espectadores
+            fullRoles: G.fullRoles
         }
     });
 
-    // Enviar roles a espectadores
     G.pubnub.publish({
         channel: G.channel,
         message: { 
@@ -1490,17 +1468,15 @@ function showResults(msg) {
         G.eliminated.push(msg.eliminatedId);
     }
 
-    // ¿Fui eliminado?
     if (msg.eliminatedId === G.myId) {
         G.isSpectator = true;
-        G.fullRoles = msg.fullRoles || G.fullRoles;  // Actualizar roles
+        G.fullRoles = msg.fullRoles || G.fullRoles;
         
         showScreen('screen-spectator');
         
         const specStatus = document.getElementById('spectator-status');
-        if (specStatus) specStatus.textContent = `Fuiste eliminado (${msg.eliminatedRole}). Ahora observas.`;
+        if (specStatus) specStatus.textContent = 'Fuiste eliminado (' + msg.eliminatedRole + '). Ahora observas.';
         
-        // NUEVO: Actualizar info de espectador INMEDIATAMENTE
         updateSpectatorRoles();
         
         if (G.isHost) {
@@ -1512,13 +1488,12 @@ function showResults(msg) {
         return;
     }
 
-    // Ya era espectador
     if (G.isSpectator) {
         const specStatus = document.getElementById('spectator-status');
         if (specStatus) {
             specStatus.textContent = msg.isTie ?
                 'Empate - nadie eliminado' :
-                `${msg.eliminatedName} eliminado (${msg.eliminatedRole})`;
+                msg.eliminatedName + ' eliminado (' + msg.eliminatedRole + ')';
         }
         
         updateSpectatorRoles();
@@ -1530,7 +1505,6 @@ function showResults(msg) {
         return;
     }
 
-    // Sigo en juego - mostrar resultados
     showScreen('screen-results');
     G.gamePhase = 'results';
 
@@ -1543,36 +1517,30 @@ function showResults(msg) {
             const name = G.players[id]?.name || id;
             const pct = (count / maxVotes) * 100;
 
-            return `
-                <div class="result-item">
-                    <div class="result-header">
-                        <span class="result-name">${name}</span>
-                        <span class="result-votes">${count} votos</span>
-                    </div>
-                    <div class="result-bar">
-                        <div class="result-bar-fill" style="width: ${pct}%"></div>
-                    </div>
-                </div>
-            `;
+            return '<div class="result-item">' +
+                '<div class="result-header">' +
+                '<span class="result-name">' + name + '</span>' +
+                '<span class="result-votes">' + count + ' votos</span>' +
+                '</div>' +
+                '<div class="result-bar">' +
+                '<div class="result-bar-fill" style="width: ' + pct + '%"></div>' +
+                '</div>' +
+                '</div>';
         }).join('');
     }
 
     const elimBox = document.getElementById('eliminated-box');
     if (elimBox) {
         if (msg.isTie) {
-            elimBox.innerHTML = `
-                <div class="eliminated-icon">⚖️</div>
-                <div class="eliminated-name">EMPATE</div>
-                <div class="eliminated-role">Nadie fue eliminado</div>
-            `;
+            elimBox.innerHTML = '<div class="eliminated-icon">⚖️</div>' +
+                '<div class="eliminated-name">EMPATE</div>' +
+                '<div class="eliminated-role">Nadie fue eliminado</div>';
         } else {
             const icon = msg.eliminatedRole === 'INFILTRADO' ? '🎭' :
                         msg.eliminatedRole === 'CHARLATÁN' ? '🃏' : '🔍';
-            elimBox.innerHTML = `
-                <div class="eliminated-icon">${icon}</div>
-                <div class="eliminated-name">${msg.eliminatedName}</div>
-                <div class="eliminated-role">Era ${msg.eliminatedRole}</div>
-            `;
+            elimBox.innerHTML = '<div class="eliminated-icon">' + icon + '</div>' +
+                '<div class="eliminated-name">' + msg.eliminatedName + '</div>' +
+                '<div class="eliminated-role">Era ' + msg.eliminatedRole + '</div>';
         }
     }
 
@@ -1607,15 +1575,13 @@ function nextRound() {
 }
 
 function handleNextRound(msg) {
-    // Limpiar timers
     clearAllTimers();
     
     G.votes = {};
     G.votedPlayers = new Set();
     G.voteTargets = {};
-    G.isFirstRound = false;  // Ya no es primera ronda
+    G.isFirstRound = false;
     
-    // Actualizar datos del mensaje si vienen
     if (msg && msg.activePlayers) {
         G.activePlayers = msg.activePlayers;
     }
@@ -1626,7 +1592,6 @@ function handleNextRound(msg) {
         }
     }
 
-    // Espectador
     if (G.isSpectator) {
         const specStatus = document.getElementById('spectator-status');
         const btnSpecNext = document.getElementById('btn-spectator-next');
@@ -1642,7 +1607,6 @@ function handleNextRound(msg) {
         return;
     }
 
-    // Jugador activo - mostrar rol directamente (NO oculto)
     const card = document.getElementById('role-card');
     const roleIcon = document.getElementById('role-icon');
     const roleTitle = document.getElementById('role-title');
@@ -1655,7 +1619,6 @@ function handleNextRound(msg) {
     const btnStart = document.getElementById('btn-start-round');
     const btnSkip = document.getElementById('btn-skip-word');
     
-    // NUEVO: Mostrar rol revelado directamente (ya lo conocen)
     G.roleRevealed = true;
     
     if (card) {
@@ -1717,8 +1680,8 @@ function checkGameOver() {
             channel: G.channel,
             message: {
                 type: 'game_over',
-                winner,
-                reason,
+                winner: winner,
+                reason: reason,
                 scores: G.scores,
                 roles: G.fullRoles
             }
@@ -1727,7 +1690,6 @@ function checkGameOver() {
 }
 
 function handleGameOver(msg) {
-    // Limpiar timers
     clearAllTimers();
     
     G.gamePhase = 'gameover';
@@ -1742,7 +1704,7 @@ function handleGameOver(msg) {
     const goReason = document.getElementById('gameover-reason');
     const goIcon = document.getElementById('gameover-icon');
     
-    if (goTitle) goTitle.textContent = `¡${msg.winner} GANAN!`;
+    if (goTitle) goTitle.textContent = '¡' + msg.winner + ' GANAN!';
     if (goReason) goReason.textContent = msg.reason;
     if (goIcon) goIcon.textContent = isImpostorWin ? '🎭' : '🔍';
 
@@ -1755,16 +1717,14 @@ function handleGameOver(msg) {
             const role = G.fullRoles[id];
             const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
 
-            return `
-                <div class="score-item">
-                    <div class="score-rank">${medal || (idx + 1)}</div>
-                    <div class="score-info">
-                        <div class="score-name">${p?.name || id}</div>
-                        <div class="score-role">${role?.role || ''}</div>
-                    </div>
-                    <div class="score-points">${score}</div>
-                </div>
-            `;
+            return '<div class="score-item">' +
+                '<div class="score-rank">' + (medal || (idx + 1)) + '</div>' +
+                '<div class="score-info">' +
+                '<div class="score-name">' + (p?.name || id) + '</div>' +
+                '<div class="score-role">' + (role?.role || '') + '</div>' +
+                '</div>' +
+                '<div class="score-points">' + score + '</div>' +
+                '</div>';
         }).join('');
     }
 
@@ -1815,7 +1775,6 @@ function handleBackToLobby(msg) {
 }
 
 function resetGameState() {
-    // Limpiar timers
     clearAllTimers();
     
     G.gamePhase = 'lobby';
@@ -1843,7 +1802,6 @@ function updateSpectatorRoles() {
     const list = document.getElementById('spectator-roles');
     if (!list) return;
     
-    // Verificar que tengamos roles
     if (!G.fullRoles || Object.keys(G.fullRoles).length === 0) {
         list.innerHTML = '<div class="player-item"><div class="player-info"><div class="player-name">Cargando roles...</div></div></div>';
         return;
@@ -1851,19 +1809,16 @@ function updateSpectatorRoles() {
 
     list.innerHTML = Object.entries(G.fullRoles).map(([id, role]) => {
         const p = G.players[id];
-        const avatar = AVATARS.find(a => a.id === p?.avatar) || AVATARS[0];
         const isActive = G.activePlayers.includes(id);
 
-        return `
-            <div class="player-item" style="opacity: ${isActive ? 1 : 0.5}">
-                <div class="player-avatar">${renderAvatar(avatar, 32)}</div>
-                <div class="player-info">
-                    <div class="player-name">${p?.name || id}</div>
-                    <div class="player-tag">${role.role} - ${role.word}</div>
-                </div>
-                <span>${isActive ? '✅' : '❌'}</span>
-            </div>
-        `;
+        return '<div class="player-item" style="opacity: ' + (isActive ? 1 : 0.5) + '">' +
+            '<div class="player-avatar">' + renderPlayerAvatar(id, 36) + '</div>' +
+            '<div class="player-info">' +
+            '<div class="player-name">' + (p?.name || id) + '</div>' +
+            '<div class="player-tag">' + role.role + ' - ' + role.word + '</div>' +
+            '</div>' +
+            '<span>' + (isActive ? '✅' : '❌') + '</span>' +
+            '</div>';
     }).join('');
 }
 
@@ -1873,20 +1828,17 @@ function updateSpectatorVotes() {
 
     list.innerHTML = G.activePlayers.map(id => {
         const p = G.players[id];
-        const avatar = AVATARS.find(a => a.id === p?.avatar) || AVATARS[0];
         const votes = G.votes[id] || 0;
         const hasVoted = G.votedPlayers.has(id);
 
-        return `
-            <div class="player-item">
-                <div class="player-avatar">${renderAvatar(avatar, 32)}</div>
-                <div class="player-info">
-                    <div class="player-name">${p?.name || id}</div>
-                    <div class="player-tag">${hasVoted ? 'Ha votado' : 'Pendiente'}</div>
-                </div>
-                <span>${votes} votos</span>
-            </div>
-        `;
+        return '<div class="player-item">' +
+            '<div class="player-avatar">' + renderPlayerAvatar(id, 36) + '</div>' +
+            '<div class="player-info">' +
+            '<div class="player-name">' + (p?.name || id) + '</div>' +
+            '<div class="player-tag">' + (hasVoted ? 'Ha votado' : 'Pendiente') + '</div>' +
+            '</div>' +
+            '<span>' + votes + ' votos</span>' +
+            '</div>';
     }).join('');
 }
 
@@ -1928,12 +1880,13 @@ function exitGame() {
     showScreen('screen-home');
 }
 
-function toast(message, type = 'info') {
+function toast(message, type) {
+    type = type || 'info';
     const container = document.getElementById('toast-container');
     if (!container) return;
     
     const t = document.createElement('div');
-    t.className = `toast ${type}`;
+    t.className = 'toast ' + type;
     t.textContent = message;
     container.appendChild(t);
     setTimeout(() => t.remove(), 3000);
@@ -1941,4 +1894,4 @@ function toast(message, type = 'info') {
 
 // Debug
 window.G = G;
-console.log('game.js v3.0 cargado correctamente');
+console.log('game.js v0.9.8.0 cargado correctamente');
