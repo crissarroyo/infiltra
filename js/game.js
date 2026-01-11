@@ -1,5 +1,5 @@
 /**
- * INFILTRA - Game Logic v0.9.7
+ * INFILTRA - Game Logic v0.9.7.2
  * 
  * Correcciones:
  * - maxPlayers/scores se sincronizan correctamente
@@ -42,16 +42,17 @@ const DB = {
 };
 
 const AVATARS = [
-    { id: 'avatar-11', emoji: '🔬', image: 'assets/avatars/avatar-11.svg' },
+    { id: 'avatar-11', emoji: '🔎', image: 'assets/avatars/avatar-11.svg' },
     { id: 'avatar-12', emoji: '🔎', image: 'assets/avatars/avatar-12.svg' },
-    { id: 'avatar-16', emoji: '👮', image: 'assets/avatars/avatar-16.svg' }
+    { id: 'avatar-12', emoji: '🔎', image: 'assets/avatars/avatar-13.svg' },
+    { id: 'avatar-16', emoji: '🔎', image: 'assets/avatars/avatar-16.svg' }
 ];
 
 const FRAMES = [
     { id: 'fr-basic', color: '#4a5568', locked: false },
-    { id: 'fr-gold', color: '#c9a227', locked: true },
-    { id: 'fr-red', color: '#8b2635', locked: true },
-    { id: 'fr-purple', color: '#7c3aed', locked: true }
+    { id: 'fr-gold', color: '#c9a227', locked: false },
+    { id: 'fr-red', color: '#8b2635', locked: false },
+    { id: 'fr-purple', color: '#7c3aed', locked: false }
 ];
 
 const RESULT_DISPLAY_TIME = 5000;
