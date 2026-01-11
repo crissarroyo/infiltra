@@ -727,11 +727,34 @@ function showPointsReminder() {
 }
 
 function startRound() {
+    const newStarter = G.activePlayers[Math.floor(Math.random() * G.activePlayers.length)];
+    
     G.pubnub.publish({
         channel: G.channel,
-        message: { type: 'start_round', time: G.roundTime }
+        message: { 
+            type: 'start_round', 
+            time: G.roundTime,
+            starterPlayerId: newStarter
+        }
     });
     document.getElementById('btn-start-round').style.display = 'none';
+    document.getElementById('btn-skip-word').style.display = 'none';
+}
+
+function handleStartRound(msg) {
+    if (G.isSpectator) return;
+    
+    G.starterPlayerId = msg.starterPlayerId;
+    const starterName = G.players[G.starterPlayerId]?.name || 'Alguien';
+    
+    document.getElementById('starter-info').textContent = `¡${starterName} inicia!`;
+    document.getElementById('starter-info').style.display = 'block';
+    
+    setTimeout(() => {
+        document.getElementById('starter-info').style.display = 'none';
+        startTimer(msg.time);
+        G.gamePhase = 'round';
+    }, 2000);
 }
 
 function startTimer(duration) {
@@ -765,10 +788,6 @@ function updateTimerDisplay(seconds) {
     document.getElementById('timer').textContent =
         `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
-
-// ============================================
-// VOTACIÓN
-// ============================================
 
 function startVoting() {
     if (G.isSpectator) {
@@ -913,7 +932,6 @@ function publishResults() {
             G.citizens = G.citizens.filter(id => id !== eliminatedId);
         }
 
-        // Calcular puntos
         Object.entries(G.voteTargets).forEach(([voterId, targetId]) => {
             if (targetId === eliminatedId) {
                 if (eliminatedRole === 'INFILTRADO') {
@@ -949,7 +967,7 @@ function publishResults() {
         message: { type: 'spectator_roles', roles: G.fullRoles }
     });
 
-    setTimeout(() => checkGameOver(), 500);
+    setTimeout(() => checkGameOver(), RESULT_DISPLAY_TIME);
 }
 
 function showResults(msg) {
@@ -970,6 +988,7 @@ function showResults(msg) {
         
         if (G.isHost) {
             document.getElementById('btn-spectator-next').style.display = 'block';
+            document.getElementById('btn-spectator-lobby').style.display = 'block';
         }
         return;
     }
@@ -1025,8 +1044,14 @@ function showResults(msg) {
         `;
     }
 
-    document.getElementById('btn-next-round').style.display = G.isHost ? 'block' : 'none';
+    document.getElementById('btn-next-round').style.display = 'none';
     document.getElementById('btn-back-lobby').style.display = 'none';
+    
+    if (G.isHost) {
+        setTimeout(() => {
+            document.getElementById('btn-next-round').style.display = 'block';
+        }, RESULT_DISPLAY_TIME);
+    }
 }
 
 function nextRound() {
@@ -1051,6 +1076,12 @@ function handleNextRound() {
     if (G.isSpectator) {
         document.getElementById('spectator-status').textContent = 'Nueva ronda en progreso...';
         document.getElementById('btn-spectator-next').style.display = 'none';
+        
+        if (G.isHost) {
+            document.getElementById('btn-spectator-next').textContent = '⏱ Iniciar Ronda';
+            document.getElementById('btn-spectator-next').style.display = 'block';
+            document.getElementById('btn-spectator-next').onclick = startRound;
+        }
         return;
     }
 
@@ -1064,7 +1095,9 @@ function handleNextRound() {
     document.getElementById('timer').style.display = 'none';
     document.getElementById('timer').classList.remove('warning');
     document.getElementById('wait-message').style.display = 'block';
+    document.getElementById('starter-info').style.display = 'none';
     document.getElementById('btn-start-round').style.display = G.isHost ? 'block' : 'none';
+    document.getElementById('btn-skip-word').style.display = G.isHost ? 'block' : 'none';
 
     G.gamePhase = 'roles';
     showScreen('screen-role');
@@ -1149,17 +1182,15 @@ function handleGameOver(msg) {
     document.getElementById('btn-back-to-lobby').style.display = 'block';
 }
 
-// ============================================
-// VOLVER AL LOBBY
-// ============================================
-
 function backToLobby() {
     if (G.isHost) {
         G.pubnub.publish({
             channel: G.channel,
             message: {
                 type: 'back_to_lobby',
-                scores: G.scores
+                scores: G.scores,
+                hostId: G.hostId,
+                usedWords: G.usedWords
             }
         });
     }
@@ -1175,6 +1206,9 @@ function backToLobby() {
 
 function handleBackToLobby(msg) {
     G.scores = msg.scores || G.scores;
+    G.hostId = msg.hostId || G.hostId;
+    G.isHost = (G.myId === G.hostId);
+    G.usedWords = msg.usedWords || G.usedWords;
     resetGameState();
     showScreen('screen-lobby');
     
@@ -1198,15 +1232,12 @@ function resetGameState() {
     G.votedPlayers = new Set();
     G.voteTargets = {};
     G.roleRevealed = false;
+    G.starterPlayerId = null;
 
     clearInterval(G.timerInterval);
     clearInterval(G.voteTimerInterval);
     clearTimeout(G.voteTimeout);
 }
-
-// ============================================
-// ESPECTADOR
-// ============================================
 
 function updateSpectatorRoles() {
     const list = document.getElementById('spectator-roles');
@@ -1247,10 +1278,6 @@ function updateSpectatorVotes() {
     }).join('');
 }
 
-// ============================================
-// UTILIDADES
-// ============================================
-
 function leaveRoom() {
     if (confirm('¿Abandonar la sala?')) {
         exitGame();
@@ -1277,8 +1304,10 @@ function exitGame() {
 
     G.channel = null;
     G.isHost = false;
+    G.hostId = null;
     G.players = {};
     G.scores = {};
+    G.usedWords = [];
     resetGameState();
 
     showScreen('screen-home');
