@@ -37,16 +37,6 @@ const DB = {
 };
 
 const AVATARS = [
-    { id: 'av-1', emoji: '🕵️' },
-    { id: 'av-2', emoji: '🕵️‍♀️' },
-    { id: 'av-3', emoji: '👤' },
-    { id: 'av-4', emoji: '👩' },
-    { id: 'av-5', emoji: '🧑' },
-    { id: 'av-6', emoji: '👨' },
-    { id: 'av-7', emoji: '👩‍💼' },
-    { id: 'av-8', emoji: '👨‍💼' },
-    { id: 'av-9', emoji: '🥷' },
-    { id: 'av-10', emoji: '🦸' },
     { id: 'avatar-11', emoji: '🔬', image: 'assets/avatars/avatar-11.svg' },
     { id: 'avatar-12', emoji: '🔎', image: 'assets/avatars/avatar-12.svg' },
     { id: 'avatar-16', emoji: '👮', image: 'assets/avatars/avatar-16.svg' }
