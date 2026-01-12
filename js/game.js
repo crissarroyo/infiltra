@@ -1,5 +1,5 @@
 /**
- * INFILTRA - Game Logic v0.9.8.1
+ * INFILTRA - Game Logic v0.9.8.2
  * 
  * Cambios en v0.9.9.0:
  * - Host espectador ahora ve el timer de la ronda
@@ -119,7 +119,7 @@ let G = {
 document.addEventListener('DOMContentLoaded', init);
 
 function init() {
-    console.log('Iniciando INFILTRA v0.9.9.0...');
+    console.log('Iniciando INFILTRA v0.9.8.2...');
     
     G.myId = sessionStorage.getItem('infiltra_myId');
     if (!G.myId) {
@@ -543,8 +543,13 @@ function onPresence(event) {
     }
     
     if (event.action === 'leave' || event.action === 'timeout') {
-        delete G.players[event.uuid];
+        // Solo eliminar de G.players si estamos en lobby
+        // Durante partida, mantener datos por si reconecta
+        if (G.gamePhase === 'lobby' || G.gamePhase === 'home') {
+            delete G.players[event.uuid];
+        }
         
+        // Marcar como desconectado pero no eliminar inmediatamente
         if (G.gamePhase !== 'lobby' && G.gamePhase !== 'home') {
             G.activePlayers = G.activePlayers.filter(id => id !== event.uuid);
             if (!G.eliminated.includes(event.uuid)) {
@@ -1444,8 +1449,20 @@ function sendVote(targetId, button) {
 }
 
 function handleVote(voterId, targetId) {
+    // Validar TARGET
     if (!G.activePlayers.includes(targetId) || G.eliminated.includes(targetId)) {
         return;
+    }
+    
+    // Validar VOTER
+    if (!G.activePlayers.includes(voterId)) {
+        return; // Espectadores/eliminados no votan
+    }
+    if (G.votedPlayers.has(voterId)) {
+        return; // Ya votó, ignorar duplicado
+    }
+    if (voterId === targetId) {
+        return; // No puede votarse a sí mismo
     }
 
     G.votes[targetId] = (G.votes[targetId] || 0) + 1;
@@ -2050,4 +2067,4 @@ function toast(message, type) {
 
 // Debug
 window.G = G;
-console.log('game.js v0.9.8.1 cargado correctamente');
+console.log('game.js v0.9.8.2 cargado correctamente');
