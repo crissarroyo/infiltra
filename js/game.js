@@ -1,19 +1,15 @@
 /**
- * INFILTRA - Game Logic v0.9.8.0
+ * INFILTRA - Game Logic v0.9.8.1
  * 
- * Cambios en v0.9.8.0:
+ * Cambios en v0.9.9.0:
+ * - Host espectador ahora ve el timer de la ronda
+ * - Botones con feedback visual (disabled + texto cambia)
+ * - Flujo de rondas corregido para espectadores
+ * - Mejor sincronización entre jugadores
+ * 
+ * Cambios anteriores (v0.9.8.0):
  * - Marcos (frames) visibles en todas las fases del juego
  * - Función renderPlayerAvatar para mostrar avatar + marco
- * - Mejor visualización de marcos en selección de perfil
- * - Avatar por defecto corregido a 'avatar-11'
- * 
- * Correcciones anteriores (v0.9.7.2):
- * - maxPlayers/scores se sincronizan correctamente
- * - Host eliminado ve info de espectador inmediatamente
- * - En rondas adicionales NO se oculta el rol (ya lo conoces)
- * - Timer no llega a negativo, limpieza correcta de intervalos
- * - Reconexión restaura estado completo
- * - Botón iniciar ronda funciona correctamente
  */
 
 // ============================================
@@ -108,6 +104,7 @@ let G = {
     voteTimerInterval: null,
     refreshInterval: null,
     voteTimeout: null,
+    spectatorTimerInterval: null,
     
     soundEnabled: true,
     previousScreen: 'screen-home',
@@ -122,7 +119,7 @@ let G = {
 document.addEventListener('DOMContentLoaded', init);
 
 function init() {
-    console.log('Iniciando INFILTRA v0.9.8.0...');
+    console.log('Iniciando INFILTRA v0.9.9.0...');
     
     G.myId = sessionStorage.getItem('infiltra_myId');
     if (!G.myId) {
@@ -138,7 +135,7 @@ function init() {
     bindEvents();
     checkURLParams();
     
-    console.log('INFILTRA v0.9.8.0 iniciado correctamente');
+    console.log('INFILTRA v0.9.9.0 iniciado correctamente');
 }
 
 function loadProfile() {
@@ -269,7 +266,7 @@ function bindEvents() {
     bind('btn-back-lobby', backToLobby);
     bind('btn-back-to-lobby', backToLobby);
     bind('btn-exit-game', exitGame);
-    bind('btn-spectator-next', nextRound);
+    bind('btn-spectator-next', spectatorNextAction);
     bind('btn-spectator-lobby', backToLobby);
     bind('role-card', revealRole);
     
@@ -1045,7 +1042,13 @@ function handleAssign(msg) {
         if (pointsBox) pointsBox.style.display = 'none';
         if (timer) timer.style.display = 'none';
         if (waitMsg) waitMsg.style.display = 'block';
-        if (btnStart) btnStart.style.display = G.isHost ? 'block' : 'none';
+        
+        // Resetear botones
+        if (btnStart) {
+            btnStart.style.display = G.isHost ? 'block' : 'none';
+            btnStart.disabled = false;
+            btnStart.textContent = '▶ Iniciar Ronda';
+        }
         if (btnSkip) btnSkip.style.display = G.isHost ? 'block' : 'none';
 
         if (starterInfo) {
@@ -1105,9 +1108,18 @@ function showPointsReminder() {
     box.style.display = 'block';
 }
 
+// ============================================
+// INICIAR RONDA - CORREGIDO
+// ============================================
+
 function startRound() {
     if (!G.pubnub) {
         console.error('startRound: No hay conexión PubNub');
+        return;
+    }
+    
+    if (!G.isHost) {
+        console.error('startRound: No soy host');
         return;
     }
     
@@ -1115,6 +1127,21 @@ function startRound() {
         console.error('startRound: No hay jugadores activos');
         toast('Error: No hay jugadores activos', 'error');
         return;
+    }
+    
+    // Feedback visual inmediato
+    const btnStart = document.getElementById('btn-start-round');
+    const btnSkip = document.getElementById('btn-skip-word');
+    const btnSpecNext = document.getElementById('btn-spectator-next');
+    
+    if (btnStart) {
+        btnStart.disabled = true;
+        btnStart.textContent = '⏳ Iniciando...';
+    }
+    if (btnSkip) btnSkip.style.display = 'none';
+    if (btnSpecNext) {
+        btnSpecNext.disabled = true;
+        btnSpecNext.textContent = '⏳ Iniciando...';
     }
     
     const newStarter = G.activePlayers[Math.floor(Math.random() * G.activePlayers.length)];
@@ -1129,41 +1156,58 @@ function startRound() {
             starterPlayerId: newStarter
         }
     });
-    
-    const btnStart = document.getElementById('btn-start-round');
-    const btnSkip = document.getElementById('btn-skip-word');
-    if (btnStart) btnStart.style.display = 'none';
-    if (btnSkip) btnSkip.style.display = 'none';
 }
 
 function handleStartRound(msg) {
     console.log('handleStartRound:', msg);
     
-    if (G.isSpectator) {
-        console.log('Soy espectador, ignorando start_round');
-        return;
-    }
-    
     clearAllTimers();
     
     G.starterPlayerId = msg.starterPlayerId;
+    G.gamePhase = 'round';
+    
+    // Ocultar/resetear botones en todas las pantallas
+    const btnStart = document.getElementById('btn-start-round');
+    const btnSkip = document.getElementById('btn-skip-word');
+    const btnSpecNext = document.getElementById('btn-spectator-next');
+    
+    if (btnStart) {
+        btnStart.style.display = 'none';
+        btnStart.disabled = false;
+        btnStart.textContent = '▶ Iniciar Ronda';
+    }
+    if (btnSkip) btnSkip.style.display = 'none';
+    if (btnSpecNext) {
+        btnSpecNext.style.display = 'none';
+        btnSpecNext.disabled = false;
+    }
+    
     const starterName = G.players[G.starterPlayerId]?.name || 'Alguien';
     
+    // Si soy espectador, mostrar timer en pantalla espectador
+    if (G.isSpectator) {
+        const specStatus = document.getElementById('spectator-status');
+        if (specStatus) {
+            specStatus.textContent = '¡' + starterName + ' inicia! Preparando...';
+        }
+        
+        // Después de 2 segundos, iniciar timer de espectador
+        setTimeout(() => {
+            startSpectatorTimer(msg.time);
+        }, 2000);
+        return;
+    }
+    
+    // Jugador activo
     const starterInfo = document.getElementById('starter-info');
     if (starterInfo) {
         starterInfo.textContent = '¡' + starterName + ' inicia!';
         starterInfo.style.display = 'block';
     }
     
-    const btnStart = document.getElementById('btn-start-round');
-    const btnSkip = document.getElementById('btn-skip-word');
-    if (btnStart) btnStart.style.display = 'none';
-    if (btnSkip) btnSkip.style.display = 'none';
-    
     setTimeout(() => {
         if (starterInfo) starterInfo.style.display = 'none';
         startTimer(msg.time);
-        G.gamePhase = 'round';
     }, 2000);
 }
 
@@ -1179,6 +1223,10 @@ function clearAllTimers() {
     if (G.voteTimeout) {
         clearTimeout(G.voteTimeout);
         G.voteTimeout = null;
+    }
+    if (G.spectatorTimerInterval) {
+        clearInterval(G.spectatorTimerInterval);
+        G.spectatorTimerInterval = null;
     }
 }
 
@@ -1227,6 +1275,55 @@ function startTimer(duration) {
     }, 1000);
 }
 
+function startSpectatorTimer(duration) {
+    if (G.spectatorTimerInterval) {
+        clearInterval(G.spectatorTimerInterval);
+        G.spectatorTimerInterval = null;
+    }
+    
+    let remaining = duration;
+    const specStatus = document.getElementById('spectator-status');
+    
+    const updateDisplay = () => {
+        const mins = Math.floor(remaining / 60);
+        const secs = remaining % 60;
+        const timeStr = mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
+        
+        if (specStatus) {
+            if (remaining <= 10) {
+                specStatus.textContent = '⚠️ Ronda: ' + timeStr;
+            } else {
+                specStatus.textContent = '🎮 Ronda en curso: ' + timeStr;
+            }
+        }
+    };
+    
+    updateDisplay();
+    
+    G.spectatorTimerInterval = setInterval(() => {
+        remaining--;
+        
+        if (remaining < 0) {
+            clearInterval(G.spectatorTimerInterval);
+            G.spectatorTimerInterval = null;
+            if (specStatus) {
+                specStatus.textContent = '🗳️ Votación en curso...';
+            }
+            return;
+        }
+        
+        updateDisplay();
+        
+        if (remaining <= 0) {
+            clearInterval(G.spectatorTimerInterval);
+            G.spectatorTimerInterval = null;
+            if (specStatus) {
+                specStatus.textContent = '🗳️ Votación en curso...';
+            }
+        }
+    }, 1000);
+}
+
 function updateTimerDisplay(seconds) {
     if (seconds < 0) seconds = 0;
     
@@ -1249,6 +1346,8 @@ function startVoting() {
     }
     
     if (G.isSpectator) {
+        const specStatus = document.getElementById('spectator-status');
+        if (specStatus) specStatus.textContent = '🗳️ Votación en curso...';
         showScreen('screen-spectator');
         return;
     }
@@ -1458,6 +1557,8 @@ function publishResults() {
 }
 
 function showResults(msg) {
+    clearAllTimers();
+    
     G.votes = msg.votes;
     G.scores = msg.scores || G.scores;
     G.activePlayers = msg.activePlayers;
@@ -1481,7 +1582,11 @@ function showResults(msg) {
         if (G.isHost) {
             const btnNext = document.getElementById('btn-spectator-next');
             const btnLobby = document.getElementById('btn-spectator-lobby');
-            if (btnNext) btnNext.style.display = 'block';
+            if (btnNext) {
+                btnNext.style.display = 'block';
+                btnNext.disabled = false;
+                btnNext.textContent = '▶ Siguiente Ronda';
+            }
             if (btnLobby) btnLobby.style.display = 'block';
         }
         return;
@@ -1499,7 +1604,11 @@ function showResults(msg) {
         
         if (G.isHost) {
             const btnNext = document.getElementById('btn-spectator-next');
-            if (btnNext) btnNext.style.display = 'block';
+            if (btnNext) {
+                btnNext.style.display = 'block';
+                btnNext.disabled = false;
+                btnNext.textContent = '▶ Siguiente Ronda';
+            }
         }
         return;
     }
@@ -1545,7 +1654,11 @@ function showResults(msg) {
 
     const btnNext = document.getElementById('btn-next-round');
     const btnLobby = document.getElementById('btn-back-lobby');
-    if (btnNext) btnNext.style.display = 'none';
+    if (btnNext) {
+        btnNext.style.display = 'none';
+        btnNext.disabled = false;
+        btnNext.textContent = '▶ Siguiente Ronda';
+    }
     if (btnLobby) btnLobby.style.display = 'none';
     
     if (G.isHost) {
@@ -1555,13 +1668,25 @@ function showResults(msg) {
     }
 }
 
+// ============================================
+// SIGUIENTE RONDA - CORREGIDO
+// ============================================
+
 function nextRound() {
-    if (!G.pubnub) return;
+    if (!G.pubnub || !G.isHost) return;
     
+    // Feedback visual
     const btnNext = document.getElementById('btn-next-round');
     const btnSpecNext = document.getElementById('btn-spectator-next');
-    if (btnNext) btnNext.style.display = 'none';
-    if (btnSpecNext) btnSpecNext.style.display = 'none';
+    
+    if (btnNext) {
+        btnNext.disabled = true;
+        btnNext.textContent = '⏳ Preparando...';
+    }
+    if (btnSpecNext) {
+        btnSpecNext.disabled = true;
+        btnSpecNext.textContent = '⏳ Preparando...';
+    }
 
     G.pubnub.publish({
         channel: G.channel,
@@ -1573,6 +1698,20 @@ function nextRound() {
     });
 }
 
+// Acción del botón espectador (puede ser nextRound o startRound)
+function spectatorNextAction() {
+    const btnSpecNext = document.getElementById('btn-spectator-next');
+    if (!btnSpecNext || !G.isHost) return;
+    
+    const btnText = btnSpecNext.textContent;
+    
+    if (btnText.includes('Iniciar')) {
+        startRound();
+    } else {
+        nextRound();
+    }
+}
+
 function handleNextRound(msg) {
     clearAllTimers();
     
@@ -1580,6 +1719,7 @@ function handleNextRound(msg) {
     G.votedPlayers = new Set();
     G.voteTargets = {};
     G.isFirstRound = false;
+    G.gamePhase = 'roles';
     
     if (msg && msg.activePlayers) {
         G.activePlayers = msg.activePlayers;
@@ -1591,21 +1731,31 @@ function handleNextRound(msg) {
         }
     }
 
+    // Espectador
     if (G.isSpectator) {
         const specStatus = document.getElementById('spectator-status');
         const btnSpecNext = document.getElementById('btn-spectator-next');
         
-        if (specStatus) specStatus.textContent = 'Nueva ronda en progreso...';
-        if (btnSpecNext) btnSpecNext.style.display = 'none';
+        if (specStatus) specStatus.textContent = 'Esperando que el host inicie la ronda...';
         
-        if (G.isHost && btnSpecNext) {
-            btnSpecNext.textContent = '⏱ Iniciar Ronda';
-            btnSpecNext.style.display = 'block';
-            btnSpecNext.onclick = startRound;
+        if (btnSpecNext) {
+            btnSpecNext.style.display = 'none';
+            btnSpecNext.disabled = false;
         }
+        
+        // Si soy host, mostrar botón para iniciar ronda
+        if (G.isHost && btnSpecNext) {
+            btnSpecNext.textContent = '▶ Iniciar Ronda';
+            btnSpecNext.style.display = 'block';
+            btnSpecNext.disabled = false;
+        }
+        
+        showScreen('screen-spectator');
+        updateSpectatorRoles();
         return;
     }
 
+    // Jugador activo
     const card = document.getElementById('role-card');
     const roleIcon = document.getElementById('role-icon');
     const roleTitle = document.getElementById('role-title');
@@ -1637,10 +1787,15 @@ function handleNextRound(msg) {
     }
     if (waitMsg) waitMsg.style.display = 'block';
     if (starterInfo) starterInfo.style.display = 'none';
-    if (btnStart) btnStart.style.display = G.isHost ? 'block' : 'none';
+    
+    // Resetear botones
+    if (btnStart) {
+        btnStart.style.display = G.isHost ? 'block' : 'none';
+        btnStart.disabled = false;
+        btnStart.textContent = '▶ Iniciar Ronda';
+    }
     if (btnSkip) btnSkip.style.display = G.isHost ? 'block' : 'none';
 
-    G.gamePhase = 'roles';
     showScreen('screen-role');
 }
 
@@ -1759,6 +1914,8 @@ function backToLobby() {
 }
 
 function handleBackToLobby(msg) {
+    clearAllTimers();
+    
     G.scores = msg.scores || G.scores;
     G.hostId = msg.hostId || G.hostId;
     G.isHost = (G.myId === G.hostId);
@@ -1893,4 +2050,4 @@ function toast(message, type) {
 
 // Debug
 window.G = G;
-console.log('game.js v0.9.8.0 cargado correctamente');
+console.log('game.js v0.9.8.1 cargado correctamente');
