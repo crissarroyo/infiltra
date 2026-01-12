@@ -203,9 +203,8 @@ function initFrames() {
     
     grid.innerHTML = FRAMES.map(f => 
         '<div class="frame-option ' + (f.id === G.frame ? 'selected' : '') + ' ' + (f.locked ? 'locked' : '') + '" ' +
-        'data-id="' + f.id + '" style="border: 4px solid ' + f.color + '; background: rgba(255,255,255,0.1);">' +
+        'data-id="' + f.id + '" data-color="' + f.color + '">' +
         '<div style="width:30px;height:30px;border-radius:50%;border:3px solid ' + f.color + ';background:rgba(0,0,0,0.3);"></div>' +
-        (f.locked ? '<span style="position:absolute;font-size:12px;">🔒</span>' : '') +
         '</div>'
     ).join('');
 
