@@ -1518,6 +1518,8 @@ p {
 
 .frame-option.selected {
     border-color: var(--color-accent-gold);
+    transform: scale(1.15);
+    box-shadow: 0 0 0 2px #fff, 0 0 12px rgba(255,255,255,0.4);
 }
 
 .frame-option.locked {
