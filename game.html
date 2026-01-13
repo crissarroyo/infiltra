@@ -33,9 +33,30 @@
             <div id="screen-home" class="screen active">
                 <div class="game-card">
                     <div class="card-header"><h1>BIENVENIDO</h1><p>Configura tu perfil y comienza a jugar</p></div>
-                    <div class="form-group"><label class="form-label">Tu Avatar</label><div class="avatar-grid" id="avatar-grid"></div></div>
-                    <div class="form-group"><label class="form-label">Marco</label><div class="frame-grid" id="frame-grid"></div></div>
-                    <div class="form-group"><label class="form-label">Tu Nombre</label><input type="text" id="input-name" class="form-input" placeholder="Ingresa tu nombre" maxlength="15"></div>
+                    
+                    <!-- Vista previa del perfil -->
+                    <div class="profile-preview" id="profile-preview">
+                        <div class="preview-avatar-wrapper" id="preview-avatar-wrapper">
+                            <div class="preview-avatar" id="preview-avatar"></div>
+                        </div>
+                        <div class="preview-name" id="preview-name">Tu Nombre</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tu Nombre</label>
+                        <input type="text" id="input-name" class="form-input" placeholder="Ingresa tu nombre" maxlength="15">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tu Avatar</label>
+                        <div class="avatar-grid" id="avatar-grid"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tu Marco</label>
+                        <div class="frame-grid-new" id="frame-grid"></div>
+                    </div>
+                    
                     <div class="btn-group">
                         <button class="btn btn-primary" id="btn-show-config"><span>🏠</span> Crear Sala</button>
                         <div class="divider"><span>o únete</span></div>
@@ -48,7 +69,7 @@
                 <div class="game-card">
                     <div class="card-header"><h1>CONFIGURAR SALA</h1><p>Ajusta las opciones de la partida</p></div>
                     <div class="form-row">
-                        <div class="form-group"><label class="form-label">Máx. Jugadores</label><input type="number" id="config-max-players" class="form-input" value="10" min="3" max="20"></div>
+                        <div class="form-group"><label class="form-label">Máx. Jugadores</label><input type="number" id="config-max-players" class="form-input" value="10" min="3" max="10"></div>
                         <div class="form-group"><label class="form-label">Infiltrados</label><input type="number" id="config-impostors" class="form-input" value="1" min="1" max="5"></div>
                     </div>
                     <div class="form-row">
@@ -97,6 +118,7 @@
                     <div class="btn-group">
                         <button class="btn btn-primary" id="btn-start-round" style="display:none"><span>⏱</span> Iniciar Ronda</button>
                         <button class="btn btn-secondary" id="btn-skip-word" style="display:none"><span>🔄</span> Cambiar Palabra</button>
+                        <button class="btn btn-danger" id="btn-leave-role"><span>🚪</span> Abandonar Partida</button>
                     </div>
                 </div>
             </div>
@@ -106,6 +128,9 @@
                     <div class="timer" id="vote-timer">00:30</div>
                     <div class="voting-list" id="voting-list"></div>
                     <p class="status-text" id="vote-status">Selecciona un jugador para votar</p>
+                    <div class="btn-group" style="margin-top:1rem">
+                        <button class="btn btn-danger" id="btn-leave-voting"><span>🚪</span> Abandonar Partida</button>
+                    </div>
                 </div>
             </div>
             <div id="screen-results" class="screen">
@@ -116,6 +141,7 @@
                     <div class="btn-group" style="margin-top:1.5rem">
                         <button class="btn btn-success" id="btn-next-round" style="display:none"><span>🔄</span> Siguiente Ronda</button>
                         <button class="btn btn-primary" id="btn-back-lobby" style="display:none"><span>🏠</span> Volver a Sala</button>
+                        <button class="btn btn-danger" id="btn-leave-results"><span>🚪</span> Abandonar Partida</button>
                     </div>
                 </div>
             </div>
@@ -138,6 +164,7 @@
                     <div class="btn-group">
                         <button class="btn btn-success" id="btn-spectator-next" style="display:none"><span>🔄</span> Siguiente Ronda</button>
                         <button class="btn btn-primary" id="btn-spectator-lobby" style="display:none"><span>🏠</span> Volver a Sala</button>
+                        <button class="btn btn-danger" id="btn-leave-spectator"><span>🚪</span> Abandonar Partida</button>
                     </div>
                 </div>
             </div>
