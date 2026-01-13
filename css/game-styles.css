@@ -118,16 +118,167 @@ body {
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--color-steel-dark); }
 .divider span { font-size: 0.875rem; color: var(--color-text-muted); }
 
-.avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; }
-.avatar-option { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: var(--color-bg-secondary); border: 2px solid var(--color-steel-dark); border-radius: var(--radius-lg); cursor: pointer; font-size: 1.75rem; }
-.avatar-option:hover { border-color: var(--color-steel); }
-.avatar-option.selected { border-color: var(--color-accent-gold); box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.3); }
+/* ========================================
+   VISTA PREVIA DEL PERFIL
+   ======================================== */
 
+.profile-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-steel-dark);
+}
+
+.preview-avatar-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    padding: 4px;
+    margin-bottom: 0.75rem;
+    transition: all var(--transition-normal);
+}
+
+.preview-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--color-bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    overflow: hidden;
+}
+
+.preview-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.preview-name {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    letter-spacing: 0.05em;
+    color: var(--color-text-primary);
+}
+
+/* ========================================
+   GRID DE AVATARES
+   ======================================== */
+
+.avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; }
+.avatar-option { 
+    aspect-ratio: 1; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    background: var(--color-bg-secondary); 
+    border: 2px solid var(--color-steel-dark); 
+    border-radius: var(--radius-lg); 
+    cursor: pointer; 
+    font-size: 1.75rem;
+    transition: all var(--transition-fast);
+    overflow: hidden;
+}
+.avatar-option:hover { border-color: var(--color-steel); transform: scale(1.05); }
+.avatar-option.selected { border-color: var(--color-accent-gold); box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.3); }
+.avatar-option img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ========================================
+   GRID DE MARCOS - NUEVO DISEÑO
+   ======================================== */
+
+.frame-grid-new {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+}
+
+.frame-option-new {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-secondary);
+    border: 2px solid var(--color-steel-dark);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    padding: 6px;
+    position: relative;
+}
+
+.frame-option-new:hover {
+    transform: scale(1.05);
+}
+
+.frame-option-new.selected {
+    border-color: var(--color-accent-gold);
+    box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.3);
+}
+
+.frame-option-new.selected::after {
+    content: '✓';
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    background: var(--color-accent-gold);
+    color: var(--color-bg-primary);
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.frame-option-new.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.frame-option-new.locked::after {
+    content: '🔒';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.25rem;
+}
+
+.frame-preview {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: var(--color-bg-card);
+}
+
+/* Viejo grid de marcos (mantener compatibilidad) */
 .frame-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
 .frame-option { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: var(--color-bg-secondary); border: 2px solid; border-radius: var(--radius-lg); cursor: pointer; }
 .frame-option.selected { border-color: var(--color-accent-gold); }
 .frame-option.locked { opacity: 0.5; cursor: not-allowed; }
 .frame-option.locked::after { content: '🔒'; font-size: 1.25rem; }
+
+/* ========================================
+   RESTO DE ESTILOS
+   ======================================== */
 
 .room-code-box { text-align: center; padding: 1.5rem; background: var(--color-bg-secondary); border-radius: var(--radius-lg); margin-bottom: 1.5rem; }
 .room-code { font-family: var(--font-display); font-size: 3rem; letter-spacing: 0.3em; color: var(--color-accent-gold); text-shadow: 0 0 20px rgba(201, 162, 39, 0.5); }
@@ -234,9 +385,13 @@ body {
     .room-code { font-size: 2.5rem; }
     .role-card { width: 200px; height: 280px; }
     .timer { font-size: 3rem; }
+    .preview-avatar-wrapper { width: 70px; height: 70px; }
+    .preview-avatar { font-size: 2rem; }
 }
 
-/* NUEVOS ESTILOS v2.2 */
+/* ========================================
+   NUEVOS ESTILOS v0.9.8.3
+   ======================================== */
 
 /* Botón de kick para el host */
 .btn-kick {
