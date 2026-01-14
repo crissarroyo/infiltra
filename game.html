@@ -10,7 +10,7 @@
         gtag('js', new Date());
         gtag('config', 'G-HT02ZX6MDK');
     </script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>INFILTRA - Jugar</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,16 +23,23 @@
     <div class="particles-bg" id="particles"></div>
     <div class="game-wrapper">
         <header class="game-header">
-            <a href="index.html" class="logo"><span class="logo-icon">◈</span><span class="logo-text">INFILTRA</span></a>
+            <a href="index.html" class="logo">
+                <img src="assets/icons/icon-logo.png" alt="Logo" class="logo-icon-img">
+                <span class="logo-text">INFILTRA</span>
+            </a>
             <div class="header-controls">
-                <button class="btn-icon" id="btn-sound">🔊</button>
-                <button class="btn-icon" id="btn-help">❓</button>
+                <button class="btn-icon" id="btn-sound"><img src="assets/icons/icon-sound-on.png" alt="Sonido" class="btn-icon-img"></button>
+                <button class="btn-icon" id="btn-help"><img src="assets/icons/icon-help.png" alt="Ayuda" class="btn-icon-img"></button>
             </div>
         </header>
         <main class="game-container">
+            <!-- PANTALLA HOME -->
             <div id="screen-home" class="screen active">
                 <div class="game-card">
-                    <div class="card-header"><h1>BIENVENIDO</h1><p>Configura tu perfil y comienza a jugar</p></div>
+                    <div class="card-header">
+                        <h1>BIENVENIDO</h1>
+                        <p>Configura tu perfil y comienza a jugar</p>
+                    </div>
                     
                     <!-- Vista previa del perfil -->
                     <div class="profile-preview" id="profile-preview">
@@ -58,119 +65,246 @@
                     </div>
                     
                     <div class="btn-group">
-                        <button class="btn btn-primary" id="btn-show-config"><span>🏠</span> Crear Sala</button>
+                        <button class="btn btn-primary" id="btn-show-config">
+                            <img src="assets/icons/icon-home.png" alt="" class="btn-img"> Crear Sala
+                        </button>
                         <div class="divider"><span>o únete</span></div>
                         <input type="text" id="input-join-code" class="form-input form-input-code" placeholder="CÓDIGO" maxlength="4">
-                        <button class="btn btn-secondary" id="btn-join-room"><span>📱</span> Unirse a Sala</button>
+                        <button class="btn btn-secondary" id="btn-join-room">
+                            <img src="assets/icons/icon-join.png" alt="" class="btn-img"> Unirse a Sala
+                        </button>
                     </div>
                 </div>
             </div>
+            
+            <!-- PANTALLA CONFIG -->
             <div id="screen-config" class="screen">
                 <div class="game-card">
-                    <div class="card-header"><h1>CONFIGURAR SALA</h1><p>Ajusta las opciones de la partida</p></div>
-                    <div class="form-row">
-                        <div class="form-group"><label class="form-label">Máx. Jugadores</label><input type="number" id="config-max-players" class="form-input" value="10" min="3" max="10"></div>
-                        <div class="form-group"><label class="form-label">Infiltrados</label><input type="number" id="config-impostors" class="form-input" value="1" min="1" max="5"></div>
+                    <div class="card-header">
+                        <h1>CONFIGURAR SALA</h1>
+                        <p>Ajusta las opciones de la partida</p>
                     </div>
                     <div class="form-row">
-                        <div class="form-group"><label class="form-label">Charlatanes</label><input type="number" id="config-charlatans" class="form-input" value="0" min="0" max="3"></div>
-                        <div class="form-group"><label class="form-label">Tiempo Ronda</label><select id="config-time" class="form-select"><option value="30">30 seg</option><option value="60" selected>1 min</option><option value="90">1:30</option><option value="120">2 min</option><option value="180">3 min</option></select></div>
+                        <div class="form-group">
+                            <label class="form-label">Máx. Jugadores</label>
+                            <input type="number" id="config-max-players" class="form-input" value="10" min="3" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Infiltrados</label>
+                            <input type="number" id="config-impostors" class="form-input" value="1" min="1" max="5">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Charlatanes</label>
+                            <input type="number" id="config-charlatans" class="form-input" value="0" min="0" max="3">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tiempo Ronda</label>
+                            <select id="config-time" class="form-select">
+                                <option value="30">30 seg</option>
+                                <option value="60" selected>1 min</option>
+                                <option value="90">1:30</option>
+                                <option value="120">2 min</option>
+                                <option value="180">3 min</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="categories-box">
-                        <div class="categories-header"><h4>Categorías</h4><div class="categories-actions"><button id="btn-cat-all">Todas</button><button id="btn-cat-none">Ninguna</button></div></div>
+                        <div class="categories-header">
+                            <h4>Categorías</h4>
+                            <div class="categories-actions">
+                                <button id="btn-cat-all">Todas</button>
+                                <button id="btn-cat-none">Ninguna</button>
+                            </div>
+                        </div>
                         <div class="categories-list" id="categories-list"></div>
                     </div>
                     <div class="btn-group">
-                        <button class="btn btn-primary" id="btn-create-room"><span>✓</span> Crear Sala</button>
-                        <button class="btn btn-secondary" id="btn-back-home"><span>←</span> Volver</button>
+                        <button class="btn btn-primary" id="btn-create-room">
+                            <img src="assets/icons/icon-check.png" alt="" class="btn-img"> Crear Sala
+                        </button>
+                        <button class="btn btn-secondary" id="btn-back-home">
+                            <img src="assets/icons/icon-back.png" alt="" class="btn-img"> Volver
+                        </button>
                     </div>
                 </div>
             </div>
+            
+            <!-- PANTALLA LOBBY -->
             <div id="screen-lobby" class="screen">
                 <div class="game-card">
-                    <div class="card-header"><h1>SALA DE ESPERA</h1><p>Comparte el código con tus amigos</p></div>
-                    <div class="room-code-box"><div class="room-code" id="display-room-code">----</div><div class="room-code-label">Código de Sala</div></div>
+                    <div class="card-header">
+                        <h1>SALA DE ESPERA</h1>
+                        <p>Comparte el código con tus amigos</p>
+                    </div>
+                    <div class="room-code-box">
+                        <div class="room-code" id="display-room-code">----</div>
+                        <div class="room-code-label">Código de Sala</div>
+                    </div>
                     <div class="qr-container" id="qr-container"></div>
                     <div class="player-list-box">
-                        <div class="player-list-header"><h3>Jugadores</h3><span class="player-count" id="player-count">0/10</span></div>
+                        <div class="player-list-header">
+                            <h3>Jugadores</h3>
+                            <span class="player-count" id="player-count">0/10</span>
+                        </div>
                         <div class="player-list" id="player-list"></div>
                     </div>
                     <div class="btn-group">
-                        <button class="btn btn-primary" id="btn-distribute" style="display:none"><span>▶</span> Repartir Roles</button>
-                        <button class="btn btn-danger" id="btn-leave-room"><span>🚪</span> Abandonar Sala</button>
+                        <button class="btn btn-primary" id="btn-distribute" style="display:none">
+                            <img src="assets/icons/icon-play.png" alt="" class="btn-img"> Repartir Roles
+                        </button>
+                        <button class="btn btn-danger" id="btn-leave-room">
+                            <img src="assets/icons/icon-leave.png" alt="" class="btn-img"> Abandonar Sala
+                        </button>
                     </div>
                 </div>
             </div>
+            
+            <!-- PANTALLA ROL -->
             <div id="screen-role" class="screen">
                 <div class="game-card">
-                    <div class="card-header"><h1>TU ROL SECRETO</h1><p id="role-instruction">Toca la carta para revelar</p></div>
+                    <div class="card-header">
+                        <h1>TU ROL SECRETO</h1>
+                        <p id="role-instruction">Toca la carta para revelar</p>
+                    </div>
                     <div class="starter-info" id="starter-info" style="display:none"></div>
                     <div class="role-display">
                         <div class="role-card blurred" id="role-card">
-                            <div class="role-icon" id="role-icon">❓</div>
+                            <div class="role-icon" id="role-icon">
+                                <img src="assets/icons/icon-help.png" alt="?" class="role-icon-img">
+                            </div>
                             <div class="role-title" id="role-title">SECRETO</div>
                             <div class="role-word" id="role-word">???</div>
                         </div>
                     </div>
-                    <div class="points-box" id="points-box" style="display:none"><h4>Recuerda - Sistema de Puntos</h4><ul id="points-list"></ul></div>
+                    <div class="points-box" id="points-box" style="display:none">
+                        <h4>Recuerda - Sistema de Puntos</h4>
+                        <ul id="points-list"></ul>
+                    </div>
                     <div class="timer" id="timer" style="display:none">00:00</div>
                     <p class="status-text" id="wait-message">Espera a que el host inicie la ronda...</p>
                     <div class="btn-group">
-                        <button class="btn btn-primary" id="btn-start-round" style="display:none"><span>⏱</span> Iniciar Ronda</button>
-                        <button class="btn btn-secondary" id="btn-skip-word" style="display:none"><span>🔄</span> Cambiar Palabra</button>
-                        <button class="btn btn-danger" id="btn-leave-role"><span>🚪</span> Abandonar Partida</button>
+                        <button class="btn btn-primary" id="btn-start-round" style="display:none">
+                            <img src="assets/icons/icon-play.png" alt="" class="btn-img"> Iniciar Ronda
+                        </button>
+                        <button class="btn btn-secondary" id="btn-skip-word" style="display:none">
+                            <img src="assets/icons/icon-refresh.png" alt="" class="btn-img"> Cambiar Palabra
+                        </button>
+                        <button class="btn btn-danger" id="btn-leave-role">
+                            <img src="assets/icons/icon-leave.png" alt="" class="btn-img"> Abandonar Partida
+                        </button>
                     </div>
                 </div>
             </div>
+            
+            <!-- PANTALLA VOTACIÓN -->
             <div id="screen-voting" class="screen">
                 <div class="game-card">
-                    <div class="card-header"><h1>VOTACIÓN</h1><p>¿Quién crees que es el infiltrado?</p></div>
+                    <div class="card-header">
+                        <h1>VOTACIÓN</h1>
+                        <p>¿Quién crees que es el infiltrado?</p>
+                    </div>
                     <div class="timer" id="vote-timer">00:30</div>
                     <div class="voting-list" id="voting-list"></div>
                     <p class="status-text" id="vote-status">Selecciona un jugador para votar</p>
                     <div class="btn-group" style="margin-top:1rem">
-                        <button class="btn btn-danger" id="btn-leave-voting"><span>🚪</span> Abandonar Partida</button>
+                        <button class="btn btn-danger" id="btn-leave-voting">
+                            <img src="assets/icons/icon-leave.png" alt="" class="btn-img"> Abandonar Partida
+                        </button>
                     </div>
                 </div>
             </div>
+            
+            <!-- PANTALLA RESULTADOS -->
             <div id="screen-results" class="screen">
                 <div class="game-card">
-                    <div class="card-header"><h1>RESULTADOS</h1><p>Resumen de la votación</p></div>
+                    <div class="card-header">
+                        <h1>RESULTADOS</h1>
+                        <p>Resumen de la votación</p>
+                    </div>
                     <div class="results-list" id="results-list"></div>
                     <div class="eliminated-box" id="eliminated-box"></div>
                     <div class="btn-group" style="margin-top:1.5rem">
-                        <button class="btn btn-success" id="btn-next-round" style="display:none"><span>🔄</span> Siguiente Ronda</button>
-                        <button class="btn btn-primary" id="btn-back-lobby" style="display:none"><span>🏠</span> Volver a Sala</button>
-                        <button class="btn btn-danger" id="btn-leave-results"><span>🚪</span> Abandonar Partida</button>
+                        <button class="btn btn-success" id="btn-next-round" style="display:none">
+                            <img src="assets/icons/icon-refresh.png" alt="" class="btn-img"> Siguiente Ronda
+                        </button>
+                        <button class="btn btn-primary" id="btn-back-lobby" style="display:none">
+                            <img src="assets/icons/icon-home.png" alt="" class="btn-img"> Volver a Sala
+                        </button>
+                        <button class="btn btn-danger" id="btn-leave-results">
+                            <img src="assets/icons/icon-leave.png" alt="" class="btn-img"> Abandonar Partida
+                        </button>
                     </div>
                 </div>
             </div>
+            
+            <!-- PANTALLA GAME OVER -->
             <div id="screen-gameover" class="screen">
                 <div class="game-card">
-                    <div class="card-header"><h1 id="gameover-title">¡JUEGO TERMINADO!</h1><p id="gameover-reason"></p></div>
-                    <div style="text-align:center;margin:1.5rem 0"><div style="font-size:5rem" id="gameover-icon">🎉</div></div>
-                    <div class="player-list-box"><div class="player-list-header"><h3>Puntuación Final</h3></div><div id="final-scores"></div></div>
+                    <div class="card-header">
+                        <h1 id="gameover-title">¡JUEGO TERMINADO!</h1>
+                        <p id="gameover-reason"></p>
+                    </div>
+                    <div style="text-align:center;margin:1.5rem 0">
+                        <img src="assets/icons/icon-celebrate.png" alt="Celebrar" id="gameover-icon" class="gameover-icon-img">
+                    </div>
+                    <div class="player-list-box">
+                        <div class="player-list-header">
+                            <h3>Puntuación Final</h3>
+                        </div>
+                        <div id="final-scores"></div>
+                    </div>
                     <div class="btn-group">
-                        <button class="btn btn-primary" id="btn-back-to-lobby"><span>🏠</span> Volver a Sala</button>
-                        <button class="btn btn-secondary" id="btn-exit-game"><span>🚪</span> Salir del Juego</button>
+                        <button class="btn btn-primary" id="btn-back-to-lobby">
+                            <img src="assets/icons/icon-home.png" alt="" class="btn-img"> Volver a Sala
+                        </button>
+                        <button class="btn btn-secondary" id="btn-exit-game">
+                            <img src="assets/icons/icon-leave.png" alt="" class="btn-img"> Salir del Juego
+                        </button>
                     </div>
                 </div>
             </div>
+            
+            <!-- PANTALLA ESPECTADOR -->
             <div id="screen-spectator" class="screen">
                 <div class="game-card">
-                    <div class="card-header"><h1>MODO ESPECTADOR</h1><p id="spectator-status">Observando el juego...</p></div>
-                    <div class="player-list-box"><div class="player-list-header"><h3>Roles Revelados</h3></div><div class="player-list" id="spectator-roles"></div></div>
-                    <div class="player-list-box"><div class="player-list-header"><h3>Progreso de Votos</h3></div><div class="player-list" id="spectator-votes"></div></div>
+                    <div class="card-header">
+                        <h1>MODO ESPECTADOR</h1>
+                        <p id="spectator-status">Observando el juego...</p>
+                    </div>
+                    <div class="player-list-box">
+                        <div class="player-list-header">
+                            <h3>Roles Revelados</h3>
+                        </div>
+                        <div class="player-list" id="spectator-roles"></div>
+                    </div>
+                    <div class="player-list-box">
+                        <div class="player-list-header">
+                            <h3>Progreso de Votos</h3>
+                        </div>
+                        <div class="player-list" id="spectator-votes"></div>
+                    </div>
                     <div class="btn-group">
-                        <button class="btn btn-success" id="btn-spectator-next" style="display:none"><span>🔄</span> Siguiente Ronda</button>
-                        <button class="btn btn-primary" id="btn-spectator-lobby" style="display:none"><span>🏠</span> Volver a Sala</button>
-                        <button class="btn btn-danger" id="btn-leave-spectator"><span>🚪</span> Abandonar Partida</button>
+                        <button class="btn btn-success" id="btn-spectator-next" style="display:none">
+                            <img src="assets/icons/icon-refresh.png" alt="" class="btn-img"> Siguiente Ronda
+                        </button>
+                        <button class="btn btn-primary" id="btn-spectator-lobby" style="display:none">
+                            <img src="assets/icons/icon-home.png" alt="" class="btn-img"> Volver a Sala
+                        </button>
+                        <button class="btn btn-danger" id="btn-leave-spectator">
+                            <img src="assets/icons/icon-leave.png" alt="" class="btn-img"> Abandonar Partida
+                        </button>
                     </div>
                 </div>
             </div>
+            
+            <!-- PANTALLA AYUDA -->
             <div id="screen-help" class="screen">
                 <div class="game-card">
-                    <div class="card-header"><h1>CÓMO JUGAR</h1></div>
+                    <div class="card-header">
+                        <h1>CÓMO JUGAR</h1>
+                    </div>
                     <div class="help-content">
                         <p><strong>1. Crear/Unirse:</strong> Crea una sala o únete con un código de 4 letras.</p>
                         <p><strong>2. Roles:</strong> Se asignan secretamente: Ciudadano, Infiltrado o Charlatán.</p>
@@ -178,15 +312,22 @@
                         <p><strong>4. Votar:</strong> Vota por quien creas que es el infiltrado.</p>
                         <p><strong>5. Ganar:</strong> Ciudadanos ganan eliminando infiltrados. Infiltrados ganan si igualan en número.</p>
                     </div>
-                    <div class="points-box" style="margin-top:1.5rem"><h4>Sistema de Puntos</h4><ul>
-                        <li><span class="points-value positive">+15</span> Ciudadano sobrevive</li>
-                        <li><span class="points-value positive">+7</span> Votar correctamente</li>
-                        <li><span class="points-value negative">-3</span> Votar incorrectamente</li>
-                        <li><span class="points-value positive">+30</span> Infiltrado gana</li>
-                        <li><span class="points-value positive">+5</span> Infiltrado sobrevive ronda</li>
-                        <li><span class="points-value positive">+25</span> Charlatán sobrevive</li>
-                    </ul></div>
-                    <div class="btn-group" style="margin-top:1.5rem"><button class="btn btn-secondary" id="btn-help-back"><span>←</span> Volver</button></div>
+                    <div class="points-box" style="margin-top:1.5rem">
+                        <h4>Sistema de Puntos</h4>
+                        <ul>
+                            <li><span class="points-value positive">+15</span> Ciudadano sobrevive</li>
+                            <li><span class="points-value positive">+7</span> Votar correctamente</li>
+                            <li><span class="points-value negative">-3</span> Votar incorrectamente</li>
+                            <li><span class="points-value positive">+30</span> Infiltrado gana</li>
+                            <li><span class="points-value positive">+5</span> Infiltrado sobrevive ronda</li>
+                            <li><span class="points-value positive">+25</span> Charlatán sobrevive</li>
+                        </ul>
+                    </div>
+                    <div class="btn-group" style="margin-top:1.5rem">
+                        <button class="btn btn-secondary" id="btn-help-back">
+                            <img src="assets/icons/icon-back.png" alt="" class="btn-img"> Volver
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>
