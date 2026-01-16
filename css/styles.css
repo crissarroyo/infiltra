@@ -2098,3 +2098,138 @@ p {
         gap: var(--space-sm);
     }
 }
+/* ============================================
+   INFILTRA - Estilos adicionales para iconos PNG
+   Agregar al final de tu styles.css existente
+   ============================================ */
+
+/* Logo icon */
+.logo-icon-img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+/* Button icons */
+.btn-icon-img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.btn-primary .btn-icon-img,
+.btn-nav-play .btn-icon-img {
+    filter: brightness(0);
+}
+
+/* Hero card icons */
+.card-icon-img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+/* Step icons */
+.step-icon-img {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+/* Role icons */
+.role-icon-img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+/* Feature icons */
+.feature-icon-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+/* Contact icons */
+.contact-icon-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+/* Contact item layout fix */
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .logo-icon-img {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .btn-icon-img {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .card-icon-img {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .step-icon-img {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .role-icon-img {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .feature-icon-img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .contact-icon-img {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-icon-img {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .card-icon-img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .step-icon-img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .role-icon-img {
+        width: 48px;
+        height: 48px;
+    }
+}
