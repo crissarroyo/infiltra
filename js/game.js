@@ -1,15 +1,31 @@
 /**
  * INFILTRA - Game Logic v0.9.8.6
- * 
- * Cambios en v0.9.8.6:
- * - Fix bug doble clic en botón ayuda
- * - Iconos PNG en lugar de emojis donde JS modifica elementos
- * - Todos los cambios de v0.9.8.3 mantenidos
+ * Con iconos PNG en lugar de emojis
+ * Fix: Botón ayuda y palomita de avatar
  */
 
-// ============================================
-// CONSTANTES
-// ============================================
+const ICONS = {
+    citizen: 'assets/icons/icon-citizen.png',
+    impostor: 'assets/icons/icon-impostor.png',
+    charlatan: 'assets/icons/icon-charlatan.png',
+    help: 'assets/icons/icon-help.png',
+    check: 'assets/icons/icon-check.png',
+    close: 'assets/icons/icon-close.png',
+    kick: 'assets/icons/icon-kick.png',
+    lock: 'assets/icons/icon-lock.png',
+    active: 'assets/icons/icon-active.png',
+    eliminated: 'assets/icons/icon-eliminated.png',
+    voted: 'assets/icons/icon-voted.png',
+    pending: 'assets/icons/icon-pending.png',
+    tie: 'assets/icons/icon-tie.png',
+    celebrate: 'assets/icons/icon-celebrate.png',
+    medalGold: 'assets/icons/icon-medal-gold.png',
+    medalSilver: 'assets/icons/icon-medal-silver.png',
+    medalBronze: 'assets/icons/icon-medal-bronze.png',
+    warning: 'assets/icons/icon-warning.png',
+    soundOn: 'assets/icons/icon-sound-on.png',
+    soundOff: 'assets/icons/icon-sound-off.png'
+};
 
 const POINTS = {
     CITIZEN_SURVIVE: 15,
@@ -21,29 +37,26 @@ const POINTS = {
 };
 
 const DB = {
-    "Animales": ["León", "Tigre", "Elefante", "Cebra", "Delfín", "Lobo", "Gorila", "Águila", "Jirafa", "Oso", "Zorro", "Panda", "Tiburón", "Canguro", "Hipopótamo", "Serpiente", "Cocodrilo", "Pájaro", "Mono", "Tortuga", "Rinoceronte", "Pingüino"],
-    "Comida": ["Pizza", "Tacos", "Sushi", "Hamburguesa", "Pasta", "Ensalada", "Helado", "Pollo", "Pescado", "Chocolate", "Empanadas", "Ramen", "Curry", "Paella", "Burrito", "Croissant", "Queso", "Arroz", "Sopa", "Frutas secas", "Tarta"],
+    "Animales": ["León", "Tigre", "Elefante", "Cebra", "Delfín", "Lobo", "Gorila", "Águila", "Jirafa", "Oso", "Zorro", "Panda", "Tiburón", "Canguro", "Hipopótamo", "Serpiente", "Cocodrilo", "Pájaro", "Mono", "Tortuga"],
+    "Comida": ["Pizza", "Tacos", "Sushi", "Hamburguesa", "Pasta", "Ensalada", "Helado", "Pollo", "Pescado", "Chocolate", "Empanadas", "Ramen", "Curry", "Paella", "Burrito", "Croissant", "Queso", "Arroz", "Sopa", "Tarta"],
     "Países": ["México", "Japón", "Brasil", "España", "Francia", "Italia", "Alemania", "Australia", "Argentina", "Canadá", "China", "India", "Rusia", "Estados Unidos", "Reino Unido", "Sudáfrica", "Egipto", "Nueva Zelanda", "Corea del Sur", "Turquía"],
     "Profesiones": ["Médico", "Abogado", "Ingeniero", "Profesor", "Chef", "Piloto", "Arquitecto", "Programador", "Fotógrafo", "Enfermero", "Diseñador", "Periodista", "Músico", "Actor", "Científico", "Veterinario", "Contador", "Psicólogo", "Bombero", "Policía"],
-    "Deportes": ["Fútbol", "Baloncesto", "Tenis", "Natación", "Boxeo", "Golf", "Voleibol", "Surf", "Ciclismo", "Atletismo", "Esquí", "Karate", "Béisbol", "Rugby", "Gimnasia", "Escalada", "Patinaje", "Hockey", "Fútbol americano", "Taekwondo"],
-    "Ciudades": ["París", "Tokio", "Nueva York", "Londres", "Roma", "Berlín", "Madrid", "Dubai", "Barcelona", "México DF", "Sídney", "Río de Janeiro", "Los Ángeles", "Toronto", "Estambul", "Singapur", "Ámsterdam", "Seúl", "Viena", "Buenos Aires"],
-    "Frutas": ["Manzana", "Banana", "Naranja", "Uva", "Fresa", "Piña", "Mango", "Sandía", "Kiwi", "Melón", "Pera", "Durazno", "Cereza", "Limón", "Papaya", "Granada", "Coco", "Higo", "Mora", "Frambuesa"],
-    "Vehículos": ["Coche", "Bicicleta", "Avión", "Barco", "Tren", "Helicóptero", "Motocicleta", "Camión", "Submarino", "Cohete", "Autobús", "Patineta", "Tractor", "Yate", "Monopatín eléctrico", "Caravana", "Todoterreno", "Furgoneta", "Globo aerostático", "Kayak"],
-    "Instrumentos": ["Guitarra", "Piano", "Batería", "Violín", "Flauta", "Trompeta", "Saxofón", "Arpa", "Bajo", "Ukelele", "Acordeón", "Cello", "Clarinete", "Órgano", "Tambor", "Armónica", "Xilófono", "Tuba", "Gaita", "Sitar"],
-    "Películas": ["Titanic", "Star Wars", "Avatar", "Frozen", "Shrek", "Batman", "Avengers", "Coco", "Inception", "The Matrix", "Jurassic Park", "Harry Potter", "The Lion King", "Pulp Fiction", "Forrest Gump", "Interstellar", "Parasite", "Toy Story", "Black Panther", "La La Land"],
-    "Colores": ["Rojo", "Azul", "Verde", "Amarillo", "Naranja", "Morado", "Rosa", "Negro", "Blanco", "Gris", "Café", "Turquesa", "Violeta", "Índigo", "Celeste", "Magenta", "Dorado", "Plateado", "Beige", "Lavanda"],
-    "Planetas": ["Mercurio", "Venus", "Tierra", "Marte", "Júpiter", "Saturno", "Urano", "Neptuno", "Plutón", "Luna (satélite)"],
-    "Elementos Químicos": ["Hidrógeno", "Oxígeno", "Carbono", "Nitrógeno", "Helio", "Hierro", "Oro", "Plata", "Calcio", "Sodio", "Potasio", "Cloro", "Fósforo", "Azufre", "Magnesio", "Aluminio", "Cobre", "Zinc", "Plomo", "Uranio"],
-    "Idiomas": ["Español", "Inglés", "Chino", "Francés", "Árabe", "Ruso", "Alemán", "Japonés", "Portugués", "Hindi", "Italiano", "Coreano", "Turco", "Sueco", "Holandés", "Polaco", "Griego", "Hebreo", "Swahili", "Quechua"],
-    "Superhéroes": ["Superman", "Batman", "Spider-Man", "Wonder Woman", "Iron Man", "Captain America", "Thor", "Hulk", "Black Widow", "Flash", "Aquaman", "Green Lantern", "Doctor Strange", "Black Panther", "Wolverine", "Deadpool", "Captain Marvel", "Ant-Man", "Shazam", "Supergirl"]
+    "Deportes": ["Fútbol", "Baloncesto", "Tenis", "Natación", "Boxeo", "Golf", "Voleibol", "Surf", "Ciclismo", "Atletismo", "Esquí", "Karate", "Béisbol", "Rugby", "Gimnasia", "Escalada", "Patinaje", "Hockey"],
+    "Ciudades": ["París", "Tokio", "Nueva York", "Londres", "Roma", "Berlín", "Madrid", "Dubai", "Barcelona", "México DF", "Sídney", "Río de Janeiro", "Los Ángeles", "Toronto", "Estambul", "Singapur", "Ámsterdam", "Seúl"],
+    "Frutas": ["Manzana", "Banana", "Naranja", "Uva", "Fresa", "Piña", "Mango", "Sandía", "Kiwi", "Melón", "Pera", "Durazno", "Cereza", "Limón", "Papaya", "Granada", "Coco", "Mora"],
+    "Vehículos": ["Coche", "Bicicleta", "Avión", "Barco", "Tren", "Helicóptero", "Motocicleta", "Camión", "Submarino", "Cohete", "Autobús", "Patineta", "Tractor", "Yate"],
+    "Instrumentos": ["Guitarra", "Piano", "Batería", "Violín", "Flauta", "Trompeta", "Saxofón", "Arpa", "Bajo", "Ukelele", "Acordeón", "Cello", "Clarinete", "Órgano"],
+    "Películas": ["Titanic", "Star Wars", "Avatar", "Frozen", "Shrek", "Batman", "Avengers", "Coco", "Inception", "The Matrix", "Jurassic Park", "Harry Potter", "Toy Story"],
+    "Colores": ["Rojo", "Azul", "Verde", "Amarillo", "Naranja", "Morado", "Rosa", "Negro", "Blanco", "Gris", "Turquesa", "Violeta", "Dorado", "Plateado"],
+    "Superhéroes": ["Superman", "Batman", "Spider-Man", "Wonder Woman", "Iron Man", "Captain America", "Thor", "Hulk", "Flash", "Aquaman", "Wolverine", "Deadpool"]
 };
 
 const AVATARS = [
-    { id: 'avatar-11', emoji: '🔎', image: 'assets/avatars/avatar-11.svg' },
-    { id: 'avatar-12', emoji: '🔎', image: 'assets/avatars/avatar-12.svg' },
-    { id: 'avatar-13', emoji: '🔎', image: 'assets/avatars/avatar-13.svg' },
-    { id: 'avatar-16', emoji: '🔎', image: 'assets/avatars/avatar-16.svg' },
-    { id: 'avatar-17', emoji: '🔎', image: 'assets/avatars/avatar-17.svg' }
+    { id: 'avatar-11', image: 'assets/avatars/avatar-11.svg' },
+    { id: 'avatar-12', image: 'assets/avatars/avatar-12.svg' },
+    { id: 'avatar-13', image: 'assets/avatars/avatar-13.svg' },
+    { id: 'avatar-16', image: 'assets/avatars/avatar-16.svg' },
+    { id: 'avatar-17', image: 'assets/avatars/avatar-17.svg' }
 ];
 
 const FRAMES = [
@@ -54,30 +67,6 @@ const FRAMES = [
 ];
 
 const RESULT_DISPLAY_TIME = 5000;
-
-// Rutas de iconos PNG
-const ICONS = {
-    sound_on: 'assets/icons/icon-sound-on.png',
-    sound_off: 'assets/icons/icon-sound-off.png',
-    help: 'assets/icons/icon-help.png',
-    citizen: 'assets/icons/icon-citizen.png',
-    impostor: 'assets/icons/icon-impostor.png',
-    charlatan: 'assets/icons/icon-charlatan.png',
-    eliminated: 'assets/icons/icon-eliminated.png',
-    tie: 'assets/icons/icon-tie.png',
-    celebrate: 'assets/icons/icon-celebrate.png',
-    medal_gold: 'assets/icons/icon-medal-gold.png',
-    medal_silver: 'assets/icons/icon-medal-silver.png',
-    medal_bronze: 'assets/icons/icon-medal-bronze.png',
-    active: 'assets/icons/icon-active.png',
-    voted: 'assets/icons/icon-voted.png',
-    pending: 'assets/icons/icon-pending.png',
-    kick: 'assets/icons/icon-kick.png'
-};
-
-// ============================================
-// ESTADO GLOBAL
-// ============================================
 
 let G = {
     pubnub: null,
@@ -118,8 +107,7 @@ let G = {
     soundEnabled: true,
     previousScreen: 'screen-home',
     roleRevealed: false,
-    isFirstRound: true,
-    helpOpen: false  // v0.9.8.6: Flag para prevenir doble clic en ayuda
+    isFirstRound: true
 };
 
 // ============================================
@@ -129,14 +117,11 @@ let G = {
 document.addEventListener('DOMContentLoaded', init);
 
 function init() {
-    console.log('Iniciando INFILTRA v0.9.8.6...');
-    
     G.myId = sessionStorage.getItem('infiltra_myId');
     if (!G.myId) {
         G.myId = 'P-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
         sessionStorage.setItem('infiltra_myId', G.myId);
     }
-
     loadProfile();
     initAvatars();
     initFrames();
@@ -145,15 +130,13 @@ function init() {
     bindEvents();
     checkURLParams();
     updateProfilePreview();
-    
-    console.log('INFILTRA v0.9.8.6 iniciado correctamente');
+    console.log('INFILTRA v0.9.8.6 iniciado');
 }
 
 function loadProfile() {
     const name = localStorage.getItem('infiltra_name');
     const avatar = localStorage.getItem('infiltra_avatar');
     const frame = localStorage.getItem('infiltra_frame');
-    
     if (name) {
         const input = document.getElementById('input-name');
         if (input) input.value = name;
@@ -169,23 +152,14 @@ function saveProfile() {
     localStorage.setItem('infiltra_frame', G.frame);
 }
 
-// ============================================
-// VISTA PREVIA DEL PERFIL
-// ============================================
-
 function updateProfilePreview() {
     const previewAvatar = document.getElementById('preview-avatar');
     const previewWrapper = document.getElementById('preview-avatar-wrapper');
     const previewName = document.getElementById('preview-name');
-    
     if (!previewAvatar || !previewWrapper) return;
     
     const avatar = AVATARS.find(a => a.id === G.avatar) || AVATARS[0];
-    if (avatar.image) {
-        previewAvatar.innerHTML = '<img src="' + avatar.image + '" alt="avatar" onerror="this.outerHTML=\'' + avatar.emoji + '\'">';
-    } else {
-        previewAvatar.textContent = avatar.emoji;
-    }
+    previewAvatar.innerHTML = '<img src="' + avatar.image + '" alt="avatar">';
     
     const frame = FRAMES.find(f => f.id === G.frame);
     if (frame) {
@@ -193,40 +167,27 @@ function updateProfilePreview() {
         previewWrapper.style.boxShadow = '0 0 15px ' + frame.color + '40';
     }
     
-    const nameInput = document.getElementById('input-name');
-    if (previewName && nameInput) {
-        previewName.textContent = nameInput.value || 'Tu Nombre';
+    if (previewName) {
+        previewName.textContent = document.getElementById('input-name')?.value || 'Tu Nombre';
     }
 }
 
 function initAvatars() {
     const grid = document.getElementById('avatar-grid');
     if (!grid) return;
-    
     grid.innerHTML = '';
     
     AVATARS.forEach(avatar => {
         const div = document.createElement('div');
         div.className = 'avatar-option' + (avatar.id === G.avatar ? ' selected' : '');
-        div.dataset.id = avatar.id;
-        
-        if (avatar.image) {
-            const img = document.createElement('img');
-            img.src = avatar.image;
-            img.alt = avatar.id;
-            img.onerror = function() { this.parentElement.textContent = avatar.emoji; };
-            div.appendChild(img);
-        } else {
-            div.textContent = avatar.emoji;
-        }
-        
+        div.innerHTML = '<img src="' + avatar.image + '" alt="' + avatar.id + '">' +
+                        '<div class="avatar-check"><img src="' + ICONS.check + '" alt="✓"></div>';
         div.onclick = function() {
             G.avatar = avatar.id;
             grid.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
             div.classList.add('selected');
             updateProfilePreview();
         };
-        
         grid.appendChild(div);
     });
 }
@@ -234,21 +195,17 @@ function initAvatars() {
 function initFrames() {
     const grid = document.getElementById('frame-grid');
     if (!grid) return;
-    
     grid.innerHTML = '';
     
     FRAMES.forEach(frame => {
         const div = document.createElement('div');
         div.className = 'frame-option-new' + (frame.id === G.frame ? ' selected' : '') + (frame.locked ? ' locked' : '');
-        div.dataset.id = frame.id;
-        div.dataset.color = frame.color;
         
         const preview = document.createElement('div');
         preview.className = 'frame-preview';
         preview.style.border = '4px solid ' + frame.color;
         preview.style.boxShadow = '0 0 10px ' + frame.color + '60';
-        preview.innerHTML = '<img src="' + ICONS.citizen + '" class="frame-preview-img" alt="" onerror="this.outerHTML=\'👤\'">';
-        
+        preview.innerHTML = '<img src="' + ICONS.citizen + '" alt="" class="frame-preview-img">';
         div.appendChild(preview);
         
         if (!frame.locked) {
@@ -259,7 +216,6 @@ function initFrames() {
                 updateProfilePreview();
             };
         }
-        
         grid.appendChild(div);
     });
 }
@@ -267,7 +223,6 @@ function initFrames() {
 function initCategories() {
     const list = document.getElementById('categories-list');
     if (!list) return;
-    
     list.innerHTML = Object.keys(DB).map(cat => 
         '<div class="category-item"><input type="checkbox" id="cat-' + cat + '" value="' + cat + '" checked><label for="cat-' + cat + '">' + cat + '</label></div>'
     ).join('');
@@ -280,23 +235,24 @@ function updateSelectedCategories() {
 function initParticles() {
     const container = document.getElementById('particles');
     if (!container) return;
-    
     for (let i = 0; i < 40; i++) {
         const p = document.createElement('div');
         p.className = 'particle';
         p.style.left = Math.random() * 100 + '%';
         p.style.top = Math.random() * 100 + '%';
         p.style.animationDelay = Math.random() * 5 + 's';
-        p.style.animationDuration = (Math.random() * 3 + 2) + 's';
         container.appendChild(p);
     }
 }
 
 function bindEvents() {
-    const bind = (id, fn) => { const el = document.getElementById(id); if (el) el.onclick = fn; };
+    const bind = (id, fn) => {
+        const el = document.getElementById(id);
+        if (el) el.onclick = fn;
+    };
     
     bind('btn-show-config', showConfig);
-    bind('btn-back-home', () => showScreen('screen-home'));
+    bind('btn-back-home', function() { showScreen('screen-home'); });
     bind('btn-join-room', joinRoom);
     bind('btn-create-room', createRoom);
     bind('btn-leave-room', leaveRoom);
@@ -310,41 +266,44 @@ function bindEvents() {
     bind('btn-spectator-next', spectatorNextAction);
     bind('btn-spectator-lobby', backToLobby);
     bind('role-card', revealRole);
-    
-    // Botones de abandonar en todas las pantallas
     bind('btn-leave-role', leaveRoom);
     bind('btn-leave-voting', leaveRoom);
     bind('btn-leave-results', leaveRoom);
     bind('btn-leave-spectator', leaveRoom);
     
-    bind('btn-cat-all', () => { document.querySelectorAll('.category-item input').forEach(cb => cb.checked = true); updateSelectedCategories(); });
-    bind('btn-cat-none', () => { document.querySelectorAll('.category-item input').forEach(cb => cb.checked = false); updateSelectedCategories(); });
-
-    // v0.9.8.6: Sonido con iconos PNG
-    bind('btn-sound', () => {
+    bind('btn-cat-all', function() {
+        document.querySelectorAll('.category-item input').forEach(cb => cb.checked = true);
+        updateSelectedCategories();
+    });
+    bind('btn-cat-none', function() {
+        document.querySelectorAll('.category-item input').forEach(cb => cb.checked = false);
+        updateSelectedCategories();
+    });
+    
+    bind('btn-sound', function() {
         G.soundEnabled = !G.soundEnabled;
         const btn = document.getElementById('btn-sound');
         if (btn) {
-            const img = btn.querySelector('.btn-icon-img');
-            if (img) {
-                img.src = G.soundEnabled ? ICONS.sound_on : ICONS.sound_off;
-                img.alt = G.soundEnabled ? 'Sonido' : 'Silenciado';
-            }
+            btn.querySelector('img').src = G.soundEnabled ? ICONS.soundOn : ICONS.soundOff;
             btn.classList.toggle('muted', !G.soundEnabled);
         }
     });
-
-    // v0.9.8.6: Fix bug doble clic en ayuda
-    bind('btn-help', () => {
-        if (G.helpOpen) return; // Prevenir doble clic
-        G.helpOpen = true;
-        G.previousScreen = document.querySelector('.screen.active')?.id || 'screen-home';
+    
+    // FIX: Botón de ayuda - guardar pantalla actual correctamente
+    bind('btn-help', function() {
+        const currentScreen = document.querySelector('.screen.active');
+        if (currentScreen && currentScreen.id !== 'screen-help') {
+            G.previousScreen = currentScreen.id;
+        }
         showScreen('screen-help');
     });
-    
-    bind('btn-help-back', () => {
-        G.helpOpen = false; // Reset flag al volver
-        showScreen(G.previousScreen || 'screen-home');
+    bind('btn-help-back', function() {
+        // Asegurar que siempre volvamos a una pantalla válida
+        if (G.previousScreen && G.previousScreen !== 'screen-help') {
+            showScreen(G.previousScreen);
+        } else {
+            showScreen('screen-home');
+        }
     });
     
     const nameInput = document.getElementById('input-name');
@@ -355,16 +314,18 @@ function checkURLParams() {
     const params = new URLSearchParams(window.location.search);
     if (params.has('room')) {
         const input = document.getElementById('input-join-code');
-        if (input) { input.value = params.get('room').toUpperCase(); toast('Código detectado. Ingresa tu nombre y únete.'); }
+        if (input) {
+            input.value = params.get('room').toUpperCase();
+            toast('Código detectado');
+        }
     }
 }
 
+// ============================================
+// NAVEGACIÓN Y PANTALLAS
+// ============================================
+
 function showScreen(id) {
-    // v0.9.8.6: Reset helpOpen flag cuando se cambia de pantalla (excepto a help)
-    if (id !== 'screen-help') {
-        G.helpOpen = false;
-    }
-    
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const screen = document.getElementById(id);
     if (screen) screen.classList.add('active');
@@ -372,19 +333,20 @@ function showScreen(id) {
 
 function showConfig() {
     G.playerName = document.getElementById('input-name')?.value.trim() || '';
-    if (!G.playerName) { toast('Ingresa tu nombre', 'error'); return; }
+    if (!G.playerName) {
+        toast('Ingresa tu nombre', 'error');
+        return;
+    }
     saveProfile();
     showScreen('screen-config');
 }
 
-// ============================================
-// CONEXIÓN
-// ============================================
-
 function createRoom() {
     updateSelectedCategories();
-    if (G.selectedCategories.length === 0) { toast('Selecciona al menos una categoría', 'error'); return; }
-
+    if (G.selectedCategories.length === 0) {
+        toast('Selecciona categorías', 'error');
+        return;
+    }
     G.isHost = true;
     G.hostId = G.myId;
     G.maxPlayers = Math.min(parseInt(document.getElementById('config-max-players')?.value) || 10, 10);
@@ -394,17 +356,20 @@ function createRoom() {
     G.usedWords = [];
     G.isFirstRound = true;
     G.gamePhase = 'lobby';
-    
     initPubNub();
 }
 
 function joinRoom() {
     G.playerName = document.getElementById('input-name')?.value.trim() || '';
-    if (!G.playerName) { toast('Ingresa tu nombre', 'error'); return; }
-
+    if (!G.playerName) {
+        toast('Ingresa tu nombre', 'error');
+        return;
+    }
     const code = (document.getElementById('input-join-code')?.value || '').toUpperCase().trim();
-    if (code.length !== 4) { toast('El código debe tener 4 letras', 'error'); return; }
-
+    if (code.length !== 4) {
+        toast('Código de 4 letras', 'error');
+        return;
+    }
     saveProfile();
     G.isHost = false;
     G.channel = code;
@@ -415,42 +380,50 @@ function joinRoom() {
 function generateCode() {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
     let code = '';
-    for (let i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+    for (let i = 0; i < 4; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
     return code;
 }
 
+// ============================================
+// PUBNUB
+// ============================================
+
 function initPubNub() {
     clearAllTimers();
-    if (G.pubnub) { G.pubnub.unsubscribeAll(); G.pubnub = null; }
-
-    G.pubnub = new PubNub({ publishKey: 'demo', subscribeKey: 'demo', userId: G.myId });
-    G.pubnub.addListener({ status: onStatus, message: onMessage, presence: onPresence });
+    if (G.pubnub) {
+        G.pubnub.unsubscribeAll();
+        G.pubnub = null;
+    }
+    G.pubnub = new PubNub({
+        publishKey: 'demo',
+        subscribeKey: 'demo',
+        userId: G.myId
+    });
+    G.pubnub.addListener({
+        status: onStatus,
+        message: onMessage,
+        presence: onPresence
+    });
     G.pubnub.subscribe({ channels: [G.channel], withPresence: true });
 }
 
 function onStatus(status) {
     if (status.category === 'PNConnectedCategory') {
-        console.log('Conectado:', G.myId);
         setPlayerState();
-        
-        const codeDisplay = document.getElementById('display-room-code');
-        if (codeDisplay) codeDisplay.textContent = G.channel;
+        document.getElementById('display-room-code').textContent = G.channel;
         showScreen('screen-lobby');
-
         if (G.isHost) {
-            const btnDistribute = document.getElementById('btn-distribute');
-            if (btnDistribute) btnDistribute.style.display = 'block';
+            document.getElementById('btn-distribute').style.display = 'block';
             generateQR();
-            setTimeout(() => publishConfig(), 300);
+            setTimeout(publishConfig, 300);
         } else {
-            setTimeout(() => requestSync(), 500);
+            setTimeout(requestSync, 500);
         }
-
         setTimeout(refreshPlayers, 500);
         G.refreshInterval = setInterval(refreshPlayers, 3000);
-        
     } else if (status.error) {
-        console.error('Error PubNub:', status);
         toast('Error de conexión', 'error');
     }
 }
@@ -458,7 +431,7 @@ function onStatus(status) {
 function onMessage(event) {
     const msg = event.message;
     const sender = event.publisher;
-
+    
     switch (msg.type) {
         case 'config':
             G.maxPlayers = Math.min(msg.maxPlayers, 10);
@@ -474,41 +447,73 @@ function onMessage(event) {
             if (G.scores[sender] === undefined) G.scores[sender] = 0;
             renderPlayerList();
             break;
-        case 'assign': handleAssign(msg); break;
-        case 'start_round': handleStartRound(msg); break;
-        case 'vote': handleVote(sender, msg.target); break;
+        case 'assign':
+            handleAssign(msg);
+            break;
+        case 'start_round':
+            handleStartRound(msg);
+            break;
+        case 'vote':
+            handleVote(sender, msg.target);
+            break;
         case 'vote_update':
             G.votes = msg.votes;
             G.votedPlayers = new Set(msg.voted);
             if (G.isSpectator) updateSpectatorVotes();
             break;
-        case 'results': showResults(msg); break;
-        case 'next_round': handleNextRound(msg); break;
-        case 'back_to_lobby': handleBackToLobby(msg); break;
-        case 'game_over': handleGameOver(msg); break;
+        case 'results':
+            showResults(msg);
+            break;
+        case 'next_round':
+            handleNextRound(msg);
+            break;
+        case 'back_to_lobby':
+            handleBackToLobby(msg);
+            break;
+        case 'game_over':
+            handleGameOver(msg);
+            break;
         case 'spectator_roles':
-            if (G.isSpectator) { G.fullRoles = msg.roles; G.activePlayers = msg.activePlayers || G.activePlayers; updateSpectatorRoles(); }
+            if (G.isSpectator) {
+                G.fullRoles = msg.roles;
+                G.activePlayers = msg.activePlayers || G.activePlayers;
+                updateSpectatorRoles();
+            }
             break;
-        case 'sync_scores': G.scores = msg.scores; renderPlayerList(); break;
-        case 'host_disconnect': toast('El host se desconectó', 'error'); setTimeout(exitGame, 2000); break;
+        case 'host_disconnect':
+            toast('Host desconectado', 'error');
+            setTimeout(exitGame, 2000);
+            break;
         case 'kick_player':
-            if (msg.targetId === G.myId) { toast('Has sido expulsado de la sala', 'error'); setTimeout(exitGame, 1500); }
-            else { delete G.players[msg.targetId]; delete G.scores[msg.targetId]; renderPlayerList(); toast(msg.targetName + ' fue expulsado', 'info'); }
+            if (msg.targetId === G.myId) {
+                toast('Fuiste expulsado', 'error');
+                setTimeout(exitGame, 1500);
+            } else {
+                delete G.players[msg.targetId];
+                delete G.scores[msg.targetId];
+                renderPlayerList();
+            }
             break;
-        case 'skip_word': handleSkipWord(msg); break;
-        case 'request_sync': if (G.isHost) publishFullSync(); break;
-        case 'full_sync': handleFullSync(msg); break;
+        case 'skip_word':
+            handleSkipWord(msg);
+            break;
+        case 'request_sync':
+            if (G.isHost) publishFullSync();
+            break;
+        case 'full_sync':
+            handleFullSync(msg);
+            break;
     }
 }
 
 function onPresence(event) {
-    console.log('Presencia:', event.action, event.uuid);
-    
-    if (event.action === 'join' && G.isHost && event.uuid !== G.myId) setTimeout(() => publishConfig(), 500);
-    
+    if (event.action === 'join' && G.isHost && event.uuid !== G.myId) {
+        setTimeout(publishConfig, 500);
+    }
     if (event.action === 'leave' || event.action === 'timeout') {
-        if (G.gamePhase === 'lobby' || G.gamePhase === 'home') delete G.players[event.uuid];
-        if (G.gamePhase !== 'lobby' && G.gamePhase !== 'home') {
+        if (G.gamePhase === 'lobby' || G.gamePhase === 'home') {
+            delete G.players[event.uuid];
+        } else {
             G.activePlayers = G.activePlayers.filter(id => id !== event.uuid);
             if (!G.eliminated.includes(event.uuid)) G.eliminated.push(event.uuid);
         }
@@ -519,13 +524,29 @@ function onPresence(event) {
 
 function setPlayerState() {
     if (!G.pubnub) return;
-    G.pubnub.setState({ state: { name: G.playerName, avatar: G.avatar, frame: G.frame }, channels: [G.channel] });
-    G.pubnub.publish({ channel: G.channel, message: { type: 'player_state', name: G.playerName, avatar: G.avatar, frame: G.frame } });
+    G.pubnub.setState({
+        state: { name: G.playerName, avatar: G.avatar, frame: G.frame },
+        channels: [G.channel]
+    });
+    G.pubnub.publish({
+        channel: G.channel,
+        message: { type: 'player_state', name: G.playerName, avatar: G.avatar, frame: G.frame }
+    });
 }
 
 function publishConfig() {
     if (!G.pubnub || !G.isHost) return;
-    G.pubnub.publish({ channel: G.channel, message: { type: 'config', maxPlayers: G.maxPlayers, roundTime: G.roundTime, hostId: G.hostId, usedWords: G.usedWords, scores: G.scores } });
+    G.pubnub.publish({
+        channel: G.channel,
+        message: {
+            type: 'config',
+            maxPlayers: G.maxPlayers,
+            roundTime: G.roundTime,
+            hostId: G.hostId,
+            usedWords: G.usedWords,
+            scores: G.scores
+        }
+    });
 }
 
 function requestSync() {
@@ -535,19 +556,35 @@ function requestSync() {
 
 function publishFullSync() {
     if (!G.pubnub || !G.isHost) return;
-    G.pubnub.publish({ channel: G.channel, message: { type: 'full_sync', maxPlayers: G.maxPlayers, roundTime: G.roundTime, hostId: G.hostId, usedWords: G.usedWords, scores: G.scores, gamePhase: G.gamePhase, activePlayers: G.activePlayers, eliminated: G.eliminated, fullRoles: G.fullRoles, impostors: G.impostors, charlatans: G.charlatans, citizens: G.citizens } });
+    G.pubnub.publish({
+        channel: G.channel,
+        message: {
+            type: 'full_sync',
+            maxPlayers: G.maxPlayers,
+            roundTime: G.roundTime,
+            hostId: G.hostId,
+            usedWords: G.usedWords,
+            scores: G.scores,
+            gamePhase: G.gamePhase,
+            activePlayers: G.activePlayers,
+            eliminated: G.eliminated,
+            fullRoles: G.fullRoles,
+            impostors: G.impostors,
+            charlatans: G.charlatans,
+            citizens: G.citizens
+        }
+    });
 }
 
 function handleFullSync(msg) {
     if (G.isHost) return;
-    G.maxPlayers = Math.min(msg.maxPlayers || G.maxPlayers, 10);
-    G.roundTime = msg.roundTime || G.roundTime;
-    G.hostId = msg.hostId || G.hostId;
+    G.maxPlayers = Math.min(msg.maxPlayers || 10, 10);
+    G.roundTime = msg.roundTime || 60;
+    G.hostId = msg.hostId;
     G.isHost = (G.myId === G.hostId);
-    G.usedWords = msg.usedWords || G.usedWords;
-    G.scores = msg.scores || G.scores;
-    
-    if (msg.gamePhase && msg.gamePhase !== 'lobby' && msg.gamePhase !== 'home') {
+    G.usedWords = msg.usedWords || [];
+    G.scores = msg.scores || {};
+    if (msg.gamePhase && msg.gamePhase !== 'lobby') {
         G.gamePhase = msg.gamePhase;
         G.activePlayers = msg.activePlayers || [];
         G.eliminated = msg.eliminated || [];
@@ -565,25 +602,27 @@ function generateQR() {
     const container = document.getElementById('qr-container');
     if (!container || typeof qrcode === 'undefined') return;
     const qr = qrcode(0, 'M');
-    const url = window.location.href.split('?')[0] + '?room=' + G.channel;
-    qr.addData(url);
+    qr.addData(window.location.href.split('?')[0] + '?room=' + G.channel);
     qr.make();
     container.innerHTML = qr.createImgTag(4);
 }
 
 function refreshPlayers() {
     if (!G.pubnub) return;
-    
-    G.pubnub.hereNow({ channels: [G.channel], includeState: true }, (status, response) => {
+    G.pubnub.hereNow({ channels: [G.channel], includeState: true }, function(status, response) {
         if (response && response.channels && response.channels[G.channel]) {
             const occupants = response.channels[G.channel].occupants;
             const currentIds = occupants.map(o => o.uuid);
-            
-            Object.keys(G.players).forEach(id => { if (!currentIds.includes(id)) delete G.players[id]; });
-
+            Object.keys(G.players).forEach(id => {
+                if (!currentIds.includes(id)) delete G.players[id];
+            });
             occupants.forEach(o => {
                 if (!G.players[o.uuid]) {
-                    G.players[o.uuid] = { name: o.state?.name || o.uuid.substring(0, 8), avatar: o.state?.avatar || 'avatar-11', frame: o.state?.frame || 'fr-basic' };
+                    G.players[o.uuid] = {
+                        name: o.state?.name || o.uuid.substring(0, 8),
+                        avatar: o.state?.avatar || 'avatar-11',
+                        frame: o.state?.frame || 'fr-basic'
+                    };
                 } else if (o.state) {
                     G.players[o.uuid].name = o.state.name || G.players[o.uuid].name;
                     G.players[o.uuid].avatar = o.state.avatar || G.players[o.uuid].avatar;
@@ -600,26 +639,13 @@ function refreshPlayers() {
 // RENDERIZADO
 // ============================================
 
-function renderAvatar(avatar, size, frameId) {
-    size = size || 40;
-    const frame = frameId ? FRAMES.find(f => f.id === frameId) : null;
-    const frameStyle = frame ? 'border: 3px solid ' + frame.color + ';' : '';
-    
-    if (avatar.image) {
-        return '<img src="' + avatar.image + '" alt="' + avatar.id + '" style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;object-fit:cover;' + frameStyle + '" onerror="this.outerHTML=\'' + avatar.emoji + '\'">';
-    }
-    if (frame) {
-        return '<span style="display:inline-flex;align-items:center;justify-content:center;width:' + size + 'px;height:' + size + 'px;border-radius:50%;' + frameStyle + 'font-size:' + (size * 0.6) + 'px;">' + avatar.emoji + '</span>';
-    }
-    return '<span style="font-size:' + (size * 0.6) + 'px;">' + avatar.emoji + '</span>';
-}
-
 function renderPlayerAvatar(playerId, size) {
     size = size || 40;
     const p = G.players[playerId];
     const avatar = AVATARS.find(a => a.id === p?.avatar) || AVATARS[0];
-    const frameId = p?.frame || 'fr-basic';
-    return renderAvatar(avatar, size, frameId);
+    const frame = FRAMES.find(f => f.id === p?.frame);
+    const frameStyle = frame ? 'border:3px solid ' + frame.color + ';' : '';
+    return '<img src="' + avatar.image + '" style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;object-fit:cover;' + frameStyle + '">';
 }
 
 function renderPlayerList() {
@@ -629,27 +655,24 @@ function renderPlayerList() {
     
     const playerIds = Object.keys(G.players);
     if (countEl) countEl.textContent = playerIds.length + '/' + G.maxPlayers;
-
+    
     list.innerHTML = playerIds.map(id => {
         const p = G.players[id];
         const isMe = id === G.myId;
         const isHostPlayer = id === G.hostId;
         const score = G.scores[id] || 0;
-
-        // v0.9.8.6: Botón kick con icono PNG
-        const kickBtn = (G.isHost && !isMe && (G.gamePhase === 'lobby' || G.gamePhase === 'home')) 
-            ? '<button class="btn-kick" onclick="kickPlayer(\'' + id + '\')" title="Expulsar"><img src="' + ICONS.kick + '" alt="Expulsar"></button>' 
+        const kickBtn = (G.isHost && !isMe && (G.gamePhase === 'lobby' || G.gamePhase === 'home'))
+            ? '<button class="btn-kick" onclick="kickPlayer(\'' + id + '\')" title="Expulsar"><img src="' + ICONS.close + '" alt="X"></button>'
             : '';
-
         return '<div class="player-item">' +
             '<div class="player-avatar">' + renderPlayerAvatar(id, 40) + '</div>' +
             '<div class="player-info">' +
-            '<div class="player-name">' + p.name + (isMe ? ' (Tú)' : '') + '</div>' +
-            (isHostPlayer ? '<div class="player-tag">Host</div>' : '') +
+                '<div class="player-name">' + p.name + (isMe ? ' (Tú)' : '') + '</div>' +
+                (isHostPlayer ? '<div class="player-tag">Host</div>' : '') +
             '</div>' +
             '<div class="player-score">' + score + '</div>' +
             kickBtn +
-            '</div>';
+        '</div>';
     }).join('');
     
     const btnDistribute = document.getElementById('btn-distribute');
@@ -659,113 +682,153 @@ function renderPlayerList() {
 function kickPlayer(playerId) {
     if (!G.isHost || !G.pubnub) return;
     const playerName = G.players[playerId]?.name || 'Jugador';
-    if (confirm('¿Expulsar a ' + playerName + ' de la sala?')) {
-        G.pubnub.publish({ channel: G.channel, message: { type: 'kick_player', targetId: playerId, targetName: playerName } });
+    if (confirm('¿Expulsar a ' + playerName + '?')) {
+        G.pubnub.publish({
+            channel: G.channel,
+            message: { type: 'kick_player', targetId: playerId, targetName: playerName }
+        });
     }
 }
 window.kickPlayer = kickPlayer;
 
 // ============================================
-// LÓGICA DEL JUEGO
+// LÓGICA DE JUEGO
 // ============================================
 
 function selectNewWord() {
     updateSelectedCategories();
-    
     let availableWords = [];
     G.selectedCategories.forEach(cat => {
-        DB[cat].forEach(word => { if (!G.usedWords.includes(word)) availableWords.push({ category: cat, word: word }); });
+        DB[cat].forEach(word => {
+            if (!G.usedWords.includes(word)) {
+                availableWords.push({ category: cat, word: word });
+            }
+        });
     });
-
+    
     if (availableWords.length < 2) {
         G.usedWords = [];
         availableWords = [];
-        G.selectedCategories.forEach(cat => { DB[cat].forEach(word => { availableWords.push({ category: cat, word: word }); }); });
-        toast('Palabras reiniciadas - todas fueron usadas');
+        G.selectedCategories.forEach(cat => {
+            DB[cat].forEach(word => {
+                availableWords.push({ category: cat, word: word });
+            });
+        });
+        toast('Palabras reiniciadas');
     }
-
+    
     const secretIdx = Math.floor(Math.random() * availableWords.length);
     const secretData = availableWords[secretIdx];
     G.currentCategory = secretData.category;
     G.currentSecretWord = secretData.word;
     G.usedWords.push(G.currentSecretWord);
-
+    
     const fakeOptions = availableWords.filter(w => w.word !== G.currentSecretWord);
     if (fakeOptions.length > 0) {
-        const fakeIdx = Math.floor(Math.random() * fakeOptions.length);
-        G.currentFakeWord = fakeOptions[fakeIdx].word;
+        G.currentFakeWord = fakeOptions[Math.floor(Math.random() * fakeOptions.length)].word;
         G.usedWords.push(G.currentFakeWord);
     } else {
-        G.currentFakeWord = "???";
+        G.currentFakeWord = '???';
     }
-
+    
     return { category: G.currentCategory, secretWord: G.currentSecretWord, fakeWord: G.currentFakeWord };
 }
 
 function distributeRoles() {
     if (!G.pubnub) return;
-    
     const playerIds = Object.keys(G.players);
-    if (playerIds.length < 3) { toast('Se necesitan al menos 3 jugadores', 'error'); return; }
-
+    
+    if (playerIds.length < 3) {
+        toast('Mínimo 3 jugadores', 'error');
+        return;
+    }
+    
     const numImp = Math.min(parseInt(document.getElementById('config-impostors')?.value) || 1, Math.floor(playerIds.length / 2));
     const numChar = Math.min(parseInt(document.getElementById('config-charlatans')?.value) || 0, playerIds.length - numImp - 1);
-
+    
     updateSelectedCategories();
-    if (G.selectedCategories.length === 0) { toast('Selecciona al menos una categoría', 'error'); return; }
-
+    if (G.selectedCategories.length === 0) {
+        toast('Selecciona categorías', 'error');
+        return;
+    }
+    
     const wordData = selectNewWord();
     let roles = {};
     let pool = [...playerIds];
-    
     G.impostors = [];
     G.charlatans = [];
     G.citizens = [];
-
+    
     for (let i = 0; i < numImp && pool.length; i++) {
         const idx = Math.floor(Math.random() * pool.length);
         const id = pool.splice(idx, 1)[0];
         roles[id] = { role: 'INFILTRADO', icon: ICONS.impostor, word: 'Categoría: ' + wordData.category };
         G.impostors.push(id);
     }
-
+    
     for (let i = 0; i < numChar && pool.length; i++) {
         const idx = Math.floor(Math.random() * pool.length);
         const id = pool.splice(idx, 1)[0];
         roles[id] = { role: 'CHARLATÁN', icon: ICONS.charlatan, word: wordData.fakeWord };
         G.charlatans.push(id);
     }
-
+    
     pool.forEach(id => {
         roles[id] = { role: 'CIUDADANO', icon: ICONS.citizen, word: wordData.secretWord };
         G.citizens.push(id);
     });
-
+    
     G.activePlayers = [...playerIds];
     G.eliminated = [];
     G.fullRoles = roles;
     G.gamePhase = 'roles';
     G.isFirstRound = true;
     G.starterPlayerId = G.activePlayers[Math.floor(Math.random() * G.activePlayers.length)];
-
-    G.pubnub.publish({ channel: G.channel, message: { type: 'assign', roles: roles, activePlayers: G.activePlayers, impostors: G.impostors, charlatans: G.charlatans, citizens: G.citizens, hostId: G.hostId, starterPlayerId: G.starterPlayerId, usedWords: G.usedWords, isFirstRound: true } });
+    
+    G.pubnub.publish({
+        channel: G.channel,
+        message: {
+            type: 'assign',
+            roles: roles,
+            activePlayers: G.activePlayers,
+            impostors: G.impostors,
+            charlatans: G.charlatans,
+            citizens: G.citizens,
+            hostId: G.hostId,
+            starterPlayerId: G.starterPlayerId,
+            usedWords: G.usedWords,
+            isFirstRound: true
+        }
+    });
 }
 
 function skipWord() {
     if (!G.isHost || !G.pubnub) return;
-
     const wordData = selectNewWord();
-
+    
     Object.keys(G.fullRoles).forEach(id => {
         const role = G.fullRoles[id];
         if (role.role === 'CIUDADANO') role.word = wordData.secretWord;
         else if (role.role === 'CHARLATÁN') role.word = wordData.fakeWord;
-        else if (role.role === 'INFILTRADO') role.word = 'Categoría: ' + wordData.category;
+        else role.word = 'Categoría: ' + wordData.category;
     });
-
+    
     G.starterPlayerId = G.activePlayers[Math.floor(Math.random() * G.activePlayers.length)];
-
-    G.pubnub.publish({ channel: G.channel, message: { type: 'skip_word', roles: G.fullRoles, activePlayers: G.activePlayers, impostors: G.impostors, charlatans: G.charlatans, citizens: G.citizens, hostId: G.hostId, starterPlayerId: G.starterPlayerId, usedWords: G.usedWords } });
+    
+    G.pubnub.publish({
+        channel: G.channel,
+        message: {
+            type: 'skip_word',
+            roles: G.fullRoles,
+            activePlayers: G.activePlayers,
+            impostors: G.impostors,
+            charlatans: G.charlatans,
+            citizens: G.citizens,
+            hostId: G.hostId,
+            starterPlayerId: G.starterPlayerId,
+            usedWords: G.usedWords
+        }
+    });
 }
 
 function handleSkipWord(msg) {
@@ -777,25 +840,17 @@ function handleSkipWord(msg) {
     
     const card = document.getElementById('role-card');
     if (card) card.className = 'role-card blurred';
+    document.getElementById('role-icon').innerHTML = '<img src="' + ICONS.help + '" alt="?" class="role-icon-img">';
+    document.getElementById('role-title').textContent = 'SECRETO';
+    document.getElementById('role-word').textContent = '???';
+    document.getElementById('role-instruction').textContent = 'Toca la carta para revelar';
     
-    const roleIcon = document.getElementById('role-icon');
-    const roleTitle = document.getElementById('role-title');
-    const roleWord = document.getElementById('role-word');
-    const roleInst = document.getElementById('role-instruction');
     const starterInfo = document.getElementById('starter-info');
-    
-    if (roleIcon) roleIcon.innerHTML = '<img src="' + ICONS.help + '" alt="?" class="role-icon-img">';
-    if (roleTitle) roleTitle.textContent = 'SECRETO';
-    if (roleWord) roleWord.textContent = '???';
-    if (roleInst) roleInst.textContent = 'Toca la carta para revelar';
-    
     if (starterInfo) {
-        const starterName = G.players[G.starterPlayerId]?.name || 'Alguien';
-        starterInfo.textContent = 'Inicia: ' + starterName;
+        starterInfo.textContent = 'Inicia: ' + (G.players[G.starterPlayerId]?.name || 'Alguien');
         starterInfo.style.display = 'block';
     }
-    
-    toast('El host cambió la palabra', 'info');
+    toast('Palabra cambiada', 'info');
 }
 
 function handleAssign(msg) {
@@ -812,80 +867,70 @@ function handleAssign(msg) {
     G.isSpectator = false;
     G.isFirstRound = msg.isFirstRound !== false;
     if (G.isFirstRound) G.roleRevealed = false;
-
+    
     const myRoleData = msg.roles[G.myId];
-    if (myRoleData) {
-        G.myRole = myRoleData;
-
-        const card = document.getElementById('role-card');
-        const roleIcon = document.getElementById('role-icon');
-        const roleTitle = document.getElementById('role-title');
-        const roleWord = document.getElementById('role-word');
-        const roleInst = document.getElementById('role-instruction');
-        const pointsBox = document.getElementById('points-box');
-        const timer = document.getElementById('timer');
-        const waitMsg = document.getElementById('wait-message');
-        const btnStart = document.getElementById('btn-start-round');
-        const btnSkip = document.getElementById('btn-skip-word');
-        const starterInfo = document.getElementById('starter-info');
-        
-        if (G.isFirstRound) {
-            if (card) card.className = 'role-card blurred';
-            if (roleIcon) roleIcon.innerHTML = '<img src="' + ICONS.help + '" alt="?" class="role-icon-img">';
-            if (roleTitle) roleTitle.textContent = 'SECRETO';
-            if (roleWord) roleWord.textContent = '???';
-            if (roleInst) roleInst.textContent = 'Toca la carta para revelar';
-        } else {
-            G.roleRevealed = true;
-            if (card) {
-                card.classList.remove('blurred');
-                const roleClass = G.myRole.role === 'INFILTRADO' ? 'impostor' : G.myRole.role === 'CHARLATÁN' ? 'charlatan' : 'citizen';
-                card.className = 'role-card ' + roleClass;
-            }
-            if (roleIcon) roleIcon.innerHTML = '<img src="' + G.myRole.icon + '" alt="' + G.myRole.role + '" class="role-icon-img">';
-            if (roleTitle) roleTitle.textContent = G.myRole.role;
-            if (roleWord) roleWord.textContent = G.myRole.word;
-            if (roleInst) roleInst.textContent = 'Tu rol (ya revelado)';
-        }
-        
-        if (pointsBox) pointsBox.style.display = 'none';
-        if (timer) timer.style.display = 'none';
-        if (waitMsg) waitMsg.style.display = 'block';
-        
-        if (btnStart) { btnStart.style.display = G.isHost ? 'block' : 'none'; btnStart.disabled = false; }
-        if (btnSkip) btnSkip.style.display = G.isHost ? 'block' : 'none';
-
-        if (starterInfo) {
-            const starterName = G.players[G.starterPlayerId]?.name || 'Alguien';
-            starterInfo.textContent = 'Inicia: ' + starterName;
-            starterInfo.style.display = 'block';
-        }
-
-        showScreen('screen-role');
-        clearInterval(G.refreshInterval);
+    if (!myRoleData) return;
+    G.myRole = myRoleData;
+    
+    const card = document.getElementById('role-card');
+    const roleIcon = document.getElementById('role-icon');
+    const roleTitle = document.getElementById('role-title');
+    const roleWord = document.getElementById('role-word');
+    const roleInst = document.getElementById('role-instruction');
+    const starterInfo = document.getElementById('starter-info');
+    const btnStart = document.getElementById('btn-start-round');
+    const btnSkip = document.getElementById('btn-skip-word');
+    
+    if (G.isFirstRound) {
+        if (card) card.className = 'role-card blurred';
+        roleIcon.innerHTML = '<img src="' + ICONS.help + '" alt="?" class="role-icon-img">';
+        roleTitle.textContent = 'SECRETO';
+        roleWord.textContent = '???';
+        roleInst.textContent = 'Toca la carta para revelar';
+    } else {
+        G.roleRevealed = true;
+        const roleClass = G.myRole.role === 'INFILTRADO' ? 'impostor' : G.myRole.role === 'CHARLATÁN' ? 'charlatan' : 'citizen';
+        if (card) card.className = 'role-card ' + roleClass;
+        roleIcon.innerHTML = '<img src="' + G.myRole.icon + '" alt="" class="role-icon-img">';
+        roleTitle.textContent = G.myRole.role;
+        roleWord.textContent = G.myRole.word;
+        roleInst.textContent = 'Tu rol (ya revelado)';
     }
+    
+    document.getElementById('points-box').style.display = 'none';
+    document.getElementById('timer').style.display = 'none';
+    document.getElementById('wait-message').style.display = 'block';
+    
+    if (btnStart) {
+        btnStart.style.display = G.isHost ? 'block' : 'none';
+        btnStart.disabled = false;
+    }
+    if (btnSkip) btnSkip.style.display = G.isHost ? 'block' : 'none';
+    
+    if (starterInfo) {
+        starterInfo.textContent = 'Inicia: ' + (G.players[G.starterPlayerId]?.name || 'Alguien');
+        starterInfo.style.display = 'block';
+    }
+    
+    showScreen('screen-role');
+    clearInterval(G.refreshInterval);
 }
 
 function revealRole() {
     if (G.roleRevealed) return;
     G.roleRevealed = true;
-
+    
     const card = document.getElementById('role-card');
     if (card) card.classList.remove('blurred');
-
-    const roleIcon = document.getElementById('role-icon');
-    const roleTitle = document.getElementById('role-title');
-    const roleWord = document.getElementById('role-word');
-    const roleInst = document.getElementById('role-instruction');
     
-    if (roleIcon) roleIcon.innerHTML = '<img src="' + G.myRole.icon + '" alt="' + G.myRole.role + '" class="role-icon-img">';
-    if (roleTitle) roleTitle.textContent = G.myRole.role;
-    if (roleWord) roleWord.textContent = G.myRole.word;
-    if (roleInst) roleInst.textContent = 'Memoriza tu información';
-
+    document.getElementById('role-icon').innerHTML = '<img src="' + G.myRole.icon + '" alt="" class="role-icon-img">';
+    document.getElementById('role-title').textContent = G.myRole.role;
+    document.getElementById('role-word').textContent = G.myRole.word;
+    document.getElementById('role-instruction').textContent = 'Memoriza tu información';
+    
     const roleClass = G.myRole.role === 'INFILTRADO' ? 'impostor' : G.myRole.role === 'CHARLATÁN' ? 'charlatan' : 'citizen';
     if (card) card.classList.add(roleClass);
-
+    
     showPointsReminder();
 }
 
@@ -893,14 +938,18 @@ function showPointsReminder() {
     const box = document.getElementById('points-box');
     const list = document.getElementById('points-list');
     if (!box || !list) return;
-
+    
     let html = '';
     if (G.myRole.role === 'CIUDADANO') {
-        html = '<li><span class="points-value positive">+' + POINTS.CITIZEN_SURVIVE + '</span> Sobrevivir la partida</li><li><span class="points-value positive">+' + POINTS.CITIZEN_CORRECT_VOTE + '</span> Votar correctamente</li><li><span class="points-value negative">' + POINTS.CITIZEN_WRONG_VOTE + '</span> Votar incorrectamente</li>';
+        html = '<li><span class="points-value positive">+' + POINTS.CITIZEN_SURVIVE + '</span> Sobrevivir</li>' +
+               '<li><span class="points-value positive">+' + POINTS.CITIZEN_CORRECT_VOTE + '</span> Votar bien</li>' +
+               '<li><span class="points-value negative">' + POINTS.CITIZEN_WRONG_VOTE + '</span> Votar mal</li>';
     } else if (G.myRole.role === 'INFILTRADO') {
-        html = '<li><span class="points-value positive">+' + POINTS.IMPOSTOR_WIN + '</span> Ganar la partida</li><li><span class="points-value positive">+' + POINTS.IMPOSTOR_SURVIVE_ROUND + '</span> Sobrevivir cada ronda</li>';
+        html = '<li><span class="points-value positive">+' + POINTS.IMPOSTOR_WIN + '</span> Ganar</li>' +
+               '<li><span class="points-value positive">+' + POINTS.IMPOSTOR_SURVIVE_ROUND + '</span> Sobrevivir ronda</li>';
     } else {
-        html = '<li><span class="points-value positive">+' + POINTS.CHARLATAN_SURVIVE + '</span> Sobrevivir la partida</li><li><span class="points-value positive">+' + POINTS.CITIZEN_CORRECT_VOTE + '</span> Votar correctamente</li>';
+        html = '<li><span class="points-value positive">+' + POINTS.CHARLATAN_SURVIVE + '</span> Sobrevivir</li>' +
+               '<li><span class="points-value positive">+' + POINTS.CITIZEN_CORRECT_VOTE + '</span> Votar bien</li>';
     }
     list.innerHTML = html;
     box.style.display = 'block';
@@ -912,18 +961,15 @@ function showPointsReminder() {
 
 function startRound() {
     if (!G.pubnub || !G.isHost) return;
-    if (G.activePlayers.length === 0) { toast('Error: No hay jugadores activos', 'error'); return; }
-    
     const btnStart = document.getElementById('btn-start-round');
     const btnSkip = document.getElementById('btn-skip-word');
-    const btnSpecNext = document.getElementById('btn-spectator-next');
-    
     if (btnStart) btnStart.disabled = true;
     if (btnSkip) btnSkip.style.display = 'none';
-    if (btnSpecNext) btnSpecNext.disabled = true;
-    
     const newStarter = G.activePlayers[Math.floor(Math.random() * G.activePlayers.length)];
-    G.pubnub.publish({ channel: G.channel, message: { type: 'start_round', time: G.roundTime, starterPlayerId: newStarter } });
+    G.pubnub.publish({
+        channel: G.channel,
+        message: { type: 'start_round', time: G.roundTime, starterPlayerId: newStarter }
+    });
 }
 
 function handleStartRound(msg) {
@@ -933,25 +979,29 @@ function handleStartRound(msg) {
     
     const btnStart = document.getElementById('btn-start-round');
     const btnSkip = document.getElementById('btn-skip-word');
-    const btnSpecNext = document.getElementById('btn-spectator-next');
-    
-    if (btnStart) { btnStart.style.display = 'none'; btnStart.disabled = false; }
+    if (btnStart) {
+        btnStart.style.display = 'none';
+        btnStart.disabled = false;
+    }
     if (btnSkip) btnSkip.style.display = 'none';
-    if (btnSpecNext) { btnSpecNext.style.display = 'none'; btnSpecNext.disabled = false; }
     
     const starterName = G.players[G.starterPlayerId]?.name || 'Alguien';
     
     if (G.isSpectator) {
-        const specStatus = document.getElementById('spectator-status');
-        if (specStatus) specStatus.textContent = '¡' + starterName + ' inicia! Preparando...';
-        setTimeout(() => { startSpectatorTimer(msg.time); }, 2000);
+        document.getElementById('spectator-status').textContent = starterName + ' inicia!';
+        setTimeout(function() { startSpectatorTimer(msg.time); }, 2000);
         return;
     }
     
     const starterInfo = document.getElementById('starter-info');
-    if (starterInfo) { starterInfo.textContent = '¡' + starterName + ' inicia!'; starterInfo.style.display = 'block'; }
-    
-    setTimeout(() => { if (starterInfo) starterInfo.style.display = 'none'; startTimer(msg.time); }, 2000);
+    if (starterInfo) {
+        starterInfo.textContent = '¡' + starterName + ' inicia!';
+        starterInfo.style.display = 'block';
+    }
+    setTimeout(function() {
+        if (starterInfo) starterInfo.style.display = 'none';
+        startTimer(msg.time);
+    }, 2000);
 }
 
 function clearAllTimers() {
@@ -962,28 +1012,27 @@ function clearAllTimers() {
 }
 
 function startTimer(duration) {
-    if (G.timerInterval) { clearInterval(G.timerInterval); G.timerInterval = null; }
-    
+    if (G.timerInterval) clearInterval(G.timerInterval);
     const timer = document.getElementById('timer');
-    const waitMsg = document.getElementById('wait-message');
-    const pointsBox = document.getElementById('points-box');
+    timer.style.display = 'block';
+    timer.classList.remove('warning');
+    document.getElementById('wait-message').style.display = 'none';
+    document.getElementById('points-box').style.display = 'none';
     
-    if (timer) { timer.style.display = 'block'; timer.classList.remove('warning'); }
-    if (waitMsg) waitMsg.style.display = 'none';
-    if (pointsBox) pointsBox.style.display = 'none';
-
     let remaining = duration;
     updateTimerDisplay(remaining);
-
-    G.timerInterval = setInterval(() => {
+    
+    G.timerInterval = setInterval(function() {
         remaining--;
-        if (remaining < 0) { clearInterval(G.timerInterval); G.timerInterval = null; return; }
+        if (remaining < 0) {
+            clearInterval(G.timerInterval);
+            return;
+        }
         updateTimerDisplay(remaining);
-        if (remaining <= 10 && timer) timer.classList.add('warning');
+        if (remaining <= 10) timer.classList.add('warning');
         if (remaining <= 0) {
             clearInterval(G.timerInterval);
-            G.timerInterval = null;
-            if (timer) timer.textContent = '¡TIEMPO!';
+            timer.textContent = '¡TIEMPO!';
             if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
             startVoting();
         }
@@ -991,25 +1040,25 @@ function startTimer(duration) {
 }
 
 function startSpectatorTimer(duration) {
-    if (G.spectatorTimerInterval) { clearInterval(G.spectatorTimerInterval); G.spectatorTimerInterval = null; }
-    
+    if (G.spectatorTimerInterval) clearInterval(G.spectatorTimerInterval);
     let remaining = duration;
     const specStatus = document.getElementById('spectator-status');
     
-    const updateDisplay = () => {
+    function updateDisplay() {
         const mins = Math.floor(remaining / 60);
         const secs = remaining % 60;
-        const timeStr = mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
-        if (specStatus) specStatus.textContent = remaining <= 10 ? '⚠️ Ronda: ' + timeStr : '🎮 Ronda en curso: ' + timeStr;
-    };
-    
+        specStatus.textContent = 'Ronda: ' + mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
+    }
     updateDisplay();
     
-    G.spectatorTimerInterval = setInterval(() => {
+    G.spectatorTimerInterval = setInterval(function() {
         remaining--;
-        if (remaining < 0) { clearInterval(G.spectatorTimerInterval); G.spectatorTimerInterval = null; if (specStatus) specStatus.textContent = '🗳️ Votación en curso...'; return; }
+        if (remaining < 0) {
+            clearInterval(G.spectatorTimerInterval);
+            specStatus.textContent = 'Votación...';
+            return;
+        }
         updateDisplay();
-        if (remaining <= 0) { clearInterval(G.spectatorTimerInterval); G.spectatorTimerInterval = null; if (specStatus) specStatus.textContent = '🗳️ Votación en curso...'; }
     }, 1000);
 }
 
@@ -1017,8 +1066,7 @@ function updateTimerDisplay(seconds) {
     if (seconds < 0) seconds = 0;
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    const timer = document.getElementById('timer');
-    if (timer) timer.textContent = mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
+    document.getElementById('timer').textContent = mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
 }
 
 // ============================================
@@ -1026,27 +1074,26 @@ function updateTimerDisplay(seconds) {
 // ============================================
 
 function startVoting() {
-    if (G.timerInterval) { clearInterval(G.timerInterval); G.timerInterval = null; }
+    if (G.timerInterval) clearInterval(G.timerInterval);
     
     if (G.isSpectator) {
-        const specStatus = document.getElementById('spectator-status');
-        if (specStatus) specStatus.textContent = '🗳️ Votación en curso...';
+        document.getElementById('spectator-status').textContent = 'Votación...';
         showScreen('screen-spectator');
         return;
     }
-
+    
     G.gamePhase = 'voting';
     G.votes = {};
     G.votedPlayers = new Set();
     G.voteTargets = {};
-
+    
     showScreen('screen-voting');
     renderVotingList();
     startVoteTimer(30);
-
+    
     if (G.isHost) {
         if (G.voteTimeout) clearTimeout(G.voteTimeout);
-        G.voteTimeout = setTimeout(() => publishResults(), 32000);
+        G.voteTimeout = setTimeout(publishResults, 32000);
     }
 }
 
@@ -1055,103 +1102,150 @@ function renderVotingList() {
     if (!list) return;
     
     const votable = G.activePlayers.filter(id => id !== G.myId && !G.eliminated.includes(id));
-
-    list.innerHTML = votable.map(id => {
-        const p = G.players[id];
-        return '<div class="vote-item"><div class="player-avatar">' + renderPlayerAvatar(id, 40) + '</div><div class="player-info"><div class="player-name">' + (p?.name || id) + '</div></div><button class="btn-vote" data-target="' + id + '">Votar</button></div>';
-    }).join('');
-
-    list.querySelectorAll('.btn-vote').forEach(btn => { btn.onclick = () => sendVote(btn.dataset.target, btn); });
+    list.innerHTML = votable.map(id => 
+        '<div class="vote-item">' +
+            '<div class="player-avatar">' + renderPlayerAvatar(id, 40) + '</div>' +
+            '<div class="player-info"><div class="player-name">' + (G.players[id]?.name || id) + '</div></div>' +
+            '<button class="btn-vote" data-target="' + id + '">Votar</button>' +
+        '</div>'
+    ).join('');
+    
+    list.querySelectorAll('.btn-vote').forEach(btn => {
+        btn.onclick = function() { sendVote(btn.dataset.target, btn); };
+    });
 }
 
 function startVoteTimer(seconds) {
-    if (G.voteTimerInterval) { clearInterval(G.voteTimerInterval); G.voteTimerInterval = null; }
-    
+    if (G.voteTimerInterval) clearInterval(G.voteTimerInterval);
     let remaining = seconds;
     const display = document.getElementById('vote-timer');
-    if (display) display.textContent = '00:' + remaining.toString().padStart(2, '0');
-
-    G.voteTimerInterval = setInterval(() => {
+    display.textContent = '00:' + remaining.toString().padStart(2, '0');
+    
+    G.voteTimerInterval = setInterval(function() {
         remaining--;
-        if (remaining < 0) { clearInterval(G.voteTimerInterval); G.voteTimerInterval = null; return; }
-        if (display) display.textContent = '00:' + remaining.toString().padStart(2, '0');
-        if (remaining <= 0) { clearInterval(G.voteTimerInterval); G.voteTimerInterval = null; }
+        if (remaining < 0) {
+            clearInterval(G.voteTimerInterval);
+            return;
+        }
+        display.textContent = '00:' + remaining.toString().padStart(2, '0');
     }, 1000);
 }
 
 function sendVote(targetId, button) {
-    if (!G.pubnub) return;
-    if (G.eliminated.includes(targetId) || !G.activePlayers.includes(targetId)) { toast('Jugador no válido', 'error'); return; }
-
-    G.pubnub.publish({ channel: G.channel, message: { type: 'vote', target: targetId } });
-
+    if (!G.pubnub || G.eliminated.includes(targetId) || !G.activePlayers.includes(targetId)) return;
+    
+    G.pubnub.publish({
+        channel: G.channel,
+        message: { type: 'vote', target: targetId }
+    });
+    
     button.classList.add('voted');
-    button.textContent = 'Votado ✓';
+    button.textContent = 'Votado';
     button.disabled = true;
     document.querySelectorAll('.btn-vote').forEach(btn => btn.disabled = true);
-    
-    const voteStatus = document.getElementById('vote-status');
-    if (voteStatus) voteStatus.textContent = 'Voto registrado. Esperando...';
+    document.getElementById('vote-status').textContent = 'Voto registrado. Esperando...';
 }
 
 function handleVote(voterId, targetId) {
-    if (!G.activePlayers.includes(targetId) || G.eliminated.includes(targetId)) return;
-    if (!G.activePlayers.includes(voterId)) return;
-    if (G.votedPlayers.has(voterId)) return;
-    if (voterId === targetId) return;
-
+    if (!G.activePlayers.includes(targetId) || G.eliminated.includes(targetId) ||
+        !G.activePlayers.includes(voterId) || G.votedPlayers.has(voterId) || voterId === targetId) {
+        return;
+    }
+    
     G.votes[targetId] = (G.votes[targetId] || 0) + 1;
     G.votedPlayers.add(voterId);
     G.voteTargets[voterId] = targetId;
-
+    
     if (G.isHost && G.pubnub) {
-        G.pubnub.publish({ channel: G.channel, message: { type: 'vote_update', votes: G.votes, voted: Array.from(G.votedPlayers) } });
+        G.pubnub.publish({
+            channel: G.channel,
+            message: { type: 'vote_update', votes: G.votes, voted: Array.from(G.votedPlayers) }
+        });
         if (G.votedPlayers.size >= G.activePlayers.length) {
-            if (G.voteTimeout) { clearTimeout(G.voteTimeout); G.voteTimeout = null; }
-            setTimeout(() => publishResults(), 500);
+            if (G.voteTimeout) clearTimeout(G.voteTimeout);
+            setTimeout(publishResults, 500);
         }
     }
+    
     if (G.isSpectator) updateSpectatorVotes();
 }
+
+// ============================================
+// RESULTADOS
+// ============================================
 
 function publishResults() {
     if (!G.pubnub) return;
     clearAllTimers();
-
+    
     let maxVotes = 0;
     let mostVoted = [];
-
-    Object.entries(G.votes).forEach(([id, count]) => {
-        if (count > maxVotes) { maxVotes = count; mostVoted = [id]; }
-        else if (count === maxVotes) mostVoted.push(id);
+    Object.entries(G.votes).forEach(function([id, count]) {
+        if (count > maxVotes) {
+            maxVotes = count;
+            mostVoted = [id];
+        } else if (count === maxVotes) {
+            mostVoted.push(id);
+        }
     });
-
+    
     const isTie = mostVoted.length > 1 || maxVotes === 0;
     let eliminatedId = null;
     let eliminatedRole = null;
-
+    
     if (!isTie) {
         eliminatedId = mostVoted[0];
         G.eliminated.push(eliminatedId);
         G.activePlayers = G.activePlayers.filter(id => id !== eliminatedId);
-
-        if (G.impostors.includes(eliminatedId)) { eliminatedRole = 'INFILTRADO'; G.impostors = G.impostors.filter(id => id !== eliminatedId); }
-        else if (G.charlatans.includes(eliminatedId)) { eliminatedRole = 'CHARLATÁN'; G.charlatans = G.charlatans.filter(id => id !== eliminatedId); }
-        else { eliminatedRole = 'CIUDADANO'; G.citizens = G.citizens.filter(id => id !== eliminatedId); }
-
-        Object.entries(G.voteTargets).forEach(([voterId, targetId]) => {
+        
+        if (G.impostors.includes(eliminatedId)) {
+            eliminatedRole = 'INFILTRADO';
+            G.impostors = G.impostors.filter(id => id !== eliminatedId);
+        } else if (G.charlatans.includes(eliminatedId)) {
+            eliminatedRole = 'CHARLATÁN';
+            G.charlatans = G.charlatans.filter(id => id !== eliminatedId);
+        } else {
+            eliminatedRole = 'CIUDADANO';
+            G.citizens = G.citizens.filter(id => id !== eliminatedId);
+        }
+        
+        Object.entries(G.voteTargets).forEach(function([voterId, targetId]) {
             if (targetId === eliminatedId) {
-                if (eliminatedRole === 'INFILTRADO') G.scores[voterId] = (G.scores[voterId] || 0) + POINTS.CITIZEN_CORRECT_VOTE;
-                else if (!G.impostors.includes(voterId)) G.scores[voterId] = (G.scores[voterId] || 0) + POINTS.CITIZEN_WRONG_VOTE;
+                if (eliminatedRole === 'INFILTRADO') {
+                    G.scores[voterId] = (G.scores[voterId] || 0) + POINTS.CITIZEN_CORRECT_VOTE;
+                } else if (!G.impostors.includes(voterId)) {
+                    G.scores[voterId] = (G.scores[voterId] || 0) + POINTS.CITIZEN_WRONG_VOTE;
+                }
             }
         });
-        G.impostors.forEach(id => { G.scores[id] = (G.scores[id] || 0) + POINTS.IMPOSTOR_SURVIVE_ROUND; });
+        
+        G.impostors.forEach(id => {
+            G.scores[id] = (G.scores[id] || 0) + POINTS.IMPOSTOR_SURVIVE_ROUND;
+        });
     }
-
-    G.pubnub.publish({ channel: G.channel, message: { type: 'results', votes: G.votes, eliminatedId: eliminatedId, eliminatedName: eliminatedId ? G.players[eliminatedId]?.name : null, eliminatedRole: eliminatedRole, isTie: isTie, scores: G.scores, activePlayers: G.activePlayers, impostors: G.impostors, fullRoles: G.fullRoles } });
-    G.pubnub.publish({ channel: G.channel, message: { type: 'spectator_roles', roles: G.fullRoles, activePlayers: G.activePlayers } });
-
-    setTimeout(() => checkGameOver(), RESULT_DISPLAY_TIME);
+    
+    G.pubnub.publish({
+        channel: G.channel,
+        message: {
+            type: 'results',
+            votes: G.votes,
+            eliminatedId: eliminatedId,
+            eliminatedName: eliminatedId ? G.players[eliminatedId]?.name : null,
+            eliminatedRole: eliminatedRole,
+            isTie: isTie,
+            scores: G.scores,
+            activePlayers: G.activePlayers,
+            impostors: G.impostors,
+            fullRoles: G.fullRoles
+        }
+    });
+    
+    G.pubnub.publish({
+        channel: G.channel,
+        message: { type: 'spectator_roles', roles: G.fullRoles, activePlayers: G.activePlayers }
+    });
+    
+    setTimeout(checkGameOver, RESULT_DISPLAY_TIME);
 }
 
 function showResults(msg) {
@@ -1160,92 +1254,100 @@ function showResults(msg) {
     G.scores = msg.scores || G.scores;
     G.activePlayers = msg.activePlayers;
     G.impostors = msg.impostors;
-
-    if (msg.eliminatedId && !G.eliminated.includes(msg.eliminatedId)) G.eliminated.push(msg.eliminatedId);
-
+    
+    if (msg.eliminatedId && !G.eliminated.includes(msg.eliminatedId)) {
+        G.eliminated.push(msg.eliminatedId);
+    }
+    
     if (msg.eliminatedId === G.myId) {
         G.isSpectator = true;
         G.fullRoles = msg.fullRoles || G.fullRoles;
         showScreen('screen-spectator');
-        const specStatus = document.getElementById('spectator-status');
-        if (specStatus) specStatus.textContent = 'Fuiste eliminado (' + msg.eliminatedRole + '). Ahora observas.';
+        document.getElementById('spectator-status').textContent = 'Eliminado (' + msg.eliminatedRole + ')';
         updateSpectatorRoles();
         if (G.isHost) {
-            const btnNext = document.getElementById('btn-spectator-next');
-            const btnLobby = document.getElementById('btn-spectator-lobby');
-            if (btnNext) { btnNext.style.display = 'block'; btnNext.disabled = false; }
-            if (btnLobby) btnLobby.style.display = 'block';
+            document.getElementById('btn-spectator-next').style.display = 'block';
+            document.getElementById('btn-spectator-lobby').style.display = 'block';
         }
         return;
     }
-
+    
     if (G.isSpectator) {
-        const specStatus = document.getElementById('spectator-status');
-        if (specStatus) specStatus.textContent = msg.isTie ? 'Empate - nadie eliminado' : msg.eliminatedName + ' eliminado (' + msg.eliminatedRole + ')';
+        document.getElementById('spectator-status').textContent = msg.isTie ? 'Empate' : msg.eliminatedName + ' eliminado';
         updateSpectatorRoles();
-        if (G.isHost) {
-            const btnNext = document.getElementById('btn-spectator-next');
-            if (btnNext) { btnNext.style.display = 'block'; btnNext.disabled = false; }
-        }
+        if (G.isHost) document.getElementById('btn-spectator-next').style.display = 'block';
         return;
     }
-
+    
     showScreen('screen-results');
     G.gamePhase = 'results';
-
+    
     const resultsList = document.getElementById('results-list');
     if (resultsList) {
         const voteEntries = Object.entries(msg.votes);
         const maxVotes = voteEntries.length > 0 ? Math.max(...Object.values(msg.votes), 1) : 1;
-
-        resultsList.innerHTML = voteEntries.map(([id, count]) => {
-            const name = G.players[id]?.name || id;
-            const pct = (count / maxVotes) * 100;
-            return '<div class="result-item"><div class="result-header"><span class="result-name">' + name + '</span><span class="result-votes">' + count + ' votos</span></div><div class="result-bar"><div class="result-bar-fill" style="width: ' + pct + '%"></div></div></div>';
+        resultsList.innerHTML = voteEntries.map(function([id, count]) {
+            return '<div class="result-item">' +
+                '<div class="result-header">' +
+                    '<span class="result-name">' + (G.players[id]?.name || id) + '</span>' +
+                    '<span class="result-votes">' + count + ' votos</span>' +
+                '</div>' +
+                '<div class="result-bar"><div class="result-bar-fill" style="width:' + (count / maxVotes * 100) + '%"></div></div>' +
+            '</div>';
         }).join('');
     }
-
+    
     const elimBox = document.getElementById('eliminated-box');
     if (elimBox) {
         if (msg.isTie) {
-            elimBox.innerHTML = '<div class="eliminated-icon"><img src="' + ICONS.tie + '" alt="Empate" class="eliminated-icon-img"></div><div class="eliminated-name">EMPATE</div><div class="eliminated-role">Nadie fue eliminado</div>';
+            elimBox.innerHTML = '<div class="eliminated-icon"><img src="' + ICONS.tie + '" alt="" class="eliminated-icon-img"></div>' +
+                '<div class="eliminated-name">EMPATE</div>' +
+                '<div class="eliminated-role">Nadie eliminado</div>';
         } else {
-            const iconSrc = msg.eliminatedRole === 'INFILTRADO' ? ICONS.impostor : msg.eliminatedRole === 'CHARLATÁN' ? ICONS.charlatan : ICONS.citizen;
-            elimBox.innerHTML = '<div class="eliminated-icon"><img src="' + iconSrc + '" alt="' + msg.eliminatedRole + '" class="eliminated-icon-img"></div><div class="eliminated-name">' + msg.eliminatedName + '</div><div class="eliminated-role">Era ' + msg.eliminatedRole + '</div>';
+            const iconSrc = msg.eliminatedRole === 'INFILTRADO' ? ICONS.impostor :
+                           msg.eliminatedRole === 'CHARLATÁN' ? ICONS.charlatan : ICONS.citizen;
+            elimBox.innerHTML = '<div class="eliminated-icon"><img src="' + iconSrc + '" alt="" class="eliminated-icon-img"></div>' +
+                '<div class="eliminated-name">' + msg.eliminatedName + '</div>' +
+                '<div class="eliminated-role">Era ' + msg.eliminatedRole + '</div>';
         }
     }
-
-    const btnNext = document.getElementById('btn-next-round');
-    const btnLobby = document.getElementById('btn-back-lobby');
-    if (btnNext) { btnNext.style.display = 'none'; btnNext.disabled = false; }
-    if (btnLobby) btnLobby.style.display = 'none';
     
-    if (G.isHost) setTimeout(() => { if (btnNext) btnNext.style.display = 'block'; }, RESULT_DISPLAY_TIME);
+    const btnNext = document.getElementById('btn-next-round');
+    if (btnNext) {
+        btnNext.style.display = 'none';
+        btnNext.disabled = false;
+    }
+    document.getElementById('btn-back-lobby').style.display = 'none';
+    
+    if (G.isHost) {
+        setTimeout(function() {
+            if (btnNext) btnNext.style.display = 'block';
+        }, RESULT_DISPLAY_TIME);
+    }
 }
 
 // ============================================
-// SIGUIENTE RONDA
+// SIGUIENTE RONDA Y GAME OVER
 // ============================================
 
 function nextRound() {
     if (!G.pubnub || !G.isHost) return;
-    
     const btnNext = document.getElementById('btn-next-round');
-    const btnSpecNext = document.getElementById('btn-spectator-next');
-    
     if (btnNext) btnNext.disabled = true;
-    if (btnSpecNext) btnSpecNext.disabled = true;
-
-    G.pubnub.publish({ channel: G.channel, message: { type: 'next_round', activePlayers: G.activePlayers, fullRoles: G.fullRoles } });
+    G.pubnub.publish({
+        channel: G.channel,
+        message: { type: 'next_round', activePlayers: G.activePlayers, fullRoles: G.fullRoles }
+    });
 }
 
 function spectatorNextAction() {
-    const btnSpecNext = document.getElementById('btn-spectator-next');
-    if (!btnSpecNext || !G.isHost) return;
-    
-    const btnText = btnSpecNext.textContent;
-    if (btnText.includes('Iniciar')) startRound();
-    else nextRound();
+    if (!G.isHost) return;
+    const btn = document.getElementById('btn-spectator-next');
+    if (btn && btn.textContent.includes('Iniciar')) {
+        startRound();
+    } else {
+        nextRound();
+    }
 }
 
 function handleNextRound(msg) {
@@ -1257,70 +1359,86 @@ function handleNextRound(msg) {
     G.gamePhase = 'roles';
     
     if (msg && msg.activePlayers) G.activePlayers = msg.activePlayers;
-    if (msg && msg.fullRoles) { G.fullRoles = msg.fullRoles; if (G.fullRoles[G.myId]) G.myRole = G.fullRoles[G.myId]; }
-
+    if (msg && msg.fullRoles) {
+        G.fullRoles = msg.fullRoles;
+        if (G.fullRoles[G.myId]) G.myRole = G.fullRoles[G.myId];
+    }
+    
     if (G.isSpectator) {
-        const specStatus = document.getElementById('spectator-status');
+        document.getElementById('spectator-status').textContent = 'Esperando inicio...';
         const btnSpecNext = document.getElementById('btn-spectator-next');
-        if (specStatus) specStatus.textContent = 'Esperando que el host inicie la ronda...';
-        if (btnSpecNext) { btnSpecNext.style.display = 'none'; btnSpecNext.disabled = false; }
-        if (G.isHost && btnSpecNext) { btnSpecNext.style.display = 'block'; btnSpecNext.disabled = false; }
+        if (btnSpecNext) btnSpecNext.style.display = 'none';
+        if (G.isHost && btnSpecNext) {
+            btnSpecNext.textContent = 'Iniciar Ronda';
+            btnSpecNext.style.display = 'block';
+            btnSpecNext.disabled = false;
+        }
         showScreen('screen-spectator');
         updateSpectatorRoles();
         return;
     }
-
+    
     const card = document.getElementById('role-card');
-    const roleIcon = document.getElementById('role-icon');
-    const roleTitle = document.getElementById('role-title');
-    const roleWord = document.getElementById('role-word');
-    const roleInst = document.getElementById('role-instruction');
-    const pointsBox = document.getElementById('points-box');
-    const timer = document.getElementById('timer');
-    const waitMsg = document.getElementById('wait-message');
-    const starterInfo = document.getElementById('starter-info');
     const btnStart = document.getElementById('btn-start-round');
     const btnSkip = document.getElementById('btn-skip-word');
     
     G.roleRevealed = true;
+    const roleClass = G.myRole.role === 'INFILTRADO' ? 'impostor' : G.myRole.role === 'CHARLATÁN' ? 'charlatan' : 'citizen';
+    if (card) card.className = 'role-card ' + roleClass;
     
-    if (card) {
-        const roleClass = G.myRole.role === 'INFILTRADO' ? 'impostor' : G.myRole.role === 'CHARLATÁN' ? 'charlatan' : 'citizen';
-        card.className = 'role-card ' + roleClass;
+    document.getElementById('role-icon').innerHTML = '<img src="' + G.myRole.icon + '" alt="" class="role-icon-img">';
+    document.getElementById('role-title').textContent = G.myRole.role;
+    document.getElementById('role-word').textContent = G.myRole.word;
+    document.getElementById('role-instruction').textContent = 'Tu rol (conocido)';
+    
+    document.getElementById('points-box').style.display = 'none';
+    const timer = document.getElementById('timer');
+    timer.style.display = 'none';
+    timer.classList.remove('warning');
+    document.getElementById('wait-message').style.display = 'block';
+    document.getElementById('starter-info').style.display = 'none';
+    
+    if (btnStart) {
+        btnStart.style.display = G.isHost ? 'block' : 'none';
+        btnStart.disabled = false;
     }
-    if (roleIcon) roleIcon.innerHTML = '<img src="' + G.myRole.icon + '" alt="' + G.myRole.role + '" class="role-icon-img">';
-    if (roleTitle) roleTitle.textContent = G.myRole.role;
-    if (roleWord) roleWord.textContent = G.myRole.word;
-    if (roleInst) roleInst.textContent = 'Tu rol (ya conocido)';
-    if (pointsBox) pointsBox.style.display = 'none';
-    if (timer) { timer.style.display = 'none'; timer.classList.remove('warning'); }
-    if (waitMsg) waitMsg.style.display = 'block';
-    if (starterInfo) starterInfo.style.display = 'none';
-    if (btnStart) { btnStart.style.display = G.isHost ? 'block' : 'none'; btnStart.disabled = false; }
     if (btnSkip) btnSkip.style.display = G.isHost ? 'block' : 'none';
-
+    
     showScreen('screen-role');
 }
 
 function checkGameOver() {
     if (!G.isHost || !G.pubnub) return;
-
+    
     let winner = null;
     let reason = '';
-
+    
     if (G.impostors.length === 0) {
         winner = 'CIUDADANOS';
-        reason = 'Todos los infiltrados eliminados';
-        G.citizens.forEach(id => { if (G.activePlayers.includes(id)) G.scores[id] = (G.scores[id] || 0) + POINTS.CITIZEN_SURVIVE; });
-        G.charlatans.forEach(id => { if (G.activePlayers.includes(id)) G.scores[id] = (G.scores[id] || 0) + POINTS.CHARLATAN_SURVIVE; });
+        reason = 'Infiltrados eliminados';
+        G.citizens.forEach(id => {
+            if (G.activePlayers.includes(id)) {
+                G.scores[id] = (G.scores[id] || 0) + POINTS.CITIZEN_SURVIVE;
+            }
+        });
+        G.charlatans.forEach(id => {
+            if (G.activePlayers.includes(id)) {
+                G.scores[id] = (G.scores[id] || 0) + POINTS.CHARLATAN_SURVIVE;
+            }
+        });
     } else if (G.activePlayers.length - G.impostors.length <= G.impostors.length) {
         winner = 'INFILTRADOS';
-        reason = 'Los infiltrados dominan';
-        G.impostors.forEach(id => { G.scores[id] = (G.scores[id] || 0) + POINTS.IMPOSTOR_WIN; });
+        reason = 'Infiltrados dominan';
+        G.impostors.forEach(id => {
+            G.scores[id] = (G.scores[id] || 0) + POINTS.IMPOSTOR_WIN;
+        });
     }
-
+    
     if (winner) {
-        G.pubnub.publish({ channel: G.channel, message: { type: 'game_over', winner: winner, reason: reason, scores: G.scores, roles: G.fullRoles } });
+        G.pubnub.publish({
+            channel: G.channel,
+            message: { type: 'game_over', winner: winner, reason: reason, scores: G.scores, roles: G.fullRoles }
+        });
     }
 }
 
@@ -1329,50 +1447,50 @@ function handleGameOver(msg) {
     G.gamePhase = 'gameover';
     G.scores = msg.scores || G.scores;
     G.fullRoles = msg.roles || G.fullRoles;
-
-    showScreen('screen-gameover');
-
-    const isImpostorWin = msg.winner === 'INFILTRADOS';
-    const goTitle = document.getElementById('gameover-title');
-    const goReason = document.getElementById('gameover-reason');
-    const goIcon = document.getElementById('gameover-icon');
     
-    if (goTitle) goTitle.textContent = '¡' + msg.winner + ' GANAN!';
-    if (goReason) goReason.textContent = msg.reason;
-    if (goIcon) goIcon.src = isImpostorWin ? ICONS.impostor : ICONS.celebrate;
-
+    showScreen('screen-gameover');
+    document.getElementById('gameover-title').textContent = '¡' + msg.winner + ' GANAN!';
+    document.getElementById('gameover-reason').textContent = msg.reason;
+    document.getElementById('gameover-icon').src = msg.winner === 'INFILTRADOS' ? ICONS.impostor : ICONS.celebrate;
+    
     const scoresList = document.getElementById('final-scores');
-    if (scoresList) {
-        const sorted = Object.entries(G.scores).sort((a, b) => b[1] - a[1]);
-        scoresList.innerHTML = sorted.map(([id, score], idx) => {
-            const p = G.players[id];
-            const role = G.fullRoles[id];
-            let medalHtml = '';
-            if (idx === 0) medalHtml = '<img src="' + ICONS.medal_gold + '" alt="1°">';
-            else if (idx === 1) medalHtml = '<img src="' + ICONS.medal_silver + '" alt="2°">';
-            else if (idx === 2) medalHtml = '<img src="' + ICONS.medal_bronze + '" alt="3°">';
-            else medalHtml = (idx + 1);
-            
-            return '<div class="score-item"><div class="score-rank">' + medalHtml + '</div><div class="score-info"><div class="score-name">' + (p?.name || id) + '</div><div class="score-role">' + (role?.role || '') + '</div></div><div class="score-points">' + score + '</div></div>';
-        }).join('');
-    }
-
-    const btnBackLobby = document.getElementById('btn-back-to-lobby');
-    if (btnBackLobby) btnBackLobby.style.display = 'block';
+    const sorted = Object.entries(G.scores).sort((a, b) => b[1] - a[1]);
+    
+    scoresList.innerHTML = sorted.map(function([id, score], idx) {
+        const p = G.players[id];
+        const role = G.fullRoles[id];
+        let medalHtml = '';
+        if (idx === 0) medalHtml = '<img src="' + ICONS.medalGold + '" alt="1">';
+        else if (idx === 1) medalHtml = '<img src="' + ICONS.medalSilver + '" alt="2">';
+        else if (idx === 2) medalHtml = '<img src="' + ICONS.medalBronze + '" alt="3">';
+        else medalHtml = (idx + 1);
+        
+        return '<div class="score-item">' +
+            '<div class="score-rank">' + medalHtml + '</div>' +
+            '<div class="score-info">' +
+                '<div class="score-name">' + (p?.name || id) + '</div>' +
+                '<div class="score-role">' + (role?.role || '') + '</div>' +
+            '</div>' +
+            '<div class="score-points">' + score + '</div>' +
+        '</div>';
+    }).join('');
 }
 
 // ============================================
-// VOLVER AL LOBBY
+// LOBBY Y SALIDA
 // ============================================
 
 function backToLobby() {
     if (G.isHost && G.pubnub) {
-        G.pubnub.publish({ channel: G.channel, message: { type: 'back_to_lobby', scores: G.scores, hostId: G.hostId, usedWords: G.usedWords } });
+        G.pubnub.publish({
+            channel: G.channel,
+            message: { type: 'back_to_lobby', scores: G.scores, hostId: G.hostId, usedWords: G.usedWords }
+        });
     }
     resetGameState();
     showScreen('screen-lobby');
-    const btnDistribute = document.getElementById('btn-distribute');
-    if (btnDistribute) btnDistribute.style.display = G.isHost ? 'block' : 'none';
+    const btn = document.getElementById('btn-distribute');
+    if (btn) btn.style.display = G.isHost ? 'block' : 'none';
     G.refreshInterval = setInterval(refreshPlayers, 3000);
     refreshPlayers();
 }
@@ -1385,8 +1503,8 @@ function handleBackToLobby(msg) {
     G.usedWords = msg.usedWords || G.usedWords;
     resetGameState();
     showScreen('screen-lobby');
-    const btnDistribute = document.getElementById('btn-distribute');
-    if (btnDistribute) btnDistribute.style.display = G.isHost ? 'block' : 'none';
+    const btn = document.getElementById('btn-distribute');
+    if (btn) btn.style.display = G.isHost ? 'block' : 'none';
     G.refreshInterval = setInterval(refreshPlayers, 3000);
     refreshPlayers();
 }
@@ -1408,7 +1526,6 @@ function resetGameState() {
     G.roleRevealed = false;
     G.starterPlayerId = null;
     G.isFirstRound = true;
-    G.helpOpen = false; // v0.9.8.6: Reset help flag
 }
 
 // ============================================
@@ -1417,31 +1534,40 @@ function resetGameState() {
 
 function updateSpectatorRoles() {
     const list = document.getElementById('spectator-roles');
-    if (!list) return;
+    if (!list || !G.fullRoles) return;
     
-    if (!G.fullRoles || Object.keys(G.fullRoles).length === 0) {
-        list.innerHTML = '<div class="player-item"><div class="player-info"><div class="player-name">Cargando roles...</div></div></div>';
-        return;
-    }
-
-    list.innerHTML = Object.entries(G.fullRoles).map(([id, role]) => {
+    list.innerHTML = Object.entries(G.fullRoles).map(function([id, role]) {
         const p = G.players[id];
         const isActive = G.activePlayers.includes(id);
         const statusIcon = isActive ? ICONS.active : ICONS.eliminated;
-        return '<div class="player-item" style="opacity: ' + (isActive ? 1 : 0.5) + '"><div class="player-avatar">' + renderPlayerAvatar(id, 36) + '</div><div class="player-info"><div class="player-name">' + (p?.name || id) + '</div><div class="player-tag">' + role.role + ' - ' + role.word + '</div></div><img src="' + statusIcon + '" alt="" class="player-status-icon"></div>';
+        return '<div class="player-item" style="opacity:' + (isActive ? 1 : 0.5) + '">' +
+            '<div class="player-avatar">' + renderPlayerAvatar(id, 36) + '</div>' +
+            '<div class="player-info">' +
+                '<div class="player-name">' + (p?.name || id) + '</div>' +
+                '<div class="player-tag">' + role.role + ' - ' + role.word + '</div>' +
+            '</div>' +
+            '<img src="' + statusIcon + '" alt="" class="player-status-icon">' +
+        '</div>';
     }).join('');
 }
 
 function updateSpectatorVotes() {
     const list = document.getElementById('spectator-votes');
     if (!list) return;
-
-    list.innerHTML = G.activePlayers.map(id => {
+    
+    list.innerHTML = G.activePlayers.map(function(id) {
         const p = G.players[id];
         const votes = G.votes[id] || 0;
         const hasVoted = G.votedPlayers.has(id);
         const statusIcon = hasVoted ? ICONS.voted : ICONS.pending;
-        return '<div class="player-item"><div class="player-avatar">' + renderPlayerAvatar(id, 36) + '</div><div class="player-info"><div class="player-name">' + (p?.name || id) + '</div><div class="player-tag">' + (hasVoted ? 'Ha votado' : 'Pendiente') + '</div></div><img src="' + statusIcon + '" alt="" class="player-status-icon" style="margin-right:8px"><span>' + votes + ' votos</span></div>';
+        return '<div class="player-item">' +
+            '<div class="player-avatar">' + renderPlayerAvatar(id, 36) + '</div>' +
+            '<div class="player-info">' +
+                '<div class="player-name">' + (p?.name || id) + '</div>' +
+                '<div class="player-tag">' + (hasVoted ? 'Ha votado' : 'Pendiente') + '</div>' +
+            '</div>' +
+            '<span>' + votes + ' votos</span>' +
+        '</div>';
     }).join('');
 }
 
@@ -1450,17 +1576,19 @@ function updateSpectatorVotes() {
 // ============================================
 
 function leaveRoom() {
-    if (confirm('¿Abandonar la sala?')) exitGame();
+    if (confirm('¿Abandonar?')) exitGame();
 }
 
 function exitGame() {
     clearAllTimers();
     clearInterval(G.refreshInterval);
-    G.refreshInterval = null;
-
-    if (G.isHost && G.pubnub) G.pubnub.publish({ channel: G.channel, message: { type: 'host_disconnect' } });
-    if (G.pubnub) { G.pubnub.unsubscribeAll(); G.pubnub = null; }
-
+    if (G.isHost && G.pubnub) {
+        G.pubnub.publish({ channel: G.channel, message: { type: 'host_disconnect' } });
+    }
+    if (G.pubnub) {
+        G.pubnub.unsubscribeAll();
+        G.pubnub = null;
+    }
     G.channel = null;
     G.isHost = false;
     G.hostId = null;
@@ -1472,15 +1600,15 @@ function exitGame() {
 }
 
 function toast(message, type) {
-    type = type || 'info';
     const container = document.getElementById('toast-container');
     if (!container) return;
     const t = document.createElement('div');
-    t.className = 'toast ' + type;
+    t.className = 'toast ' + (type || 'info');
     t.textContent = message;
     container.appendChild(t);
-    setTimeout(() => t.remove(), 3000);
+    setTimeout(function() { t.remove(); }, 3000);
 }
 
+// Exponer G globalmente para debugging
 window.G = G;
-console.log('game.js v0.9.8.6 cargado correctamente');
+console.log('INFILTRA v0.9.8.6 cargado completamente');
