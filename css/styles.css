@@ -1,5 +1,5 @@
 /* ========================================
-   INFILTRA - Estilos Principales
+   INFILTRA - Estilos Principales v0.9.8.6
    Paleta: Espía Moderno
    ======================================== */
 
@@ -267,6 +267,9 @@ p {
 }
 
 .btn-nav-play {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
     padding: var(--space-sm) var(--space-lg);
     background: var(--color-accent-gold);
     color: var(--color-bg-primary);
@@ -280,6 +283,30 @@ p {
     background: var(--color-accent-gold-light);
     transform: translateY(-2px);
     box-shadow: var(--shadow-gold);
+}
+
+/* Play icon triangle */
+.play-icon {
+    font-size: 0.75rem;
+    line-height: 1;
+}
+
+/* Help icon */
+.help-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: var(--color-steel);
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.btn-secondary .help-icon {
+    background: transparent;
+    border: 1px solid currentColor;
 }
 
 /* Mobile Menu Button */
@@ -350,7 +377,9 @@ p {
 }
 
 .btn-mobile-play {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
     margin-top: var(--space-lg);
     padding: var(--space-md) var(--space-xl);
     background: var(--color-accent-gold);
@@ -511,7 +540,9 @@ p {
     background: var(--color-steel-dark);
 }
 
-/* Hero Visual */
+/* ----------------------------------------
+   Hero Visual - FIXED CARDS
+   ---------------------------------------- */
 .hero-visual {
     flex: 1;
     display: flex;
@@ -530,11 +561,12 @@ p {
     align-items: center;
     justify-content: center;
     box-shadow: var(--shadow-xl);
-    transition: transform var(--transition-slow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform;
 }
 
 .visual-card:hover {
-    transform: scale(1.05) !important;
+    box-shadow: 0 25px 35px rgba(0, 0, 0, 0.7);
 }
 
 .card-inner {
@@ -552,10 +584,12 @@ p {
     letter-spacing: 0.1em;
 }
 
+/* Citizen card - LEFT */
 .card-citizen {
     background: linear-gradient(135deg, #1e3a5f 0%, #0f1f33 100%);
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    transform: rotate(-15deg) translateX(-80px);
+    border: 2px solid rgba(59, 130, 246, 0.5);
+    left: 50%;
+    transform: translateX(-180px) rotate(-12deg);
     z-index: 1;
 }
 
@@ -563,9 +597,12 @@ p {
     color: var(--color-citizen);
 }
 
+/* Impostor card - CENTER */
 .card-impostor {
     background: linear-gradient(135deg, #4a1a22 0%, #2a0f13 100%);
-    border: 1px solid rgba(139, 38, 53, 0.5);
+    border: 2px solid rgba(139, 38, 53, 0.6);
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 3;
 }
 
@@ -573,15 +610,55 @@ p {
     color: #ff6b7a;
 }
 
+/* Charlatan card - RIGHT */
 .card-charlatan {
     background: linear-gradient(135deg, #3b2066 0%, #1f1033 100%);
-    border: 1px solid rgba(124, 58, 237, 0.3);
-    transform: rotate(15deg) translateX(80px);
+    border: 2px solid rgba(124, 58, 237, 0.5);
+    left: 50%;
+    transform: translateX(20px) rotate(12deg);
     z-index: 2;
 }
 
 .card-charlatan .card-label {
     color: #a78bfa;
+}
+
+/* Hover states - sin animación automática, solo en hover */
+.card-citizen:hover {
+    transform: translateX(-180px) rotate(-12deg) translateY(-10px) scale(1.05);
+    z-index: 10;
+}
+
+.card-impostor:hover {
+    transform: translateX(-50%) translateY(-15px) scale(1.08);
+    z-index: 10;
+}
+
+.card-charlatan:hover {
+    transform: translateX(20px) rotate(12deg) translateY(-10px) scale(1.05);
+    z-index: 10;
+}
+
+/* Animaciones flotantes suaves - solo movimiento vertical */
+.animate-float {
+    animation: floatVertical 4s ease-in-out infinite;
+}
+
+.animate-float-delay {
+    animation: floatVertical 4s ease-in-out 0.5s infinite;
+}
+
+.animate-float-delay-2 {
+    animation: floatVertical 4s ease-in-out 1s infinite;
+}
+
+@keyframes floatVertical {
+    0%, 100% {
+        margin-top: 0;
+    }
+    50% {
+        margin-top: -12px;
+    }
 }
 
 @media (max-width: 1024px) {
@@ -608,7 +685,8 @@ p {
     }
     
     .hero-visual {
-        min-height: 300px;
+        min-height: 280px;
+        width: 100%;
     }
     
     .visual-card {
@@ -617,11 +695,68 @@ p {
     }
     
     .card-citizen {
-        transform: rotate(-15deg) translateX(-60px);
+        transform: translateX(-140px) rotate(-12deg);
     }
     
     .card-charlatan {
-        transform: rotate(15deg) translateX(60px);
+        transform: translateX(20px) rotate(12deg);
+    }
+    
+    .card-citizen:hover {
+        transform: translateX(-140px) rotate(-12deg) translateY(-8px) scale(1.05);
+    }
+    
+    .card-charlatan:hover {
+        transform: translateX(20px) rotate(12deg) translateY(-8px) scale(1.05);
+    }
+    
+    .card-icon-img {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-visual {
+        min-height: 220px;
+    }
+    
+    .visual-card {
+        width: 100px;
+        height: 140px;
+    }
+    
+    .card-citizen {
+        transform: translateX(-110px) rotate(-10deg);
+    }
+    
+    .card-impostor {
+        transform: translateX(-50%);
+    }
+    
+    .card-charlatan {
+        transform: translateX(10px) rotate(10deg);
+    }
+    
+    .card-citizen:hover {
+        transform: translateX(-110px) rotate(-10deg) translateY(-5px);
+    }
+    
+    .card-impostor:hover {
+        transform: translateX(-50%) translateY(-8px);
+    }
+    
+    .card-charlatan:hover {
+        transform: translateX(10px) rotate(10deg) translateY(-5px);
+    }
+    
+    .card-icon-img {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .card-label {
+        font-size: 0.75rem;
     }
 }
 
@@ -871,6 +1006,20 @@ p {
     margin-bottom: var(--space-md);
 }
 
+/* Feature icon text (for play triangle, etc.) */
+.feature-icon-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: rgba(201, 162, 39, 0.15);
+    border-radius: var(--radius-md);
+    font-size: 1.5rem;
+    color: var(--color-accent-gold);
+    margin-bottom: var(--space-md);
+}
+
 .feature-card h3 {
     color: var(--color-text-primary);
     margin-bottom: var(--space-sm);
@@ -1014,6 +1163,20 @@ p {
 
 .contact-icon {
     font-size: 2rem;
+}
+
+/* Contact icon text */
+.contact-icon-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: rgba(201, 162, 39, 0.15);
+    border-radius: var(--radius-md);
+    font-size: 1.5rem;
+    color: var(--color-accent-gold);
+    flex-shrink: 0;
 }
 
 .contact-item h4 {
@@ -1162,53 +1325,6 @@ p {
     to {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-
-.animate-float {
-    animation: float 6s ease-in-out infinite;
-}
-
-.animate-float-delay {
-    animation: float 6s ease-in-out 1s infinite;
-}
-
-.animate-float-delay-2 {
-    animation: float 6s ease-in-out 2s infinite;
-}
-
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0) rotate(-15deg);
-    }
-    50% {
-        transform: translateY(-15px) rotate(-15deg);
-    }
-}
-
-.card-impostor.animate-float-delay {
-    animation: floatCenter 6s ease-in-out 1s infinite;
-}
-
-@keyframes floatCenter {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-20px);
-    }
-}
-
-.card-charlatan.animate-float-delay-2 {
-    animation: floatRight 6s ease-in-out 2s infinite;
-}
-
-@keyframes floatRight {
-    0%, 100% {
-        transform: translateY(0) rotate(15deg) translateX(80px);
-    }
-    50% {
-        transform: translateY(-15px) rotate(15deg) translateX(80px);
     }
 }
 
@@ -2098,9 +2214,9 @@ p {
         gap: var(--space-sm);
     }
 }
+
 /* ============================================
-   INFILTRA - Estilos adicionales para iconos PNG
-   Agregar al final de tu styles.css existente
+   ICONOS PNG - Estilos adicionales
    ============================================ */
 
 /* Logo icon */
@@ -2111,17 +2227,12 @@ p {
     border-radius: 8px;
 }
 
-/* Button icons */
+/* Button icons - NO filter para que se vean */
 .btn-icon-img {
     width: 24px;
     height: 24px;
     object-fit: contain;
     border-radius: 4px;
-}
-
-.btn-primary .btn-icon-img,
-.btn-nav-play .btn-icon-img {
-    filter: brightness(0);
 }
 
 /* Hero card icons */
@@ -2167,14 +2278,7 @@ p {
     flex-shrink: 0;
 }
 
-/* Contact item layout fix */
-.contact-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-/* Responsive adjustments */
+/* Responsive adjustments for icons */
 @media (max-width: 768px) {
     .logo-icon-img {
         width: 32px;
@@ -2184,11 +2288,6 @@ p {
     .btn-icon-img {
         width: 20px;
         height: 20px;
-    }
-    
-    .card-icon-img {
-        width: 48px;
-        height: 48px;
     }
     
     .step-icon-img {
@@ -2216,11 +2315,6 @@ p {
     .logo-icon-img {
         width: 28px;
         height: 28px;
-    }
-    
-    .card-icon-img {
-        width: 40px;
-        height: 40px;
     }
     
     .step-icon-img {
