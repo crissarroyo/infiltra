@@ -199,7 +199,7 @@ body {
 }
 
 /* ========================================
-   GRID DE AVATARES
+   GRID DE AVATARES - FIX PALOMITA
    ======================================== */
 
 .avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; }
@@ -214,31 +214,44 @@ body {
     cursor: pointer; 
     font-size: 1.75rem;
     transition: all var(--transition-fast);
-    overflow: hidden;
+    overflow: visible; /* Cambiado de hidden a visible para que la palomita no se corte */
     position: relative;
 }
 .avatar-option:hover { border-color: var(--color-steel); transform: scale(1.05); }
 .avatar-option.selected { border-color: var(--color-accent-gold); box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.3); }
-.avatar-option.selected::after {
-    content: '✓';
+
+/* Palomita de selección con icono PNG */
+.avatar-check {
     position: absolute;
-    top: -4px;
-    right: -4px;
-    width: 18px;
-    height: 18px;
+    top: -6px;
+    right: -6px;
+    width: 22px;
+    height: 22px;
     background: var(--color-accent-gold);
-    color: var(--color-bg-primary);
     border-radius: 50%;
-    font-size: 0.7rem;
-    font-weight: bold;
-    display: flex;
+    display: none; /* Oculto por defecto */
     align-items: center;
     justify-content: center;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
-.avatar-option img {
+
+.avatar-check img {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    filter: brightness(0); /* Hace el icono negro/oscuro para contraste con fondo dorado */
+}
+
+.avatar-option.selected .avatar-check {
+    display: flex; /* Mostrar solo cuando está seleccionado */
+}
+
+.avatar-option > img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: calc(var(--radius-lg) - 2px); /* Para que la imagen respete el borde redondeado */
 }
 
 /* ========================================
