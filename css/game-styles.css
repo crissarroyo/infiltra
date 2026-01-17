@@ -484,20 +484,6 @@ body {
 }
 
 /* CHECK MARK - FIX: Palomita negra en círculo amarillo */
-.avatar-check {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    width: 28px;
-    height: 28px;
-    background: #fbbf24; /* Amarillo */
-    border-radius: 50%;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    z-index: 2;
-}
 
 .avatar-check {
     position: absolute;
@@ -505,6 +491,8 @@ body {
     right: -8px;
     width: 28px;
     height: 28px;
+    min-width: 28px;
+    min-height: 28px;
     background: #fbbf24;
     border-radius: 50%;
     display: none;
@@ -516,6 +504,7 @@ body {
     font-weight: 900;
     color: #000;
 }
+
 
 .avatar-option.selected {
     border-color: #fbbf24; /* Borde amarillo cuando está seleccionado */
@@ -579,22 +568,6 @@ body {
 }
 
 /* CHECK MARK PARA MARCOS - FIX: Círculo perfecto */
-.frame-check {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    width: 24px;
-    height: 24px;
-    min-width: 24px; /* Prevenir deformación */
-    min-height: 24px;
-    background: #fbbf24;
-    border-radius: 50%;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    z-index: 2;
-}
 
 .frame-check {
     position: absolute;
@@ -602,7 +575,7 @@ body {
     right: -6px;
     width: 24px;
     height: 24px;
-    min-width: 24px;
+    min-width: 24px; /* Prevenir deformación */
     min-height: 24px;
     background: #fbbf24;
     border-radius: 50%;
