@@ -1,7 +1,6 @@
 /**
- * INFILTRA - Game Logic v0.9.8.6
- * Con iconos PNG en lugar de emojis
- * Fix: Botón ayuda y palomita de avatar
+ * INFILTRA - Game Logic v0.9.8.7
+ * Fix: Selección por defecto de avatar y marco, palomita negra
  */
 
 const ICONS = {
@@ -130,7 +129,7 @@ function init() {
     bindEvents();
     checkURLParams();
     updateProfilePreview();
-    console.log('INFILTRA v0.9.8.6 iniciado');
+    console.log('INFILTRA v0.9.8.7 iniciado');
 }
 
 function loadProfile() {
@@ -142,8 +141,17 @@ function loadProfile() {
         if (input) input.value = name;
         G.playerName = name;
     }
-    if (avatar) G.avatar = avatar;
-    if (frame) G.frame = frame;
+    // Si no hay avatar/frame guardado, usar el primero por defecto
+    if (avatar && AVATARS.find(a => a.id === avatar)) {
+        G.avatar = avatar;
+    } else {
+        G.avatar = AVATARS[0].id;
+    }
+    if (frame && FRAMES.find(f => f.id === frame)) {
+        G.frame = frame;
+    } else {
+        G.frame = FRAMES[0].id;
+    }
 }
 
 function saveProfile() {
@@ -177,6 +185,11 @@ function initAvatars() {
     if (!grid) return;
     grid.innerHTML = '';
     
+    // Asegurar que siempre haya un avatar seleccionado
+    if (!G.avatar || !AVATARS.find(a => a.id === G.avatar)) {
+        G.avatar = AVATARS[0].id;
+    }
+    
     AVATARS.forEach(avatar => {
         const div = document.createElement('div');
         div.className = 'avatar-option' + (avatar.id === G.avatar ? ' selected' : '');
@@ -197,6 +210,11 @@ function initFrames() {
     if (!grid) return;
     grid.innerHTML = '';
     
+    // Asegurar que siempre haya un marco seleccionado
+    if (!G.frame || !FRAMES.find(f => f.id === G.frame)) {
+        G.frame = FRAMES[0].id;
+    }
+    
     FRAMES.forEach(frame => {
         const div = document.createElement('div');
         div.className = 'frame-option-new' + (frame.id === G.frame ? ' selected' : '') + (frame.locked ? ' locked' : '');
@@ -208,7 +226,7 @@ function initFrames() {
         preview.innerHTML = '<img src="' + ICONS.citizen + '" alt="" class="frame-preview-img">';
         div.appendChild(preview);
         
-        // Agregar palomita de selección (igual que avatares)
+        // Agregar palomita de selección
         const check = document.createElement('div');
         check.className = 'frame-check';
         check.innerHTML = '<img src="' + ICONS.check + '" alt="✓">';
@@ -1626,4 +1644,4 @@ function toast(message, type) {
 
 // Exponer G globalmente para debugging
 window.G = G;
-console.log('INFILTRA v0.9.8.6 cargado completamente');
+console.log('INFILTRA v0.9.8.7 cargado completamente');
