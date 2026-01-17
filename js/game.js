@@ -194,7 +194,7 @@ function initAvatars() {
         const div = document.createElement('div');
         div.className = 'avatar-option' + (avatar.id === G.avatar ? ' selected' : '');
         div.innerHTML = '<img src="' + avatar.image + '" alt="' + avatar.id + '">' +
-                        '<div class="avatar-check"><img src="' + ICONS.check + '" alt="✓"></div>';
+                '<div class="avatar-check">✓</div>';
         div.onclick = function() {
             G.avatar = avatar.id;
             grid.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
@@ -229,7 +229,7 @@ function initFrames() {
         // Agregar palomita de selección
         const check = document.createElement('div');
         check.className = 'frame-check';
-        check.innerHTML = '<img src="' + ICONS.check + '" alt="✓">';
+        check.textContent = '✓';
         div.appendChild(check);
         
         // Agregar icono de candado para marcos bloqueados
