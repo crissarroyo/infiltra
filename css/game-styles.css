@@ -105,8 +105,6 @@ body {
     flex-shrink: 0;
 }
 
-/* NO aplicar filtro a iconos en botones primarios - los iconos ya tienen color */
-
 .game-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
 
 .game-card {
@@ -149,14 +147,14 @@ body {
 .divider span { font-size: 0.875rem; color: var(--color-text-muted); }
 
 /* ========================================
-   VISTA PREVIA DEL PERFIL
+   VISTA PREVIA DEL PERFIL - MÁS GRANDE
    ======================================== */
 
 .profile-preview {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1.5rem;
+    padding: 2rem 1.5rem;
     margin-bottom: 1.5rem;
     background: var(--color-bg-secondary);
     border-radius: var(--radius-lg);
@@ -164,12 +162,15 @@ body {
 }
 
 .preview-avatar-wrapper {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     padding: 4px;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
     transition: all var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .preview-avatar {
@@ -180,7 +181,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.5rem;
+    font-size: 3rem;
     overflow: hidden;
 }
 
@@ -193,16 +194,24 @@ body {
 
 .preview-name {
     font-family: var(--font-display);
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     letter-spacing: 0.05em;
     color: var(--color-text-primary);
 }
 
 /* ========================================
-   GRID DE AVATARES - FIX PALOMITA
+   GRID DE AVATARES - RESPONSIVE Y CENTRADO
    ======================================== */
 
-.avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; }
+.avatar-grid { 
+    display: grid; 
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 0.75rem;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0.5rem;
+}
+
 .avatar-option { 
     aspect-ratio: 1; 
     display: flex; 
@@ -214,13 +223,22 @@ body {
     cursor: pointer; 
     font-size: 1.75rem;
     transition: all var(--transition-fast);
-    overflow: visible; /* Cambiado de hidden a visible para que la palomita no se corte */
+    overflow: visible;
     position: relative;
+    min-width: 0;
 }
-.avatar-option:hover { border-color: var(--color-steel); transform: scale(1.05); }
-.avatar-option.selected { border-color: var(--color-accent-gold); box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.3); }
 
-/* Palomita de selección con icono PNG */
+.avatar-option:hover { 
+    border-color: var(--color-steel); 
+    transform: scale(1.05); 
+}
+
+.avatar-option.selected { 
+    border-color: var(--color-accent-gold); 
+    box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.3); 
+}
+
+/* Palomita de selección con icono PNG - AVATAR */
 .avatar-check {
     position: absolute;
     top: -6px;
@@ -229,7 +247,7 @@ body {
     height: 22px;
     background: var(--color-accent-gold);
     border-radius: 50%;
-    display: none; /* Oculto por defecto */
+    display: none;
     align-items: center;
     justify-content: center;
     z-index: 10;
@@ -240,28 +258,31 @@ body {
     width: 14px;
     height: 14px;
     object-fit: contain;
-    filter: brightness(0); /* Hace el icono negro/oscuro para contraste con fondo dorado */
+    filter: brightness(0);
 }
 
 .avatar-option.selected .avatar-check {
-    display: flex; /* Mostrar solo cuando está seleccionado */
+    display: flex;
 }
 
 .avatar-option > img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: calc(var(--radius-lg) - 2px); /* Para que la imagen respete el borde redondeado */
+    border-radius: calc(var(--radius-lg) - 2px);
 }
 
 /* ========================================
-   GRID DE MARCOS - NUEVO DISEÑO
+   GRID DE MARCOS - RESPONSIVE Y CENTRADO
    ======================================== */
 
 .frame-grid-new {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.75rem;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0.5rem;
 }
 
 .frame-option-new {
@@ -276,6 +297,8 @@ body {
     transition: all var(--transition-fast);
     padding: 6px;
     position: relative;
+    overflow: visible;
+    min-width: 0;
 }
 
 .frame-option-new:hover:not(.locked) {
@@ -288,22 +311,31 @@ body {
     box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.3);
 }
 
-.frame-option-new.selected::after {
-    content: '✓';
+/* Palomita de selección con icono PNG - MARCO */
+.frame-check {
     position: absolute;
     top: -6px;
     right: -6px;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     background: var(--color-accent-gold);
-    color: var(--color-bg-primary);
     border-radius: 50%;
-    font-size: 0.75rem;
-    font-weight: bold;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
-    z-index: 1;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.frame-check img {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    filter: brightness(0);
+}
+
+.frame-option-new.selected .frame-check {
+    display: flex;
 }
 
 .frame-option-new.locked {
@@ -323,14 +355,14 @@ body {
     z-index: 1;
 }
 
-.frame-option-new.locked::after {
-    content: '🔒';
+.frame-option-new.locked .frame-lock {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 1.25rem;
     z-index: 2;
+    width: 24px;
+    height: 24px;
 }
 
 .frame-preview {
@@ -557,7 +589,7 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--color-steel-dark); border-radius: var(--radius-full); }
 
 /* ========================================
-   RESPONSIVE
+   RESPONSIVE - MÓVIL
    ======================================== */
 @media (max-width: 480px) {
     .game-header { padding: 0.75rem 1rem; }
@@ -565,18 +597,118 @@ body {
     .btn-icon { width: 40px; height: 40px; }
     .btn-icon-img { width: 24px; height: 24px; }
     
-    .game-card { padding: 1.5rem; }
+    .game-container { padding: 1rem; }
+    .game-card { padding: 1.25rem; }
+    
+    /* Vista previa más pequeña en móvil pero aún visible */
+    .profile-preview {
+        padding: 1.25rem 1rem;
+    }
+    
+    .preview-avatar-wrapper { 
+        width: 100px; 
+        height: 100px; 
+    }
+    
+    .preview-avatar { font-size: 2.5rem; }
+    .preview-name { font-size: 1.25rem; }
+    
+    /* Avatares: 5 columnas pero más pequeños */
+    .avatar-grid { 
+        grid-template-columns: repeat(5, 1fr); 
+        gap: 0.5rem;
+        padding: 0.25rem;
+    }
+    
+    .avatar-option {
+        border-radius: var(--radius-md);
+    }
+    
+    .avatar-check {
+        width: 18px;
+        height: 18px;
+        top: -4px;
+        right: -4px;
+    }
+    
+    .avatar-check img {
+        width: 12px;
+        height: 12px;
+    }
+    
+    /* Marcos: 4 columnas */
+    .frame-grid-new { 
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 0.5rem;
+        padding: 0.25rem;
+    }
+    
+    .frame-option-new {
+        padding: 4px;
+        border-radius: var(--radius-md);
+    }
+    
+    .frame-check {
+        width: 18px;
+        height: 18px;
+        top: -4px;
+        right: -4px;
+    }
+    
+    .frame-check img {
+        width: 12px;
+        height: 12px;
+    }
+    
     .room-code { font-size: 2.5rem; }
     .role-card { width: 200px; height: 280px; }
     .role-icon-img { width: 56px; height: 56px; }
     .timer { font-size: 3rem; }
     
-    .preview-avatar-wrapper { width: 70px; height: 70px; }
-    .preview-avatar { font-size: 2rem; }
-    
     .btn-img { width: 20px; height: 20px; }
     .btn { padding: 0.875rem 1.25rem; font-size: 0.9375rem; }
+}
+
+/* Pantallas muy pequeñas */
+@media (max-width: 360px) {
+    .game-card { padding: 1rem; }
     
-    .avatar-grid { gap: 0.5rem; }
-    .frame-grid-new { gap: 0.5rem; }
+    .preview-avatar-wrapper { 
+        width: 80px; 
+        height: 80px; 
+    }
+    
+    /* Avatares: reducir a 4 columnas en pantallas muy pequeñas */
+    .avatar-grid { 
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 0.4rem;
+    }
+    
+    /* Marcos: mantener 4 columnas */
+    .frame-grid-new { 
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 0.4rem;
+    }
+    
+    .room-code { font-size: 2rem; letter-spacing: 0.2em; }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 768px) {
+    .profile-preview {
+        padding: 1.5rem;
+    }
+    
+    .preview-avatar-wrapper { 
+        width: 110px; 
+        height: 110px; 
+    }
+    
+    .avatar-grid { 
+        gap: 0.625rem;
+    }
+    
+    .frame-grid-new { 
+        gap: 0.625rem;
+    }
 }
