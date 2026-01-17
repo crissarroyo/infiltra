@@ -208,6 +208,21 @@ function initFrames() {
         preview.innerHTML = '<img src="' + ICONS.citizen + '" alt="" class="frame-preview-img">';
         div.appendChild(preview);
         
+        // Agregar palomita de selección (igual que avatares)
+        const check = document.createElement('div');
+        check.className = 'frame-check';
+        check.innerHTML = '<img src="' + ICONS.check + '" alt="✓">';
+        div.appendChild(check);
+        
+        // Agregar icono de candado para marcos bloqueados
+        if (frame.locked) {
+            const lock = document.createElement('img');
+            lock.className = 'frame-lock';
+            lock.src = ICONS.lock;
+            lock.alt = '🔒';
+            div.appendChild(lock);
+        }
+        
         if (!frame.locked) {
             div.onclick = function() {
                 G.frame = frame.id;
