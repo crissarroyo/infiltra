@@ -838,3 +838,255 @@ function toast(message, type) {
 
 window.G = G;
 console.log('INFILTRA v0.9.8.8 cargado completamente');
+
+/**
+ * INFILTRA - Fixes v0.9.9.0
+  * Correcciones de lógica del juego
+   */
+
+// Variable para prevenir múltiples clicks en iniciar ronda
+let isStartingRound = false;
+
+// Sobreescribir renderPlayerList para ordenar por puntos y añadir medallas
+const originalRenderPlayerList = renderPlayerList;
+renderPlayerList = function() {
+        const list = document.getElementById('player-list');
+        const countEl = document.getElementById('player-count');
+        if (!list) return;
+
+        // Obtener y ordenar jugadores por puntos (mayor a menor)
+        const playerIds = Object.keys(G.players);
+        const sortedPlayers = playerIds.map(id => ({
+                    id: id,
+                    score: G.scores[id] || 0,
+                    player: G.players[id]
+        })).sort((a, b) => b.score - a.score);
+
+        if (countEl) countEl.textContent = playerIds.length + '/' + G.maxPlayers;
+
+        list.innerHTML = sortedPlayers.map((item, index) => {
+                    const id = item.id;
+                    const p = item.player;
+                    const score = item.score;
+                    const isMe = id === G.myId;
+                    const isHostPlayer = id === G.hostId;
+
+                    // Medallas para top 3
+                    let medalHtml = '';
+                    if (index === 0) medalHtml = '<div class="player-medal"><img src="' + ICONS.medalGold + '" alt="1"></div>';
+                    else if (index === 1) medalHtml = '<div class="player-medal"><img src="' + ICONS.medalSilver + '" alt="2"></div>';
+                    else if (index === 2) medalHtml = '<div class="player-medal"><img src="' + ICONS.medalBronze + '" alt="3"></div>';
+                    else medalHtml = '<div class="player-medal"><span class="player-medal-rank">' + (index + 1) + '</span></div>';
+
+                    // Botón kick usando icon-kick.png
+                    const kickBtn = (G.isHost && !isMe && (G.gamePhase === 'lobby' || G.gamePhase === 'home')) 
+                        ? '<button class="btn-kick" onclick="kickPlayer(\'' + id + '\')" title="Expulsar"><img src="' + ICONS.kick + '" alt="X"></button>' 
+                                    : '';
+
+                    return '<div class="player-item">' + medalHtml + '<div class="player-avatar">' + renderPlayerAvatar(id, 40) + '</div><div class="player-info"><div class="player-name">' + p.name + (isMe ? ' (Tú)' : '') + '</div>' + (isHostPlayer ? '<div class="player-tag">Host</div>' : '') + '</div><div class="player-score">' + score + '</div>' + kickBtn + '</div>';
+        }).join('');
+
+        const btnDistribute = document.getElementById('btn-distribute');
+        if (btnDistribute) btnDistribute.style.display = G.isHost ? 'block' : 'none';
+};
+
+// Sobreescribir startRound para prevenir múltiples clicks
+const originalStartRound = startRound;
+startRound = function() {
+        if (!G.pubnub || !G.isHost || isStartingRound) return;
+
+        isStartingRound = true;
+        const btnStart = document.getElementById('btn-start-round');
+        const btnSkip = document.getElementById('btn-skip-word');
+
+        if (btnStart) {
+                    btnStart.disabled = true;
+                    btnStart.textContent = 'Iniciando...';
+        }
+        if (btnSkip) btnSkip.style.display = 'none';
+
+        const newStarter = G.activePlayers[Math.floor(Math.random() * G.activePlayers.length)];
+        G.pubnub.publish({
+                    channel: G.channel,
+                    message: { type: 'start_round', time: G.roundTime, starterPlayerId: newStarter }
+        });
+
+        // Reset después de 3 segundos
+        setTimeout(function() {
+                    isStartingRound = false;
+                    if (btnStart) {
+                                    btnStart.disabled = false;
+                                    btnStart.textContent = 'Iniciar Ronda';
+                    }
+        }, 3000);
+};
+
+// Sobreescribir handleStartRound para mostrar anuncio más visible
+const originalHandleStartRound = handleStartRound;
+handleStartRound = function(msg) {
+        clearAllTimers();
+        G.starterPlayerId = msg.starterPlayerId;
+        G.gamePhase = 'round';
+
+        const btnStart = document.getElementById('btn-start-round');
+        const btnSkip = document.getElementById('btn-skip-word');
+        if (btnStart) {
+                    btnStart.style.display = 'none';
+                    btnStart.disabled = false;
+        }
+        if (btnSkip) btnSkip.style.display = 'none';
+
+        const starterName = G.players[G.starterPlayerId]?.name || 'Alguien';
+
+        if (G.isSpectator) {
+                    document.getElementById('spectator-status').textContent = starterName + ' inicia!';
+                    setTimeout(function() { startSpectatorTimer(msg.time); }, 3000);
+                    return;
+        }
+
+        // Crear anuncio de pantalla completa
+        const announcement = document.createElement('div');
+        announcement.className = 'starter-announcement';
+        announcement.innerHTML = '<div class="starter-announcement-text">¡' + starterName + ' INICIA!</div>';
+        document.body.appendChild(announcement);
+
+        // Mantener visible el starter info durante toda la ronda
+        const starterInfo = document.getElementById('starter-info');
+        if (starterInfo) {
+                    starterInfo.textContent = 'Turno: ' + starterName;
+                    starterInfo.style.display = 'block';
+        }
+
+        // Remover anuncio después de 3 segundos y empezar timer
+        setTimeout(function() {
+                    announcement.remove();
+                    startTimer(msg.time);
+        }, 3000);
+};
+
+// Sobreescribir showResults para mostrar "Has sido expulsado" y avatares
+const originalShowResults = showResults;
+showResults = function(msg) {
+        clearAllTimers();
+        G.votes = msg.votes;
+        G.scores = msg.scores || G.scores;
+        G.activePlayers = msg.activePlayers;
+        G.impostors = msg.impostors;
+        if (msg.eliminatedId && !G.eliminated.includes(msg.eliminatedId)) G.eliminated.push(msg.eliminatedId);
+
+        // Si el jugador fue eliminado, mostrar primero "Has sido expulsado"
+        if (msg.eliminatedId === G.myId) {
+                    G.isSpectator = true;
+                    G.fullRoles = msg.fullRoles || G.fullRoles;
+
+                    // Mostrar mensaje de expulsión prominente
+                    const spectatorStatus = document.getElementById('spectator-status');
+                    if (spectatorStatus) {
+                                    spectatorStatus.innerHTML = '<div class="kicked-message"><h2>¡HAS SIDO EXPULSADO!</h2><p>Eras ' + msg.eliminatedRole + '</p></div>';
+                    }
+                    showScreen('screen-spectator');
+
+                    // Después de 3 segundos, cambiar a modo espectador normal
+                    setTimeout(function() {
+                                    if (spectatorStatus) spectatorStatus.textContent = 'Modo Espectador - Eras ' + msg.eliminatedRole;
+                                    updateSpectatorRoles();
+                    }, 3000);
+
+                    if (G.isHost) {
+                                    document.getElementById('btn-spectator-next').style.display = 'block';
+                                    document.getElementById('btn-spectator-lobby').style.display = 'block';
+                    }
+                    return;
+        }
+
+        if (G.isSpectator) {
+                    document.getElementById('spectator-status').textContent = msg.isTie ? 'Empate' : msg.eliminatedName + ' eliminado';
+                    updateSpectatorRoles();
+                    if (G.isHost) document.getElementById('btn-spectator-next').style.display = 'block';
+                    return;
+        }
+
+        showScreen('screen-results');
+        G.gamePhase = 'results';
+
+        // Resultados con avatares y marcos
+        const resultsList = document.getElementById('results-list');
+        if (resultsList) {
+                    const voteEntries = Object.entries(msg.votes);
+                    const maxVotes = voteEntries.length > 0 ? Math.max(...Object.values(msg.votes), 1) : 1;
+                    resultsList.innerHTML = voteEntries.map(function([id, count]) {
+                                    return '<div class="result-item"><div class="result-avatar">' + renderPlayerAvatar(id, 40) + '</div><div class="result-info"><span class="result-name">' + (G.players[id]?.name || id) + '</span></div><span class="result-votes">' + count + '</span></div>';
+                    }).join('');
+        }
+
+        // Caja de eliminado centrada con icono de rol
+        const elimBox = document.getElementById('eliminated-box');
+        if (elimBox) {
+                    if (msg.isTie) {
+                                    elimBox.innerHTML = '<div class="eliminated-icon"><img src="' + ICONS.tie + '" alt="" class="eliminated-icon-img"></div><div class="eliminated-name">EMPATE</div><div class="eliminated-role">Nadie fue eliminado</div>';
+                    } else {
+                                    const iconSrc = msg.eliminatedRole === 'INFILTRADO' ? ICONS.impostor : msg.eliminatedRole === 'CHARLATÁN' ? ICONS.charlatan : ICONS.citizen;
+                                    elimBox.innerHTML = '<div class="eliminated-icon"><img src="' + iconSrc + '" alt="" class="eliminated-icon-img"></div><div class="eliminated-name">' + msg.eliminatedName + ' ha sido expulsado</div><div class="eliminated-role"><img src="' + iconSrc + '" class="eliminated-role-icon"> Era ' + msg.eliminatedRole + '</div>';
+                    }
+        }
+
+        const btnNext = document.getElementById('btn-next-round');
+        if (btnNext) {
+                    btnNext.style.display = 'none';
+                    btnNext.disabled = false;
+        }
+        document.getElementById('btn-back-lobby').style.display = 'none';
+
+        if (G.isHost) setTimeout(function() { if (btnNext) btnNext.style.display = 'block'; }, RESULT_DISPLAY_TIME);
+};
+
+// Sobreescribir handleGameOver para mejorar pantalla final
+const originalHandleGameOver = handleGameOver;
+handleGameOver = function(msg) {
+        clearAllTimers();
+        G.gamePhase = 'gameover';
+        G.scores = msg.scores || G.scores;
+        G.fullRoles = msg.roles || G.fullRoles;
+
+        showScreen('screen-gameover');
+
+        // Título grande y centrado
+        const title = document.getElementById('gameover-title');
+        if (title) {
+                    title.className = 'gameover-title';
+                    title.textContent = '¡' + msg.winner + ' GANAN!';
+        }
+
+        const reason = document.getElementById('gameover-reason');
+        if (reason) {
+                    reason.className = 'gameover-reason';
+                    reason.textContent = msg.reason;
+        }
+
+        // Icono grande
+        const icon = document.getElementById('gameover-icon');
+        if (icon) {
+                    icon.className = 'gameover-icon-img';
+                    icon.src = msg.winner === 'INFILTRADOS' ? ICONS.impostor : ICONS.celebrate;
+        }
+
+        // Lista de puntuación ordenada con avatares y medallas
+        const scoresList = document.getElementById('final-scores');
+        if (scoresList) {
+                    const sorted = Object.entries(G.scores).sort((a, b) => b[1] - a[1]);
+                    scoresList.innerHTML = sorted.map(function([id, score], idx) {
+                                    const p = G.players[id];
+                                    const role = G.fullRoles[id];
+
+                                    let medalHtml = '';
+                                    if (idx === 0) medalHtml = '<img src="' + ICONS.medalGold + '" alt="1">';
+                                    else if (idx === 1) medalHtml = '<img src="' + ICONS.medalSilver + '" alt="2">';
+                                    else if (idx === 2) medalHtml = '<img src="' + ICONS.medalBronze + '" alt="3">';
+                                    else medalHtml = '<span>' + (idx + 1) + '</span>';
+
+                                    return '<div class="score-item"><div class="score-rank">' + medalHtml + '</div><div class="player-avatar">' + renderPlayerAvatar(id, 40) + '</div><div class="score-info"><div class="score-name">' + (p?.name || id) + '</div><div class="score-role">' + (role?.role || '') + '</div></div><div class="score-points">' + score + '</div></div>';
+                    }).join('');
+        }
+};
+
+console.log('INFILTRA v0.9.9.0 - Fixes aplicados');
