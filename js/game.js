@@ -436,8 +436,8 @@ function showConfigScreen() {
 function initPubNub() {
     if (G.pubnub) return;
     G.pubnub = new PubNub({
-        publishKey: 'pub-c-...', // Agrega tus keys si es necesario
-        subscribeKey: 'sub-c-...',
+        publishKey: 'pub-c-bd83ef12-a0c7-4330-bfc6-5a8436f957d4',
+        subscribeKey: 'sub-c-84e92f70-a06c-48bc-8672-4b75dfe6f460',
         uuid: G.myId
     });
     G.pubnub.addListener({
