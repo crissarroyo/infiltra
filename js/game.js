@@ -436,8 +436,8 @@ function showConfigScreen() {
 function initPubNub() {
     if (G.pubnub) return;
     G.pubnub = new PubNub({
-        publishKey: 'pub-c-bd83ef12-a0c7-4330-bfc6-5a8436f957d4',
-        subscribeKey: 'sub-c-84e92f70-a06c-48bc-8672-4b75dfe6f460',
+        publishKey: 'demo',
+        subscribeKey: 'demo',
         uuid: G.myId
     });
     G.pubnub.addListener({
@@ -531,7 +531,7 @@ function generateQR() {
     if (!qr) return;
     qr.innerHTML = '';
     const qrcode = new QRCode(qr, {
-        text: window.location.origin + '/game.html?code=' + G.channel.split('-')[1],
+        text: 'https://crissarroyo.github.io/infiltra/game.html?code=' + G.channel.split('-')[1],
         width: 128,
         height: 128,
         colorDark : "#0a0a0f",
