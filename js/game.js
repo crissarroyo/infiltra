@@ -1,6 +1,6 @@
 /**
  * INFILTRA - Game Logic v0.9.8.7
- * Fix: Selección por defecto de avatar y marco, palomita negra
+ * Fix: Selección por defecto de avatar y marco, palomita negra, bug botón ayuda
  */
 
 const ICONS = {
@@ -141,7 +141,7 @@ function loadProfile() {
         if (input) input.value = name;
         G.playerName = name;
     }
-    // Si no hay avatar/frame guardado, usar el primero por defecto
+    // FIX: Si no hay avatar/frame guardado, usar el primero por defecto
     if (avatar && AVATARS.find(a => a.id === avatar)) {
         G.avatar = avatar;
     } else {
@@ -185,7 +185,7 @@ function initAvatars() {
     if (!grid) return;
     grid.innerHTML = '';
     
-    // Asegurar que siempre haya un avatar seleccionado
+    // FIX: Asegurar que siempre haya un avatar seleccionado
     if (!G.avatar || !AVATARS.find(a => a.id === G.avatar)) {
         G.avatar = AVATARS[0].id;
     }
@@ -210,7 +210,7 @@ function initFrames() {
     if (!grid) return;
     grid.innerHTML = '';
     
-    // Asegurar que siempre haya un marco seleccionado
+    // FIX: Asegurar que siempre haya un marco seleccionado
     if (!G.frame || !FRAMES.find(f => f.id === G.frame)) {
         G.frame = FRAMES[0].id;
     }
