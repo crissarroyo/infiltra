@@ -1240,3 +1240,496 @@ p {
         height: 50px;
     }
 }
+
+/* ========================================
+   INFILTRA - Fixes v0.9.9.0
+   Correcciones de UI/UX
+   ======================================== */
+
+/* ----------------------------------------
+   FIX: Header con fondo fijo (como landing)
+   ---------------------------------------- */
+.main-header {
+       background: rgba(10, 10, 15, 0.95);
+       backdrop-filter: blur(10px);
+       border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+/* ----------------------------------------
+   FIX: Avatar images - object-fit contain
+   ---------------------------------------- */
+.avatar-option img {
+       width: 100%;
+       height: 100%;
+       object-fit: contain;
+       border-radius: var(--radius-md);
+}
+
+/* ----------------------------------------
+   FIX: QR centrado con instrucciones
+   ---------------------------------------- */
+.qr-container {
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       justify-content: center;
+       text-align: center;
+       margin-bottom: var(--space-lg);
+       padding: var(--space-lg);
+       background: var(--color-bg-secondary);
+       border-radius: var(--radius-lg);
+}
+
+.qr-container img {
+       border-radius: var(--radius-md);
+       background: white;
+       padding: var(--space-sm);
+       margin-bottom: var(--space-md);
+}
+
+.qr-instructions {
+       color: var(--color-text-secondary);
+       font-size: 0.875rem;
+       margin-top: var(--space-sm);
+}
+
+/* ----------------------------------------
+   FIX: Player list con puntos ordenados
+   ---------------------------------------- */
+.player-list-header {
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       margin-bottom: var(--space-md);
+       padding-bottom: var(--space-sm);
+       border-bottom: 1px solid var(--color-steel-dark);
+}
+
+.player-list-header h3 {
+       font-size: 1rem;
+       color: var(--color-text-muted);
+       text-transform: uppercase;
+       letter-spacing: 0.05em;
+}
+
+.score-header {
+       font-size: 0.75rem;
+       color: var(--color-accent-gold);
+       text-transform: uppercase;
+       letter-spacing: 0.05em;
+}
+
+.player-item {
+       display: flex;
+       align-items: center;
+       gap: var(--space-md);
+       padding: var(--space-md);
+       background: var(--color-bg-secondary);
+       border-radius: var(--radius-md);
+       transition: all var(--transition-fast);
+}
+
+.player-medal {
+       width: 24px;
+       height: 24px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       flex-shrink: 0;
+}
+
+.player-medal img {
+       width: 100%;
+       height: 100%;
+       object-fit: contain;
+}
+
+.player-medal-rank {
+       font-family: var(--font-display);
+       font-size: 0.875rem;
+       color: var(--color-text-muted);
+}
+
+.player-score {
+       font-family: var(--font-display);
+       font-size: 1.25rem;
+       color: var(--color-accent-gold);
+       text-align: right;
+       min-width: 50px;
+}
+
+/* ----------------------------------------
+   FIX: Botón Kick con icono
+   ---------------------------------------- */
+.btn-kick {
+       width: 32px;
+       height: 32px;
+       padding: 0;
+       background: rgba(139, 38, 53, 0.2);
+       border: 1px solid var(--color-danger);
+       border-radius: var(--radius-md);
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       cursor: pointer;
+       transition: all var(--transition-fast);
+       flex-shrink: 0;
+}
+
+.btn-kick:hover {
+       background: var(--color-danger);
+       transform: scale(1.1);
+}
+
+.btn-kick img {
+       width: 18px;
+       height: 18px;
+       object-fit: contain;
+}
+
+/* ----------------------------------------
+   FIX: Starter info más visible y persistente
+   ---------------------------------------- */
+.starter-info {
+       position: fixed;
+       top: 80px;
+       left: var(--space-lg);
+       background: var(--color-accent-gold);
+       color: var(--color-bg-primary);
+       padding: var(--space-sm) var(--space-lg);
+       border-radius: var(--radius-full);
+       font-weight: 600;
+       font-size: 0.875rem;
+       z-index: var(--z-sticky);
+       box-shadow: var(--shadow-gold);
+       animation: starterPulse 2s ease-in-out infinite;
+}
+
+@keyframes starterPulse {
+       0%, 100% { transform: scale(1); }
+       50% { transform: scale(1.05); }
+}
+
+.starter-announcement {
+       position: fixed;
+       top: 0;
+       left: 0;
+       right: 0;
+       bottom: 0;
+       background: rgba(10, 10, 15, 0.9);
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       justify-content: center;
+       z-index: var(--z-modal);
+       animation: fadeIn var(--transition-normal);
+}
+
+.starter-announcement-text {
+       font-family: var(--font-display);
+       font-size: clamp(2rem, 8vw, 4rem);
+       color: var(--color-accent-gold);
+       text-align: center;
+       animation: announcePop 0.5s ease-out;
+}
+
+@keyframes announcePop {
+       0% { transform: scale(0.5); opacity: 0; }
+       100% { transform: scale(1); opacity: 1; }
+}
+
+/* ----------------------------------------
+   FIX: Mensaje "Has sido expulsado"
+   ---------------------------------------- */
+.kicked-message {
+       text-align: center;
+       padding: var(--space-2xl);
+       background: rgba(139, 38, 53, 0.2);
+       border: 2px solid var(--color-danger);
+       border-radius: var(--radius-lg);
+       margin-bottom: var(--space-xl);
+}
+
+.kicked-message h2 {
+       color: var(--color-danger-light);
+       font-size: 2rem;
+       margin-bottom: var(--space-md);
+}
+
+.kicked-message p {
+       color: var(--color-text-secondary);
+}
+
+/* ----------------------------------------
+   FIX: Resultados de votación con avatares
+   ---------------------------------------- */
+.result-item {
+       display: flex;
+       align-items: center;
+       gap: var(--space-md);
+       background: var(--color-bg-secondary);
+       border-radius: var(--radius-md);
+       padding: var(--space-md);
+       margin-bottom: var(--space-sm);
+}
+
+.result-avatar {
+       width: 40px;
+       height: 40px;
+       border-radius: 50%;
+       overflow: hidden;
+       flex-shrink: 0;
+}
+
+.result-avatar img {
+       width: 100%;
+       height: 100%;
+       object-fit: cover;
+}
+
+.result-info {
+       flex: 1;
+}
+
+.result-name {
+       font-weight: 500;
+       color: var(--color-text-primary);
+}
+
+.result-votes {
+       font-family: var(--font-display);
+       color: var(--color-accent-gold);
+       font-size: 1.25rem;
+       text-align: right;
+       min-width: 60px;
+}
+
+/* ----------------------------------------
+   FIX: Eliminated box centrado con icono
+   ---------------------------------------- */
+.eliminated-box {
+       text-align: center;
+       padding: var(--space-xl);
+       background: var(--color-bg-secondary);
+       border-radius: var(--radius-lg);
+       margin-top: var(--space-lg);
+}
+
+.eliminated-icon {
+       width: 80px;
+       height: 80px;
+       margin: 0 auto var(--space-md);
+}
+
+.eliminated-icon-img {
+       width: 100%;
+       height: 100%;
+       object-fit: contain;
+}
+
+.eliminated-name {
+       font-family: var(--font-display);
+       font-size: 1.75rem;
+       color: var(--color-text-primary);
+       margin-bottom: var(--space-sm);
+}
+
+.eliminated-role {
+       font-size: 1rem;
+       color: var(--color-text-secondary);
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       gap: var(--space-sm);
+}
+
+.eliminated-role-icon {
+       width: 24px;
+       height: 24px;
+}
+
+/* ----------------------------------------
+   FIX: Lista de jugadores durante rondas
+   ---------------------------------------- */
+.round-players-sidebar {
+       position: fixed;
+       top: 80px;
+       left: var(--space-md);
+       width: 200px;
+       background: var(--color-bg-card);
+       border: 1px solid var(--color-steel-dark);
+       border-radius: var(--radius-lg);
+       padding: var(--space-md);
+       z-index: var(--z-sticky);
+       max-height: calc(100vh - 120px);
+       overflow-y: auto;
+}
+
+.round-players-sidebar h4 {
+       font-size: 0.75rem;
+       color: var(--color-text-muted);
+       text-transform: uppercase;
+       letter-spacing: 0.05em;
+       margin-bottom: var(--space-sm);
+       padding-bottom: var(--space-xs);
+       border-bottom: 1px solid var(--color-steel-dark);
+}
+
+.round-player-item {
+       display: flex;
+       align-items: center;
+       gap: var(--space-sm);
+       padding: var(--space-xs) 0;
+       font-size: 0.875rem;
+}
+
+.round-player-item.eliminated {
+       opacity: 0.4;
+       filter: grayscale(100%);
+}
+
+.round-player-avatar {
+       width: 28px;
+       height: 28px;
+       border-radius: 50%;
+       overflow: hidden;
+}
+
+.round-player-avatar img {
+       width: 100%;
+       height: 100%;
+       object-fit: cover;
+}
+
+.round-player-name {
+       flex: 1;
+       overflow: hidden;
+       text-overflow: ellipsis;
+       white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+       .round-players-sidebar {
+                  display: none;
+       }
+}
+
+/* ----------------------------------------
+   FIX: Botones del host diferenciados
+   ---------------------------------------- */
+.btn-start-round {
+       background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-light) 100%);
+       color: var(--color-text-primary);
+       border: 2px solid var(--color-success-light);
+       position: relative;
+       overflow: hidden;
+}
+
+.btn-start-round::after {
+       content: '▶';
+       margin-left: var(--space-sm);
+}
+
+.btn-start-round:hover {
+       box-shadow: 0 0 20px rgba(35, 140, 78, 0.5);
+       transform: translateY(-3px);
+}
+
+.btn-next-round {
+       background: linear-gradient(135deg, var(--color-accent-gold-dark) 0%, var(--color-accent-gold) 100%);
+       color: var(--color-bg-primary);
+       border: 2px solid var(--color-accent-gold);
+}
+
+.btn-next-round::after {
+       content: '→';
+       margin-left: var(--space-sm);
+}
+
+.btn-next-round:hover {
+       box-shadow: var(--shadow-gold);
+       transform: translateY(-3px);
+}
+
+/* ----------------------------------------
+   FIX: Pantalla de ganador mejorada
+   ---------------------------------------- */
+.gameover-winner {
+       text-align: center;
+       margin-bottom: var(--space-2xl);
+}
+
+.gameover-icon-img {
+       width: 100px;
+       height: 100px;
+       object-fit: contain;
+       margin: 0 auto var(--space-lg);
+}
+
+.gameover-title {
+       font-family: var(--font-display);
+       font-size: clamp(2rem, 8vw, 3.5rem);
+       color: var(--color-accent-gold);
+       text-shadow: var(--shadow-gold);
+       margin-bottom: var(--space-md);
+}
+
+.gameover-reason {
+       font-size: 1.125rem;
+       color: var(--color-text-secondary);
+}
+
+.score-item {
+       display: flex;
+       align-items: center;
+       gap: var(--space-md);
+       padding: var(--space-md);
+       background: var(--color-bg-secondary);
+       border-radius: var(--radius-md);
+       margin-bottom: var(--space-sm);
+}
+
+.score-rank {
+       width: 32px;
+       height: 32px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       flex-shrink: 0;
+}
+
+.score-rank img {
+       width: 100%;
+       height: 100%;
+       object-fit: contain;
+}
+
+.score-info {
+       flex: 1;
+}
+
+.score-name {
+       font-weight: 600;
+       color: var(--color-text-primary);
+}
+
+.score-role {
+       font-size: 0.75rem;
+       color: var(--color-text-muted);
+       text-transform: uppercase;
+}
+
+.score-points {
+       font-family: var(--font-display);
+       font-size: 1.5rem;
+       color: var(--color-accent-gold);
+       text-align: right;
+}
+
+/* ----------------------------------------
+   FIX: Mejor click area para botones
+   ---------------------------------------- */
+.btn {
+       min-height: 48px;
+       padding: var(--space-md) var(--space-lg);
+}
