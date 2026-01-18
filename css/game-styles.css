@@ -1,83 +1,20 @@
 /**
- * INFILTRA - Game Styles v0.9.8.7
- * CORREGIDO: Paleta unificada con landing page
- * FIX: Logo consistente, palomita negra, selección mejorada
+ * INFILTRA - Game Styles v0.9.8.8
+ * Header EXACTO de landing page
  */
 
-/* ============================================
-   VARIABLES - PALETA EXACTA DE LANDING PAGE
-   ============================================ */
 :root {
-    /* FONDOS - Mismo que landing */
     --color-bg-primary: #0a0a0f;
     --color-bg-secondary: #12121a;
     --color-bg-card: #1a1a24;
-    --color-bg-elevated: #22222e;
-    
-    /* ACENTOS - Mismo que landing */
-    --color-accent-gold: #c9a227;
-    --color-accent-gold-light: #d4b445;
-    --color-accent-gold-dark: #a68620;
-    
-    /* SECUNDARIOS - Mismo que landing */
-    --color-steel: #4a5568;
-    --color-steel-light: #6b7a8f;
-    --color-steel-dark: #2d3748;
-    
-    /* TEXTO - Mismo que landing */
     --color-text-primary: #e8e8e8;
     --color-text-secondary: #a0a0a0;
     --color-text-muted: #6b6b6b;
-    
-    /* ESTADOS - Mismo que landing */
-    --color-danger: #8b2635;
-    --color-danger-light: #a63344;
-    --color-success: #1a5d3a;
-    --color-success-light: #238c4e;
-    --color-warning: #c9a227;
-    --color-info: #2563eb;
-    
-    /* ROLES */
-    --color-citizen: #3b82f6;
-    --color-impostor: #8b2635;
-    --color-charlatan: #7c3aed;
-    
-    /* TIPOGRAFÍA - Mismo que landing */
     --font-display: 'Bebas Neue', sans-serif;
     --font-body: 'Source Sans 3', system-ui, sans-serif;
-    
-    /* ESPACIADO */
-    --space-xs: 0.25rem;
-    --space-sm: 0.5rem;
-    --space-md: 1rem;
-    --space-lg: 1.5rem;
-    --space-xl: 2rem;
-    --space-2xl: 3rem;
-    --space-3xl: 4rem;
-    
-    /* BORDES */
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
-    --radius-full: 9999px;
-    
-    /* SOMBRAS */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
-    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
-    --shadow-gold: 0 0 20px rgba(201, 162, 39, 0.3);
-    
-    /* TRANSICIONES */
-    --transition-fast: 150ms ease;
     --transition-normal: 250ms ease;
-    --transition-slow: 400ms ease;
 }
 
-/* ============================================
-   RESET Y BASE
-   ============================================ */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -98,10 +35,6 @@ body {
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-body.menu-open {
-    overflow: hidden;
 }
 
 a {
@@ -126,9 +59,7 @@ ul, ol {
     list-style: none;
 }
 
-/* ============================================
-   PARTÍCULAS DE FONDO
-   ============================================ */
+/* PARTÍCULAS */
 .particles-bg {
     position: fixed;
     top: 0;
@@ -158,9 +89,6 @@ ul, ol {
     100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
 }
 
-/* ============================================
-   ESTRUCTURA PRINCIPAL
-   ============================================ */
 .game-wrapper {
     position: relative;
     z-index: 1;
@@ -169,36 +97,33 @@ ul, ol {
     flex-direction: column;
 }
 
-/* ============================================
-   HEADER UNIFICADO - LANDING Y GAME
-   ============================================ */
+/* HEADER - EXACTO DE LANDING */
 .main-header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 300;
-    padding: 1.5rem 2rem;
+    padding: 1rem 2rem;
     background: rgba(10, 10, 15, 0.95);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+    transition: all 250ms ease;
 }
 
-/* Para game page (solo logo + controles) */
 .header-content {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
 }
 
-/* LOGO - EXACTO COMO LANDING PAGE */
 .logo {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     text-decoration: none;
-    color: var(--color-text-primary);
-    transition: var(--transition-normal);
+    color: #e8e8e8;
+    transition: all 250ms ease;
 }
 
 .logo:hover {
@@ -212,7 +137,7 @@ ul, ol {
 }
 
 .logo-text {
-    font-family: var(--font-display);
+    font-family: 'Bebas Neue', sans-serif;
     font-size: 2rem;
     letter-spacing: 2px;
     background: linear-gradient(135deg, #6366f1, #ec4899);
@@ -236,7 +161,7 @@ ul, ol {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: var(--transition-normal);
+    transition: 250ms ease;
     border: 1px solid rgba(99, 102, 241, 0.2);
 }
 
@@ -262,22 +187,17 @@ ul, ol {
     filter: brightness(0) invert(1);
 }
 
-/* ============================================
-   CONTENEDOR PRINCIPAL
-   ============================================ */
+/* CONT PRINCIPAL */
 .game-container {
     flex: 1;
     padding: 2rem;
-    padding-top: calc(2rem + 76px); /* Compensar header fijo */
+    padding-top: calc(2rem + 76px);
     display: flex;
     justify-content: center;
     align-items: flex-start;
     overflow-y: auto;
 }
 
-/* ============================================
-   PANTALLAS
-   ============================================ */
 .screen {
     display: none;
     width: 100%;
@@ -300,9 +220,6 @@ ul, ol {
     }
 }
 
-/* ============================================
-   CARD - Mismo estilo que landing
-   ============================================ */
 .game-card {
     background: rgba(26, 26, 36, 0.8);
     backdrop-filter: blur(20px);
@@ -333,9 +250,7 @@ ul, ol {
     font-size: 1rem;
 }
 
-/* ============================================
-   BOTONES UNIFICADOS
-   ============================================ */
+/* BOTONES */
 .btn {
     width: 100%;
     padding: 1rem 1.5rem;
@@ -345,14 +260,14 @@ ul, ol {
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: var(--transition-normal);
+    transition: 250ms ease;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
     position: relative;
     overflow: hidden;
 }
@@ -374,7 +289,7 @@ ul, ol {
 
 .btn:hover {
     transform: translateY(-3px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
 }
 
 .btn:active {
@@ -407,26 +322,14 @@ ul, ol {
     color: white;
 }
 
-.btn-secondary:hover {
-    box-shadow: 0 8px 32px rgba(71, 85, 105, 0.4);
-}
-
 .btn-success {
     background: linear-gradient(135deg, #10b981, #059669);
     color: white;
 }
 
-.btn-success:hover {
-    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.4);
-}
-
 .btn-danger {
     background: linear-gradient(135deg, #ef4444, #dc2626);
     color: white;
-}
-
-.btn-danger:hover {
-    box-shadow: 0 8px 32px rgba(239, 68, 68, 0.4);
 }
 
 .btn-group {
@@ -436,9 +339,7 @@ ul, ol {
     margin-top: 1.5rem;
 }
 
-/* ============================================
-   FORMULARIOS
-   ============================================ */
+/* FORMULARIOS */
 .form-group {
     margin-bottom: 1.5rem;
 }
@@ -463,7 +364,7 @@ ul, ol {
     color: var(--color-text-primary);
     font-family: var(--font-body);
     font-size: 1rem;
-    transition: var(--transition-normal);
+    transition: 250ms ease;
 }
 
 .form-input:focus,
@@ -491,9 +392,7 @@ ul, ol {
     gap: 1rem;
 }
 
-/* ============================================
-   PERFIL PREVIEW
-   ============================================ */
+/* PERFIL PREVIEW */
 .profile-preview {
     display: flex;
     flex-direction: column;
@@ -537,9 +436,7 @@ ul, ol {
     color: var(--color-text-primary);
 }
 
-/* ============================================
-   AVATARES - FIX: Palomita negra circular
-   ============================================ */
+/* AVATARES */
 .avatar-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
@@ -553,7 +450,7 @@ ul, ol {
     position: relative;
     aspect-ratio: 1;
     cursor: pointer;
-    transition: var(--transition-normal);
+    transition: 250ms ease;
     border-radius: 50%;
     overflow: hidden;
     background: rgba(15, 23, 42, 0.5);
@@ -572,7 +469,6 @@ ul, ol {
     border-color: #6366f1;
 }
 
-/* PALOMITA NEGRA EN CÍRCULO AMARILLO */
 .avatar-check {
     position: absolute;
     top: -8px;
@@ -603,9 +499,7 @@ ul, ol {
     display: flex;
 }
 
-/* ============================================
-   MARCOS - FIX: Palomita negra circular
-   ============================================ */
+/* MARCOS */
 .frame-grid-new {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
@@ -618,7 +512,7 @@ ul, ol {
 .frame-option-new {
     position: relative;
     cursor: pointer;
-    transition: var(--transition-normal);
+    transition: 250ms ease;
     padding: 0.5rem;
     background: rgba(15, 23, 42, 0.5);
     border-radius: 12px;
@@ -655,7 +549,6 @@ ul, ol {
     object-fit: contain;
 }
 
-/* PALOMITA NEGRA EN CÍRCULO AMARILLO - CÍRCULO PERFECTO */
 .frame-check {
     position: absolute;
     top: -6px;
@@ -691,9 +584,7 @@ ul, ol {
     opacity: 0.7;
 }
 
-/* ============================================
-   CATEGORÍAS
-   ============================================ */
+/* CATEGORÍAS */
 .categories-box {
     background: rgba(15, 23, 42, 0.3);
     border-radius: 12px;
@@ -727,7 +618,7 @@ ul, ol {
     color: var(--color-text-primary);
     font-size: 0.875rem;
     cursor: pointer;
-    transition: var(--transition-normal);
+    transition: 250ms ease;
 }
 
 .categories-actions button:hover {
@@ -747,7 +638,7 @@ ul, ol {
     padding: 0.5rem;
     background: rgba(15, 23, 42, 0.5);
     border-radius: 8px;
-    transition: var(--transition-normal);
+    transition: 250ms ease;
 }
 
 .category-item:hover {
@@ -767,9 +658,7 @@ ul, ol {
     color: var(--color-text-primary);
 }
 
-/* ============================================
-   DIVIDER
-   ============================================ */
+/* DIVIDER */
 .divider {
     position: relative;
     text-align: center;
@@ -796,9 +685,7 @@ ul, ol {
     letter-spacing: 1px;
 }
 
-/* ============================================
-   CÓDIGO DE SALA
-   ============================================ */
+/* CÓDIGO SALA */
 .room-code-box {
     text-align: center;
     padding: 2rem;
@@ -825,9 +712,7 @@ ul, ol {
     letter-spacing: 1px;
 }
 
-/* ============================================
-   QR CODE
-   ============================================ */
+/* QR */
 .qr-container {
     display: flex;
     justify-content: center;
@@ -843,9 +728,7 @@ ul, ol {
     height: auto;
 }
 
-/* ============================================
-   LISTA DE JUGADORES
-   ============================================ */
+/* JUGADORES */
 .player-list-box {
     background: rgba(15, 23, 42, 0.3);
     border-radius: 12px;
@@ -889,7 +772,7 @@ ul, ol {
     padding: 0.875rem;
     background: rgba(15, 23, 42, 0.5);
     border-radius: 12px;
-    transition: var(--transition-normal);
+    transition: 250ms ease;
 }
 
 .player-item:hover {
@@ -938,7 +821,7 @@ ul, ol {
     border: 1px solid rgba(239, 68, 68, 0.2);
     border-radius: 8px;
     cursor: pointer;
-    transition: var(--transition-normal);
+    transition: 250ms ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -955,9 +838,7 @@ ul, ol {
     filter: brightness(0) invert(1);
 }
 
-/* ============================================
-   ROL
-   ============================================ */
+/* ROL */
 .starter-info {
     text-align: center;
     padding: 1rem;
@@ -987,11 +868,10 @@ ul, ol {
     align-items: center;
     justify-content: center;
     gap: 1.5rem;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
     border: 2px solid rgba(255, 255, 255, 0.1);
-    transition: var(--transition-normal);
+    transition: 250ms ease;
     cursor: pointer;
-    position: relative;
 }
 
 .role-card.blurred {
@@ -1057,9 +937,7 @@ ul, ol {
     justify-content: center;
 }
 
-/* ============================================
-   PUNTOS
-   ============================================ */
+/* PUNTOS */
 .points-box {
     background: rgba(15, 23, 42, 0.5);
     border-radius: 12px;
@@ -1107,9 +985,7 @@ ul, ol {
     color: #ef4444;
 }
 
-/* ============================================
-   TIMER
-   ============================================ */
+/* TIMER */
 .timer {
     text-align: center;
     font-family: var(--font-display);
@@ -1144,9 +1020,7 @@ ul, ol {
     margin: 1.5rem 0;
 }
 
-/* ============================================
-   VOTACIÓN
-   ============================================ */
+/* VOTACIÓN */
 .voting-list {
     display: flex;
     flex-direction: column;
@@ -1163,7 +1037,7 @@ ul, ol {
     padding: 1rem;
     background: rgba(15, 23, 42, 0.5);
     border-radius: 12px;
-    transition: var(--transition-normal);
+    transition: 250ms ease;
 }
 
 .vote-item:hover {
@@ -1178,7 +1052,7 @@ ul, ol {
     color: white;
     font-weight: 600;
     cursor: pointer;
-    transition: var(--transition-normal);
+    transition: 250ms ease;
     white-space: nowrap;
 }
 
@@ -1194,9 +1068,7 @@ ul, ol {
     transform: none;
 }
 
-/* ============================================
-   RESULTADOS
-   ============================================ */
+/* RESULTADOS */
 .results-list {
     display: flex;
     flex-direction: column;
@@ -1275,9 +1147,7 @@ ul, ol {
     color: var(--color-text-secondary);
 }
 
-/* ============================================
-   GAME OVER
-   ============================================ */
+/* GAME OVER */
 .gameover-icon-img {
     width: 100px;
     height: 100px;
@@ -1332,9 +1202,7 @@ ul, ol {
     color: #6366f1;
 }
 
-/* ============================================
-   AYUDA
-   ============================================ */
+/* AYUDA */
 .help-content {
     display: flex;
     flex-direction: column;
@@ -1352,9 +1220,7 @@ ul, ol {
     color: #6366f1;
 }
 
-/* ============================================
-   TOAST
-   ============================================ */
+/* TOAST */
 .toast-container {
     position: fixed;
     top: 100px;
@@ -1372,7 +1238,7 @@ ul, ol {
     border-radius: 12px;
     color: white;
     font-weight: 500;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
     animation: slideIn 0.3s ease-out;
     border-left: 4px solid #6366f1;
 }
@@ -1396,11 +1262,9 @@ ul, ol {
     }
 }
 
-/* ============================================
-   RESPONSIVE - MÓVIL
-   ============================================ */
+/* RESPONSIVE */
 @media (max-width: 768px) {
-    .game-header {
+    .main-header {
         padding: 1rem;
     }
     
@@ -1430,49 +1294,19 @@ ul, ol {
     
     .game-card {
         padding: 1.5rem;
-        border-radius: 20px;
     }
     
     .card-header h1 {
         font-size: 2rem;
     }
     
-    .card-header p {
-        font-size: 0.9rem;
-    }
-    
-    .btn {
-        padding: 0.875rem 1.25rem;
-        font-size: 1rem;
-        border-radius: 12px;
-    }
-    
-    .btn-img {
-        width: 20px;
-        height: 20px;
-    }
-    
     .form-row {
         grid-template-columns: 1fr;
-    }
-    
-    .profile-preview {
-        padding: 1.25rem;
-    }
-    
-    .preview-avatar-wrapper {
-        width: 80px;
-        height: 80px;
-    }
-    
-    .preview-name {
-        font-size: 1.1rem;
     }
     
     .avatar-grid {
         grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
         gap: 0.75rem;
-        padding: 0.75rem;
     }
     
     .avatar-check {
@@ -1480,25 +1314,11 @@ ul, ol {
         height: 24px;
         min-width: 24px;
         min-height: 24px;
-        top: -6px;
-        right: -6px;
         font-size: 14px;
     }
     
     .frame-grid-new {
         grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-        gap: 0.75rem;
-        padding: 0.75rem;
-    }
-    
-    .frame-preview {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .frame-preview-img {
-        width: 32px;
-        height: 32px;
     }
     
     .frame-check {
@@ -1506,79 +1326,22 @@ ul, ol {
         height: 20px;
         min-width: 20px;
         min-height: 20px;
-        top: -4px;
-        right: -4px;
         font-size: 12px;
-    }
-    
-    .frame-lock {
-        width: 16px;
-        height: 16px;
     }
     
     .room-code {
         font-size: 2.5rem;
-        letter-spacing: 0.5rem;
-    }
-    
-    .qr-container img {
-        max-width: 150px;
-    }
-    
-    .categories-list {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    }
-    
-    .role-card {
-        max-width: 300px;
-        padding: 1.5rem;
-    }
-    
-    .role-icon {
-        width: 100px;
-        height: 100px;
-    }
-    
-    .role-title {
-        font-size: 2rem;
-    }
-    
-    .role-word {
-        font-size: 1.25rem;
-        padding: 0.625rem 1.25rem;
     }
     
     .timer {
         font-size: 3rem;
-        letter-spacing: 0.25rem;
-        padding: 1.25rem;
-    }
-    
-    .toast-container {
-        right: 1rem;
-        left: 1rem;
-        top: 80px;
-    }
-    
-    .toast {
-        padding: 0.875rem 1.25rem;
-        font-size: 0.9rem;
     }
 }
 
 @media (max-width: 480px) {
-    .card-header h1 {
-        font-size: 1.75rem;
-    }
-    
     .logo-icon-img {
         width: 28px;
         height: 28px;
-    }
-    
-    .avatar-grid {
-        grid-template-columns: repeat(auto-fit, minmax(55px, 1fr));
-        gap: 0.625rem;
     }
     
     .avatar-check {
@@ -1589,11 +1352,6 @@ ul, ol {
         font-size: 12px;
     }
     
-    .frame-grid-new {
-        grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
-        gap: 0.625rem;
-    }
-    
     .frame-check {
         width: 18px;
         height: 18px;
@@ -1602,54 +1360,20 @@ ul, ol {
         font-size: 11px;
     }
     
-    .room-code {
-        font-size: 2rem;
-    }
-    
-    .role-title {
-        font-size: 1.75rem;
-    }
-    
     .timer {
         font-size: 2.5rem;
     }
 }
 
-/* ============================================
-   SCROLLBAR PERSONALIZADO
-   ============================================ */
 ::-webkit-scrollbar {
     width: 8px;
-    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
     background: rgba(15, 23, 42, 0.3);
-    border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
     background: rgba(99, 102, 241, 0.5);
     border-radius: 4px;
 }
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(99, 102, 241, 0.7);
-}
-
-/* ============================================
-   UTILIDADES
-   ============================================ */
-.text-center { text-align: center; }
-.text-primary { color: #6366f1; }
-.text-secondary { color: #ec4899; }
-.text-success { color: #10b981; }
-.text-danger { color: #ef4444; }
-.text-warning { color: #f59e0b; }
-
-.mt-1 { margin-top: 0.5rem; }
-.mt-2 { margin-top: 1rem; }
-.mt-3 { margin-top: 1.5rem; }
-.mb-1 { margin-bottom: 0.5rem; }
-.mb-2 { margin-bottom: 1rem; }
-.mb-3 { margin-bottom: 1.5rem; }
