@@ -530,12 +530,13 @@ p {
 }
 
 /* ----------------------------------------
-   Avatar & Frame Grids (FIX: Pequeños - 60px, con palomitas negras en círculos amarillos, grid fill para no espacio vacío)
+   Avatar & Frame Grids (FIX: Pequeños - 60px, con palomitas negras en círculos amarillos, grid center para no espacio vacío, uniform 100%)
    ---------------------------------------- */
 .avatar-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); /* FIX: auto-fill para llenar sin espacio invisible a la derecha */
     gap: var(--space-sm); /* Reducido gap para ajustar */
+    justify-content: center; /* FIX: Centra items para no elemento invisible derecho */
 }
 
 .avatar-option {
@@ -545,7 +546,7 @@ p {
 }
 
 .avatar-option img {
-    width: 60px; /* FIX: Pequeños */
+    width: 100%; /* FIX: 100% para uniformidad */
     height: 60px; /* FIX: Height fijo para uniformidad */
     object-fit: contain; /* FIX: Contain para ratios diferentes */
     border-radius: var(--radius-md);
@@ -566,9 +567,8 @@ p {
     align-items: center;
     justify-content: center;
     position: absolute;
-    bottom: 0; /* FIX: Ajuste position para alinear mejor */
-    right: 0;
-    transform: translate(50%, 50%); /* FIX: Centrado relativo para no off */
+    bottom: -4px; /* FIX: Ajuste position para alinear mejor */
+    right: -4px;
     width: 24px;
     height: 24px;
     background: var(--color-accent-gold); /* Círculo amarillo */
@@ -583,6 +583,7 @@ p {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); /* FIX: auto-fill para llenar sin espacio invisible */
     gap: var(--space-sm); /* Reducido gap */
+    justify-content: center; /* FIX: Centra para no vacío derecho */
 }
 
 .frame-option-new {
@@ -621,9 +622,8 @@ p {
     align-items: center;
     justify-content: center;
     position: absolute;
-    bottom: 0; /* FIX: Ajuste position */
-    right: 0;
-    transform: translate(50%, 50%); /* FIX: Centrado relativo */
+    bottom: -4px; /* FIX: Ajuste position */
+    right: -4px;
     width: 24px;
     height: 24px;
     background: var(--color-accent-gold); /* Círculo amarillo */
