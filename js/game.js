@@ -104,7 +104,7 @@ let G = {
     voteTimeout: null,
     spectatorTimerInterval: null,
     soundEnabled: true,
-    previousScreen: 'screen-home',
+    screenStack: [], // FIX: Stack real para evitar loops en botón ayuda
     roleRevealed: false,
     isFirstRound: true
 };
@@ -366,16 +366,20 @@ function bindEvents() {
     const btnLeaveSpec = document.getElementById('btn-leave-spectator');
     if (btnLeaveSpec) btnLeaveSpec.addEventListener('click', leaveRoom);
 
-    // Ayuda (FIX: Bug corregido - stack de previousScreen para evitar loops)
+    // Ayuda (FIX: Bug corregido con stack real)
     const btnHelp = document.getElementById('btn-help');
     if (btnHelp) btnHelp.addEventListener('click', function() {
-        G.previousScreen = document.querySelector('.screen.active').id; // Guardar stack
+        const current = document.querySelector('.screen.active').id;
+        if (current !== 'screen-help') { // Solo push si no estás ya en help
+            G.screenStack.push(current);
+        }
         showScreen('screen-help');
     });
 
     const btnHelpBack = document.getElementById('btn-help-back');
     if (btnHelpBack) btnHelpBack.addEventListener('click', function() {
-        showScreen(G.previousScreen || 'screen-home'); // Restaurar anterior
+        const previous = G.screenStack.pop() || 'screen-home';
+        showScreen(previous);
     });
 
     // Sonido
