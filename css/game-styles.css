@@ -321,23 +321,8 @@ p {
     padding: var(--space-xl);
     box-shadow: var(--shadow-lg);
     border: 1px solid rgba(201, 162, 39, 0.1); /* Gold border subtle */
-}
-
-.card-header {
-    text-align: center;
-    margin-bottom: var(--space-lg);
-}
-
-.card-header h1 {
-    font-size: clamp(2rem, 5vw, 3rem);
-    letter-spacing: 0.02em;
-    margin-bottom: var(--space-sm);
-    color: var(--color-text-primary); /* Unificado: sin gradient */
-}
-
-.card-header p {
-    color: var(--color-text-secondary);
-    font-size: 1rem;
+    max-width: 600px; /* FIX: Limita ancho en PC para no verse "extremadamente ancho" */
+    margin: 0 auto; /* Centrado */
 }
 
 /* ----------------------------------------
@@ -444,6 +429,29 @@ p {
     margin-top: var(--space-lg);
 }
 
+/* FIX: Mejor estilo para "o únete" - uppercase, gold, con líneas divisorias sutiles */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: var(--space-md) 0;
+    color: var(--color-accent-gold);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--color-accent-gold-dark);
+}
+
+.divider span {
+    padding: 0 var(--space-md);
+}
+
 /* ----------------------------------------
    Forms (Unificado con landing inputs, si aplica)
    ---------------------------------------- */
@@ -488,7 +496,7 @@ p {
 }
 
 /* ----------------------------------------
-   Profile Preview (Ajustado)
+   Profile Preview (FIX: Grande - 120px)
    ---------------------------------------- */
 .profile-preview {
     display: flex;
@@ -501,8 +509,8 @@ p {
 }
 
 .preview-avatar-wrapper {
-    width: 60px;
-    height: 60px;
+    width: 120px; /* FIX: Grande */
+    height: 120px;
     border-radius: var(--radius-full);
     display: flex;
     align-items: center;
@@ -511,8 +519,8 @@ p {
 }
 
 .preview-avatar {
-    width: 48px;
-    height: 48px;
+    width: 100px;
+    height: 100px;
 }
 
 .preview-name {
@@ -522,7 +530,7 @@ p {
 }
 
 /* ----------------------------------------
-   Avatar & Frame Grids (Con palomitas negras en círculos amarillos)
+   Avatar & Frame Grids (FIX: Pequeños - 60px, con palomitas negras en círculos amarillos)
    ---------------------------------------- */
 .avatar-grid {
     display: grid;
@@ -537,7 +545,7 @@ p {
 }
 
 .avatar-option img {
-    width: 100%;
+    width: 60px; /* FIX: Pequeños */
     height: auto;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
@@ -582,8 +590,8 @@ p {
 }
 
 .frame-preview {
-    width: 100%;
-    height: 80px;
+    width: 60px; /* FIX: Pequeños */
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -592,8 +600,8 @@ p {
 }
 
 .frame-preview-img {
-    width: 60px;
-    height: 60px;
+    width: 48px;
+    height: 48px;
 }
 
 .frame-option-new:hover {
@@ -1108,7 +1116,7 @@ p {
 }
 
 /* ----------------------------------------
-   Responsive (Alineado con landing: clamp y media)
+   Responsive (Alineado con landing: clamp y media, FIX: logo position en mobile)
    ---------------------------------------- */
 @media (max-width: 768px) {
     .main-header {
@@ -1141,6 +1149,7 @@ p {
     
     .game-card {
         padding: var(--space-lg);
+        max-width: 100%; /* En mobile, full width para mejor vista */
     }
     
     .card-header h1 {
@@ -1168,6 +1177,10 @@ p {
     
     .timer {
         font-size: clamp(2.5rem, 10vw, 3.5rem);
+    }
+    
+    .header-content {
+        padding: 0 var(--space-sm); /* FIX: Alinea logo en mobile para no shift */
     }
 }
 
@@ -1206,5 +1219,15 @@ p {
         width: 18px;
         height: 18px;
         font-size: 0.75rem;
+    }
+    
+    .preview-avatar-wrapper {
+        width: 100px; /* Ajuste mobile para preview */
+        height: 100px;
+    }
+    
+    .preview-avatar {
+        width: 80px;
+        height: 80px;
     }
 }
