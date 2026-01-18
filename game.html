@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
     <link rel="stylesheet" href="css/game-styles.css">
 </head>
 <body class="game-page">
@@ -75,7 +75,7 @@
                             Crear Sala
                         </button>
                         <div class="divider"><span>o únete</span></div>
-                        <input type="text" id="input-join-code" class="form-input form-input-code" placeholder="CÓDIGO" maxlength="4" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '')">
+                        <input type="text" id="input-join-code" class="form-input form-input-code" placeholder="CÓDIGO" maxlength="4" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z]/g,'')">
                         <button class="btn btn-secondary" id="btn-join-room">
                             Unirse a Sala
                         </button>
