@@ -1,5 +1,5 @@
 /* ========================================
-   INFILTRA - Game Styles v0.9.8.8 (Corregido para homogeneidad con landing)
+   INFILTRA - Game Styles v0.9.8.9 (Corregido)
    Paleta: Espía Moderno (Unificada con styles.css)
    ======================================== */
 
@@ -79,6 +79,9 @@
     --z-fixed: 300;
     --z-modal: 400;
     --z-tooltip: 500;
+    
+    /* Header height - UNIFICADO con landing */
+    --header-height: 72px;
 }
 
 /* ----------------------------------------
@@ -189,7 +192,7 @@ p {
 }
 
 /* ----------------------------------------
-   Header / Navigation (EXACTO de landing page: copiado de styles.css)
+   Header / Navigation (COPIADO EXACTO de landing con fondo fijo)
    ---------------------------------------- */
 .main-header {
     position: fixed;
@@ -198,13 +201,17 @@ p {
     right: 0;
     z-index: var(--z-fixed);
     padding: var(--space-md) var(--space-xl);
+    height: var(--header-height);
     transition: all var(--transition-normal);
-}
-
-.main-header.scrolled {
+    /* FIX: Fondo siempre presente para evitar superposición de texto */
     background: rgba(10, 10, 15, 0.95);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.main-header.scrolled {
+    background: rgba(10, 10, 15, 0.98);
+    backdrop-filter: blur(12px);
 }
 
 .header-content {
@@ -213,6 +220,7 @@ p {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    height: 100%;
 }
 
 .logo {
@@ -232,7 +240,7 @@ p {
 }
 
 .logo-text {
-    color: var(--color-text-primary); /* Unificado: sin gradient, white como en landing */
+    color: var(--color-text-primary);
 }
 
 .header-controls {
@@ -244,7 +252,7 @@ p {
     width: 44px;
     height: 44px;
     border: none;
-    background: rgba(201, 162, 39, 0.1); /* Gold accent */
+    background: rgba(201, 162, 39, 0.1);
     border-radius: 12px;
     cursor: pointer;
     display: flex;
@@ -266,7 +274,7 @@ p {
 
 .btn-icon.muted {
     opacity: 0.5;
-    background: rgba(139, 38, 53, 0.1); /* Danger red */
+    background: rgba(139, 38, 53, 0.1);
     border-color: rgba(139, 38, 53, 0.2);
 }
 
@@ -275,7 +283,7 @@ p {
     height: 24px;
     object-fit: contain;
     border-radius: 4px;
-    filter: none; /* Unificado: sin filter, como en landing */
+    filter: none;
 }
 
 /* ----------------------------------------
@@ -292,7 +300,7 @@ p {
 .game-container {
     flex: 1;
     padding: var(--space-xl);
-    padding-top: calc(var(--space-xl) + 76px); /* Ajuste para header */
+    padding-top: calc(var(--header-height) + var(--space-xl));
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -302,7 +310,7 @@ p {
 .screen {
     display: none;
     width: 100%;
-    max-width: 1200px; /* Como en landing nav-container */
+    max-width: 1200px;
     animation: fadeIn var(--transition-normal);
 }
 
@@ -320,9 +328,9 @@ p {
     border-radius: var(--radius-lg);
     padding: var(--space-xl);
     box-shadow: var(--shadow-lg);
-    border: 1px solid rgba(201, 162, 39, 0.1); /* Gold border subtle */
-    max-width: 600px; /* FIX: Limita ancho en PC para no verse "extremadamente ancho" */
-    margin: 0 auto; /* Centrado */
+    border: 1px solid rgba(201, 162, 39, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 /* ----------------------------------------
@@ -379,11 +387,17 @@ p {
     transform: none;
 }
 
+/* FIX: Mejor feedback visual para botones del host */
+.btn:active:not(:disabled) {
+    transform: scale(0.97);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
 .btn-img {
     width: 24px;
     height: 24px;
     object-fit: contain;
-    filter: none; /* Unificado */
+    filter: none;
 }
 
 .btn-primary {
@@ -422,6 +436,49 @@ p {
     background: var(--color-danger-light);
 }
 
+/* FIX: Botones de host diferenciados - Siguiente Ronda vs Iniciar Ronda */
+.btn-start-round {
+    background: linear-gradient(135deg, var(--color-accent-gold) 0%, var(--color-accent-gold-dark) 100%);
+    color: var(--color-bg-primary);
+    border: 2px solid var(--color-accent-gold-light);
+    font-size: 1rem;
+    padding: var(--space-lg) var(--space-xl);
+}
+
+.btn-start-round:hover {
+    background: linear-gradient(135deg, var(--color-accent-gold-light) 0%, var(--color-accent-gold) 100%);
+    box-shadow: 0 0 25px rgba(201, 162, 39, 0.5);
+}
+
+.btn-next-round {
+    background: linear-gradient(135deg, var(--color-success) 0%, #145a32 100%);
+    color: var(--color-text-primary);
+    border: 2px solid var(--color-success-light);
+    font-size: 1rem;
+    padding: var(--space-lg) var(--space-xl);
+}
+
+.btn-next-round:hover {
+    background: linear-gradient(135deg, var(--color-success-light) 0%, var(--color-success) 100%);
+    box-shadow: 0 0 25px rgba(35, 140, 78, 0.5);
+}
+
+.btn-next-round::after {
+    content: ' →';
+}
+
+.btn-start-round::before,
+.btn-next-round::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
 .btn-group {
     display: flex;
     flex-direction: column;
@@ -429,7 +486,7 @@ p {
     margin-top: var(--space-lg);
 }
 
-/* FIX: Mejor estilo para "o únete" - uppercase, gold, con líneas divisorias sutiles */
+/* FIX: Mejor estilo para "o únete" */
 .divider {
     display: flex;
     align-items: center;
@@ -453,7 +510,7 @@ p {
 }
 
 /* ----------------------------------------
-   Forms (Unificado con landing inputs, si aplica)
+   Forms (Unificado con landing inputs)
    ---------------------------------------- */
 .form-group {
     margin-bottom: var(--space-lg);
@@ -509,18 +566,28 @@ p {
 }
 
 .preview-avatar-wrapper {
-    width: 120px; /* FIX: Grande */
+    width: 120px;
     height: 120px;
     border-radius: var(--radius-full);
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
 }
 
 .preview-avatar {
     width: 100px;
     height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .preview-name {
@@ -530,32 +597,45 @@ p {
 }
 
 /* ----------------------------------------
-   Avatar & Frame Grids (FIX: Pequeños - 60px, con palomitas negras en círculos amarillos, grid center para no espacio vacío, uniform 100%)
+   Avatar & Frame Grids (FIX: Imágenes ajustadas correctamente)
    ---------------------------------------- */
 .avatar-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); /* FIX: auto-fill para llenar sin espacio invisible a la derecha */
-    gap: var(--space-sm); /* Reducido gap para ajustar */
-    justify-content: center; /* FIX: Centra items para no elemento invisible derecho */
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-sm);
 }
 
 .avatar-option {
     position: relative;
     cursor: pointer;
     transition: all var(--transition-fast);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    overflow: hidden;
 }
 
+/* FIX: Imágenes de avatar ajustadas al contenedor */
 .avatar-option img {
-    width: 100%; /* FIX: 100% para uniformidad */
-    height: 60px; /* FIX: Height fijo para uniformidad */
-    object-fit: contain; /* FIX: Contain para ratios diferentes */
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 4px;
 }
 
 .avatar-option:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+    border-color: var(--color-steel);
+}
+
+.avatar-option.selected {
+    border-color: var(--color-accent-gold);
+    box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.3);
 }
 
 .avatar-option.selected .avatar-check {
@@ -563,49 +643,51 @@ p {
 }
 
 .avatar-check {
-    display: none; /* Solo visible en selected */
+    display: none;
     align-items: center;
     justify-content: center;
     position: absolute;
-    bottom: -4px; /* FIX: Ajuste position para alinear mejor */
+    bottom: -4px;
     right: -4px;
-    width: 24px;
-    height: 24px;
-    background: var(--color-accent-gold); /* Círculo amarillo */
+    width: 22px;
+    height: 22px;
+    background: var(--color-accent-gold);
     border-radius: var(--radius-full);
-    color: var(--color-bg-primary); /* Check negro */
-    font-size: 1rem;
+    color: var(--color-bg-primary);
+    font-size: 0.875rem;
     font-weight: bold;
     box-shadow: var(--shadow-sm);
+    z-index: 2;
 }
 
 .frame-grid-new {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); /* FIX: auto-fill para llenar sin espacio invisible */
-    gap: var(--space-sm); /* Reducido gap */
-    justify-content: center; /* FIX: Centra para no vacío derecho */
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-sm);
 }
 
 .frame-option-new {
     position: relative;
     cursor: pointer;
     transition: all var(--transition-fast);
+    aspect-ratio: 1;
 }
 
 .frame-preview {
-    width: 60px; /* FIX: Pequeños */
-    height: 60px;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
+    background: var(--color-bg-secondary);
 }
 
 .frame-preview-img {
-    width: 48px;
-    height: 48px;
-    object-fit: contain; /* FIX: Uniformidad */
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
 }
 
 .frame-option-new:hover {
@@ -618,24 +700,25 @@ p {
 }
 
 .frame-check {
-    display: none; /* Solo visible en selected */
+    display: none;
     align-items: center;
     justify-content: center;
     position: absolute;
-    bottom: -4px; /* FIX: Ajuste position */
+    bottom: -4px;
     right: -4px;
-    width: 24px;
-    height: 24px;
-    background: var(--color-accent-gold); /* Círculo amarillo */
+    width: 22px;
+    height: 22px;
+    background: var(--color-accent-gold);
     border-radius: var(--radius-full);
-    color: var(--color-bg-primary); /* Check negro */
-    font-size: 1rem;
+    color: var(--color-bg-primary);
+    font-size: 0.875rem;
     font-weight: bold;
     box-shadow: var(--shadow-sm);
+    z-index: 2;
 }
 
 /* ----------------------------------------
-   Room Code (Unificado con stats de landing)
+   Room Code & QR (FIX: QR centrado con instrucciones)
    ---------------------------------------- */
 .room-code-box {
     text-align: center;
@@ -660,13 +743,40 @@ p {
     text-transform: uppercase;
 }
 
+/* FIX: QR centrado con instrucciones */
 .qr-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     margin-bottom: var(--space-lg);
+    padding: var(--space-lg);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+}
+
+.qr-container img {
+    border-radius: var(--radius-md);
+    background: white;
+    padding: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+
+.qr-instructions {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    max-width: 280px;
+}
+
+.qr-instructions strong {
+    color: var(--color-accent-gold);
+    display: block;
+    margin-bottom: var(--space-xs);
 }
 
 /* ----------------------------------------
-   Player List (Unificado con role-cards de landing)
+   Player List (FIX: Ordenado por puntos, medallas, kick icon)
    ---------------------------------------- */
 .player-list-box {
     margin-bottom: var(--space-lg);
@@ -686,6 +796,25 @@ p {
 .player-count {
     color: var(--color-accent-gold);
     font-weight: 600;
+}
+
+/* FIX: Título de puntaje */
+.player-list-score-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-bg-elevated);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-sm);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+}
+
+.player-list-score-header span:last-child {
+    color: var(--color-accent-gold);
 }
 
 .player-list {
@@ -710,6 +839,27 @@ p {
     background: var(--color-bg-elevated);
 }
 
+/* FIX: Medallas para top 3 */
+.player-rank {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.player-rank img {
+    width: 24px;
+    height: 24px;
+}
+
+.player-rank-number {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--color-text-muted);
+}
+
 .player-avatar {
     width: 40px;
     height: 40px;
@@ -718,16 +868,42 @@ p {
     align-items: center;
     justify-content: center;
     box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.player-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.player-info {
+    flex: 1;
+    min-width: 0;
 }
 
 .player-name {
-    flex: 1;
     font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .player-tag {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     color: var(--color-text-muted);
+}
+
+/* FIX: Puntos alineados a la derecha */
+.player-score {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--color-accent-gold);
+    min-width: 50px;
+    text-align: right;
+    margin-left: auto;
 }
 
 .player-status-icon {
@@ -735,8 +911,34 @@ p {
     height: 24px;
 }
 
+/* FIX: Botón de kick con icono */
+.btn-kick {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(139, 38, 53, 0.2);
+    border: 1px solid rgba(139, 38, 53, 0.3);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+    margin-left: var(--space-sm);
+}
+
+.btn-kick:hover {
+    background: var(--color-danger);
+    border-color: var(--color-danger-light);
+}
+
+.btn-kick img {
+    width: 18px;
+    height: 18px;
+}
+
 /* ----------------------------------------
-   Role Display (Unificado con visual-cards de landing)
+   Starter Info (FIX: Más visible y persistente)
    ---------------------------------------- */
 .starter-info {
     text-align: center;
@@ -745,6 +947,94 @@ p {
     font-weight: 600;
 }
 
+/* FIX: Banner persistente de quien inicia */
+.starter-banner {
+    position: fixed;
+    top: calc(var(--header-height) + var(--space-md));
+    left: var(--space-md);
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.95) 0%, rgba(166, 134, 32, 0.95) 100%);
+    color: var(--color-bg-primary);
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 0.875rem;
+    z-index: var(--z-sticky);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    animation: slideInLeft 0.3s ease;
+}
+
+.starter-banner img {
+    width: 20px;
+    height: 20px;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* FIX: Mensaje grande de inicio de ronda */
+.round-start-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 10, 15, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-modal);
+    animation: fadeIn 0.3s ease;
+}
+
+.round-start-message {
+    text-align: center;
+    animation: zoomIn 0.5s ease;
+}
+
+.round-start-message h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 8vw, 4rem);
+    color: var(--color-accent-gold);
+    margin-bottom: var(--space-md);
+    text-shadow: 0 0 30px rgba(201, 162, 39, 0.5);
+}
+
+.round-start-message p {
+    font-size: 1.25rem;
+    color: var(--color-text-primary);
+}
+
+.round-start-message .starter-name {
+    color: var(--color-accent-gold);
+    font-weight: 700;
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ----------------------------------------
+   Role Display
+   ---------------------------------------- */
 .role-display {
     display: flex;
     justify-content: center;
@@ -811,7 +1101,7 @@ p {
 }
 
 /* ----------------------------------------
-   Points Box (Unificado con role-points de landing)
+   Points Box
    ---------------------------------------- */
 .points-box {
     background: var(--color-bg-secondary);
@@ -851,7 +1141,7 @@ p {
 }
 
 /* ----------------------------------------
-   Timer (Unificado con animations de landing)
+   Timer
    ---------------------------------------- */
 .timer {
     text-align: center;
@@ -879,7 +1169,80 @@ p {
 }
 
 /* ----------------------------------------
-   Voting (Unificado con step-cards)
+   Players Sidebar (FIX: Lista lateral durante rondas)
+   ---------------------------------------- */
+.players-sidebar {
+    position: fixed;
+    top: calc(var(--header-height) + var(--space-md));
+    left: var(--space-md);
+    width: 200px;
+    max-height: calc(100vh - var(--header-height) - var(--space-xl));
+    background: var(--color-bg-card);
+    border: 1px solid rgba(201, 162, 39, 0.1);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    z-index: var(--z-sticky);
+    overflow-y: auto;
+    display: none;
+}
+
+.players-sidebar.visible {
+    display: block;
+    animation: slideInLeft 0.3s ease;
+}
+
+.players-sidebar-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--color-accent-gold);
+    margin-bottom: var(--space-md);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.players-sidebar-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.sidebar-player {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-xs);
+    border-radius: var(--radius-sm);
+    transition: opacity var(--transition-fast);
+}
+
+.sidebar-player.eliminated {
+    opacity: 0.4;
+    filter: grayscale(1);
+}
+
+.sidebar-player-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.sidebar-player-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sidebar-player-name {
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ----------------------------------------
+   Voting
    ---------------------------------------- */
 .voting-list {
     display: flex;
@@ -900,6 +1263,21 @@ p {
 .vote-item:hover {
     background: var(--color-bg-elevated);
     box-shadow: var(--shadow-md);
+}
+
+/* FIX: Avatar con marco en votación */
+.vote-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.vote-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .btn-vote {
@@ -925,7 +1303,7 @@ p {
 }
 
 /* ----------------------------------------
-   Results (Unificado con faq-grid)
+   Results (FIX: Avatares con marco, mensajes centrados)
    ---------------------------------------- */
 .results-list {
     display: flex;
@@ -944,6 +1322,27 @@ p {
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--space-sm);
+}
+
+/* FIX: Avatar con marco en resultados */
+.result-player {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.result-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.result-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .result-name {
@@ -969,6 +1368,7 @@ p {
     transition: width var(--transition-slow);
 }
 
+/* FIX: Mensaje de expulsión centrado y claro */
 .eliminated-box {
     text-align: center;
     padding: var(--space-xl);
@@ -977,19 +1377,77 @@ p {
     margin-top: var(--space-lg);
 }
 
+.eliminated-message {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-md);
+}
+
 .eliminated-name {
     font-family: var(--font-display);
-    font-size: 1.5rem;
+    font-size: 2rem;
+    color: var(--color-text-primary);
     margin-bottom: var(--space-sm);
 }
 
+.eliminated-role-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.eliminated-role-icon {
+    width: 48px;
+    height: 48px;
+}
+
 .eliminated-role {
-    font-size: 0.9375rem;
+    font-size: 1.25rem;
+    color: var(--color-text-secondary);
+}
+
+.eliminated-role strong {
+    color: var(--color-accent-gold);
+}
+
+/* FIX: Mensaje "Has sido expulsado" prominente */
+.you-eliminated-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 10, 15, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-modal);
+    animation: fadeIn 0.3s ease;
+}
+
+.you-eliminated-message {
+    text-align: center;
+}
+
+.you-eliminated-message h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 10vw, 5rem);
+    color: var(--color-danger);
+    margin-bottom: var(--space-lg);
+    text-shadow: 0 0 30px rgba(139, 38, 53, 0.5);
+}
+
+.you-eliminated-message p {
+    font-size: 1.25rem;
     color: var(--color-text-secondary);
 }
 
 /* ----------------------------------------
-   Categories (Unificado con features-grid)
+   Categories
    ---------------------------------------- */
 .categories-box {
     background: var(--color-bg-secondary);
@@ -1057,6 +1515,119 @@ p {
 }
 
 /* ----------------------------------------
+   Game Over (FIX: Ganador grande y centrado, resumen con avatares)
+   ---------------------------------------- */
+.gameover-winner {
+    text-align: center;
+    padding: var(--space-2xl);
+    margin-bottom: var(--space-xl);
+}
+
+.gameover-winner-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--space-lg);
+}
+
+.gameover-winner h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    color: var(--color-accent-gold);
+    margin-bottom: var(--space-sm);
+    text-shadow: 0 0 30px rgba(201, 162, 39, 0.5);
+}
+
+.gameover-reason {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+}
+
+/* FIX: Lista de puntuación final con avatares */
+.final-scores-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.score-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+}
+
+.score-rank {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.score-rank img {
+    width: 28px;
+    height: 28px;
+}
+
+.score-rank-number {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--color-text-muted);
+}
+
+.score-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.score-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.score-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.score-name {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.score-role {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+}
+
+/* FIX: Puntuación de ronda diferenciada */
+.score-round-points {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: var(--color-success-light);
+    min-width: 60px;
+    text-align: right;
+}
+
+.score-points {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--color-accent-gold);
+    min-width: 60px;
+    text-align: right;
+}
+
+/* ----------------------------------------
    Scrollbar (Unificado)
    ---------------------------------------- */
 ::-webkit-scrollbar {
@@ -1120,9 +1691,13 @@ p {
 }
 
 /* ----------------------------------------
-   Responsive (Alineado con landing: clamp y media, FIX: logo position en mobile)
+   Responsive
    ---------------------------------------- */
 @media (max-width: 768px) {
+    :root {
+        --header-height: 64px;
+    }
+    
     .main-header {
         padding: var(--space-md) var(--space-lg);
     }
@@ -1148,12 +1723,12 @@ p {
     
     .game-container {
         padding: var(--space-md);
-        padding-top: calc(var(--space-md) + 64px);
+        padding-top: calc(var(--header-height) + var(--space-md));
     }
     
     .game-card {
         padding: var(--space-lg);
-        max-width: 100%; /* En mobile, full width para mejor vista */
+        max-width: 100%;
     }
     
     .card-header h1 {
@@ -1164,15 +1739,20 @@ p {
         grid-template-columns: 1fr;
     }
     
-    .avatar-grid, .frame-grid-new {
-        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-        gap: var(--space-sm);
+    .avatar-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: var(--space-xs);
+    }
+    
+    .frame-grid-new {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-xs);
     }
     
     .avatar-check, .frame-check {
-        width: 20px;
-        height: 20px;
-        font-size: 0.875rem;
+        width: 18px;
+        height: 18px;
+        font-size: 0.75rem;
     }
     
     .room-code {
@@ -1183,8 +1763,25 @@ p {
         font-size: clamp(2.5rem, 10vw, 3.5rem);
     }
     
-    .header-content {
-        padding: 0 var(--space-sm); /* FIX: Alinea logo en mobile para no shift */
+    .players-sidebar {
+        display: none !important;
+    }
+    
+    .starter-banner {
+        left: var(--space-sm);
+        right: var(--space-sm);
+        font-size: 0.8125rem;
+        padding: var(--space-xs) var(--space-md);
+    }
+    
+    .preview-avatar-wrapper {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .preview-avatar {
+        width: 80px;
+        height: 80px;
     }
 }
 
@@ -1215,28 +1812,45 @@ p {
         font-size: clamp(2rem, 10vw, 3rem);
     }
     
-    .avatar-grid, .frame-grid-new {
-        grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    .avatar-grid {
+        grid-template-columns: repeat(5, 1fr);
     }
     
-    .avatar-check, .frame-check {
-        width: 18px;
-        height: 18px;
-        font-size: 0.75rem;
+    .gameover-winner h2 {
+        font-size: clamp(2rem, 8vw, 3rem);
     }
     
-    .preview-avatar-wrapper {
-        width: 100px; /* Ajuste mobile para preview */
-        height: 100px;
+    .you-eliminated-message h1 {
+        font-size: clamp(2rem, 8vw, 3.5rem);
     }
-    
-    .preview-avatar {
-        width: 80px;
-        height: 80px;
-    }
-    
-    .avatar-option img, .frame-preview {
-        width: 50px;
-        height: 50px;
-    }
+}
+
+/* ----------------------------------------
+   Help Content
+   ---------------------------------------- */
+.help-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.help-content p {
+    padding: var(--space-md);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+}
+
+.help-content strong {
+    color: var(--color-accent-gold);
+}
+
+/* ----------------------------------------
+   Gameover Icon
+   ---------------------------------------- */
+.gameover-icon-img {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
 }
