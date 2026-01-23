@@ -572,6 +572,7 @@ function showConfig() {
     }
     saveProfile();
     showScreen('screen-config');
+    setTimeout(validateRoleConfiguration, 100);
 }
 
 function createRoom() {
