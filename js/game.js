@@ -40,19 +40,76 @@ const POINTS = {
 };
 
 const DB = {
-    "Animales": ["León", "Tigre", "Elefante", "Zebra", "Delfín", "Lobo", "Gorila", "Águila", "Jirafa", "Oso", "Zorro", "Panda", "Tiburón", "Canguro", "Hipopótamo", "Serpiente", "Cocodrilo", "Pájaro", "Mono", "Tortuga"],
-    "Comida": ["Pizza", "Tacos", "Sushi", "Hamburguesa", "Pasta", "Ensalada", "Helado", "Pollo", "Pescado", "Chocolate", "Empanadas", "Ramen", "Curry", "Paella", "Burrito", "Croissant", "Queso", "Arroz", "Sopa", "Tarta"],
-    "Países": ["México", "Japón", "Brasil", "España", "Francia", "Italia", "Alemania", "Australia", "Argentina", "Canadá", "China", "India", "Rusia", "Estados Unidos", "Reino Unido", "Sudáfrica", "Egipto", "Nueva Zelanda", "Corea del Sur", "Turquía"],
-    "Profesiones": ["Médico", "Abogado", "Ingeniero", "Profesor", "Chef", "Piloto", "Arquitecto", "Programador", "Fotógrafo", "Enfermero", "Diseñador", "Periodista", "Músico", "Actor", "Científico", "Veterinario", "Contador", "Psicólogo", "Bombero", "Policía"],
-    "Deportes": ["Fútbol", "Baloncesto", "Tenis", "Natación", "Boxeo", "Golf", "Voleibol", "Surf", "Ciclismo", "Atletismo", "Esquí", "Karate", "Béisbol", "Rugby", "Gimnasia", "Escalada", "Patinaje", "Hockey"],
-    "Ciudades": ["París", "Tokio", "Nueva York", "Londres", "Roma", "Berlín", "Madrid", "Dubai", "Barcelona", "México DF", "Sídney", "Río de Janeiro", "Los Ángeles", "Toronto", "Estambul", "Singapur", "Ámsterdam", "Seúl"],
-    "Frutas": ["Manzana", "Banana", "Naranja", "Uva", "Fresa", "Piña", "Mango", "Sandía", "Kiwi", "Melón", "Pera", "Durazno", "Cereza", "Limón", "Papaya", "Granada", "Coco", "Mora"],
-    "Vehículos": ["Coche", "Bicicleta", "Avión", "Barco", "Tren", "Helicóptero", "Motocicleta", "Camión", "Submarino", "Cohete", "Autobús", "Patineta", "Tractor", "Yate"],
-    "Instrumentos": ["Guitarra", "Piano", "Batería", "Violín", "Flauta", "Trompeta", "Saxofón", "Arpa", "Bajo", "Ukelele", "Acordeón", "Cello", "Clarinete", "Órgano"],
-    "Películas": ["Titanic", "Star Wars", "Avatar", "Frozen", "Shrek", "Batman", "Avengers", "Coco", "Inception", "The Matrix", "Jurassic Park", "Harry Potter", "Toy Story"],
-    "Colores": ["Rojo", "Azul", "Verde", "Amarillo", "Naranja", "Morado", "Rosa", "Negro", "Blanco", "Gris", "Turquesa", "Violeta", "Dorado", "Plateado"],
-    "Superhéroes": ["Superman", "Batman", "Spider-Man", "Wonder Woman", "Iron Man", "Captain America", "Thor", "Hulk", "Flash", "Aquaman", "Wolverine", "Deadpool"]
+  "Animales": [
+    "León", "Tigre", "Elefante", "Zebra", "Delfín", "Lobo", "Gorila", "Águila",
+    "Jirafa", "Oso", "Zorro", "Panda", "Tiburón", "Canguro", "Hipopótamo",
+    "Serpiente", "Cocodrilo", "Mono", "Tortuga", "Pulpo", "Rinoceronte"
+  ],
+
+  "Comida": [
+    "Pizza", "Tacos", "Sushi", "Hamburguesa", "Pasta", "Ensalada", "Helado",
+    "Pollo", "Pescado", "Chocolate", "Empanadas", "Ramen", "Curry", "Paella",
+    "Burrito", "Croissant", "Queso", "Arroz", "Sopa", "Tarta"
+  ],
+
+  "Países": [
+    "México", "Japón", "Brasil", "España", "Francia", "Italia", "Alemania",
+    "Australia", "Argentina", "Canadá", "China", "India", "Rusia",
+    "Estados Unidos", "Reino Unido", "Egipto", "Corea del Sur", "Turquía",
+    "Chile", "Colombia"
+  ],
+
+  "Profesiones": [
+    "Médico", "Abogado", "Ingeniero", "Profesor", "Chef", "Piloto",
+    "Arquitecto", "Programador", "Fotógrafo", "Enfermero", "Diseñador",
+    "Periodista", "Músico", "Actor", "Científico", "Veterinario",
+    "Contador", "Psicólogo", "Bombero", "Policía"
+  ],
+
+  "Celebridades": [
+    "Elon Musk", "Oprah Winfrey", "Kim Kardashian", "Cristiano Ronaldo",
+    "Lionel Messi", "Taylor Swift", "Kanye West", "Shakira",
+    "Dwayne Johnson", "Beyoncé", "Bill Gates", "Rihanna",
+    "Jeff Bezos", "Bad Bunny", "MrBeast"
+  ],
+
+  "Actores": [
+    "Leonardo DiCaprio", "Brad Pitt", "Tom Cruise", "Johnny Depp",
+    "Robert Downey Jr.", "Scarlett Johansson", "Natalie Portman",
+    "Will Smith", "Keanu Reeves", "Ryan Gosling", "Margot Robbie",
+    "Christian Bale", "Joaquin Phoenix"
+  ],
+
+  "Cantantes": [
+    "Michael Jackson", "Madonna", "Taylor Swift", "Adele", "Ed Sheeran",
+    "Shakira", "Bad Bunny", "Drake", "The Weeknd", "Bruno Mars",
+    "Beyoncé", "Justin Bieber", "Lady Gaga"
+  ],
+
+  "Series": [
+    "Breaking Bad", "Game of Thrones", "Stranger Things", "The Office",
+    "Friends", "Dark", "The Walking Dead", "Narcos",
+    "Black Mirror", "House of the Dragon"
+  ],
+
+  "Videojuegos": [
+    "Minecraft", "Fortnite", "The Legend of Zelda", "GTA V",
+    "Call of Duty", "League of Legends", "Pokémon",
+    "Elden Ring", "God of War", "Among Us"
+  ],
+
+  "Personajes Ficticios": [
+    "Harry Potter", "Darth Vader", "Spider-Man", "Batman",
+    "Goku", "Homer Simpson", "Iron Man",
+    "Sherlock Holmes", "Joker", "Link"
+  ],
+
+  "Marcas": [
+    "Apple", "Samsung", "Nike", "Adidas", "Coca-Cola",
+    "Pepsi", "Amazon", "Google", "Microsoft", "Tesla"
+  ]
 };
+
 
 // Nuevos avatares PNG hexagonales
 const AVATARS = [
