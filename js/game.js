@@ -1102,9 +1102,15 @@ function skipWord() {
     const wordData = selectNewWord();
     Object.keys(G.fullRoles).forEach(id => {
         const role = G.fullRoles[id];
-        if (role.role === 'CIUDADANO') role.word = wordData.secretWord;
-        else if (role.role === 'CHARLATÁN') role.word = wordData.fakeWord;
-        else role.word = 'Categoría: ' + wordData.category;
+        const trueRole = G.trueRoles[id];
+        
+        if (trueRole === 'INFILTRADO') {
+            role.word = 'Categoría: ' + wordData.category;
+        } else if (trueRole === 'CHARLATÁN') {
+            role.word = wordData.fakeWord;
+        } else {
+            role.word = wordData.secretWord;
+        }
     });
     G.starterPlayerId = G.activePlayers[Math.floor(Math.random() * G.activePlayers.length)];
     G.pubnub.publish({
