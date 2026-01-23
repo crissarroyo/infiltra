@@ -1041,7 +1041,7 @@ function distributeRoles() {
     for (let i = 0; i < numChar && pool.length; i++) {
         const idx = Math.floor(Math.random() * pool.length);
         const id = pool.splice(idx, 1)[0];
-        roles[id] = { role: 'CIUDADANO', icon: ICONS.citizen, word: wordData.secretWord };
+        roles[id] = { role: 'CIUDADANO', icon: ICONS.citizen, word: wordData.fakeWord };
         G.trueRoles[id] = 'CHARLATÁN';
         G.charlatans.push(id);
     }
