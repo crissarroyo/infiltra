@@ -491,6 +491,51 @@ function bindEvents() {
     bind('btn-help-back', function() {
         showScreen(G.screenStack.pop() || 'screen-home');
     });
+
+    const maxPlayersInput = document.getElementById('config-max-players');
+    const impostorsInput = document.getElementById('config-impostors');
+    const charlatansInput = document.getElementById('config-charlatans');
+
+    if (maxPlayersInput) {
+        maxPlayersInput.addEventListener('input', function() {
+            const maxPlayers = parseInt(this.value) || 3;
+            if (impostorsInput) impostorsInput.max = maxPlayers - 1;
+            if (charlatansInput) charlatansInput.max = maxPlayers - 1;
+            
+            const currentImpostors = parseInt(impostorsInput?.value) || 1;
+            const currentCharlatans = parseInt(charlatansInput?.value) || 0;
+            
+            if (currentImpostors >= maxPlayers && impostorsInput) {
+                impostorsInput.value = Math.max(1, Math.floor(maxPlayers / 3));
+            }
+            if (currentCharlatans >= maxPlayers && charlatansInput) {
+                charlatansInput.value = 0;
+            }
+            validateRoleConfiguration();
+        });
+    }
+
+    if (impostorsInput) {
+        impostorsInput.addEventListener('input', function() {
+            const maxPlayers = parseInt(maxPlayersInput?.value) || 10;
+            const impostors = parseInt(this.value) || 1;
+            const remainingSpace = maxPlayers - impostors - 1;
+            
+            if (charlatansInput) {
+                charlatansInput.max = Math.max(0, remainingSpace);
+                const currentCharlatans = parseInt(charlatansInput.value) || 0;
+                if (currentCharlatans > remainingSpace) {
+                    charlatansInput.value = Math.max(0, remainingSpace);
+                }
+            }
+            validateRoleConfiguration();
+        });
+    }
+
+    if (charlatansInput) {
+        charlatansInput.addEventListener('input', validateRoleConfiguration);
+    }
+    
     const nameInput = document.getElementById('input-name');
     if (nameInput) nameInput.addEventListener('input', updateProfilePreview);
 }
