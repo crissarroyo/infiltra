@@ -313,6 +313,64 @@ function initCategories() {
     ).join('');
 }
 
+function validateRoleConfiguration() {
+    const maxPlayers = parseInt(document.getElementById('config-max-players')?.value) || 10;
+    const impostors = parseInt(document.getElementById('config-impostors')?.value) || 1;
+    const charlatans = parseInt(document.getElementById('config-charlatans')?.value) || 0;
+    
+    const specialRoles = impostors + charlatans;
+    const citizens = maxPlayers - specialRoles;
+    
+    const summaryImpostors = document.getElementById('summary-impostors');
+    const summaryCharlatans = document.getElementById('summary-charlatans');
+    const summaryCitizens = document.getElementById('summary-citizens');
+    const summaryTotal = document.getElementById('summary-total');
+    
+    if (summaryImpostors) summaryImpostors.textContent = impostors;
+    if (summaryCharlatans) summaryCharlatans.textContent = charlatans;
+    if (summaryCitizens) summaryCitizens.textContent = Math.max(0, citizens);
+    if (summaryTotal) summaryTotal.textContent = maxPlayers;
+    
+    const errorElement = document.getElementById('summary-error');
+    const createButton = document.getElementById('btn-create-room');
+    
+    if (specialRoles >= maxPlayers) {
+        if (errorElement) {
+            errorElement.textContent = '❌ Debe haber al menos 1 ciudadano';
+            errorElement.style.display = 'block';
+            errorElement.style.color = '#ff4757';
+        }
+        if (createButton) {
+            createButton.disabled = true;
+            createButton.style.opacity = '0.5';
+            createButton.style.cursor = 'not-allowed';
+        }
+        return false;
+    }
+    
+    if (citizens === 1) {
+        if (errorElement) {
+            errorElement.textContent = '⚠️ Se recomienda tener al menos 2 ciudadanos';
+            errorElement.style.display = 'block';
+            errorElement.style.color = '#ffa502';
+        }
+        if (createButton) {
+            createButton.disabled = false;
+            createButton.style.opacity = '1';
+            createButton.style.cursor = 'pointer';
+        }
+        return true;
+    }
+    
+    if (errorElement) errorElement.style.display = 'none';
+    if (createButton) {
+        createButton.disabled = false;
+        createButton.style.opacity = '1';
+        createButton.style.cursor = 'pointer';
+    }
+    return true;
+}
+
 function updateSelectedCategories() {
     G.selectedCategories = Array.from(document.querySelectorAll('.category-item input:checked')).map(cb => cb.value);
 }
