@@ -993,24 +993,43 @@ function selectNewWord() {
 
 function distributeRoles() {
     if (!G.pubnub) return;
+    
     const playerIds = Object.keys(G.players);
     if (playerIds.length < 3) {
         toast('Mínimo 3 jugadores', 'error');
         return;
     }
-    const numImp = Math.min(parseInt(document.getElementById('config-impostors')?.value) || 1, Math.floor(playerIds.length / 2));
-    const numChar = Math.min(parseInt(document.getElementById('config-charlatans')?.value) || 0, playerIds.length - numImp - 1);
+    
+    const numImp = parseInt(document.getElementById('config-impostors')?.value) || 1;
+    const numChar = parseInt(document.getElementById('config-charlatans')?.value) || 0;
+    const specialRoles = numImp + numChar;
+    
+    if (specialRoles >= playerIds.length) {
+        toast('Configuración inválida: debe haber al menos 1 ciudadano', 'error');
+        return;
+    }
+    
+    // CORRECCIÓN CRÍTICA: Calcular ciudadanos correctamente
+    const numCit = playerIds.length - specialRoles;
+    
+    if (numCit < 1) {
+        toast('Error: no hay espacio para ciudadanos', 'error');
+        return;
+    }
+    
     updateSelectedCategories();
     if (G.selectedCategories.length === 0) {
         toast('Selecciona categorías', 'error');
         return;
     }
+    
     const wordData = selectNewWord();
     let roles = {};
     let pool = [...playerIds];
     G.impostors = [];
     G.charlatans = [];
     G.citizens = [];
+    
     for (let i = 0; i < numImp && pool.length; i++) {
         const idx = Math.floor(Math.random() * pool.length);
         const id = pool.splice(idx, 1)[0];
@@ -1018,6 +1037,7 @@ function distributeRoles() {
         G.trueRoles[id] = 'INFILTRADO';
         G.impostors.push(id);
     }
+    
     for (let i = 0; i < numChar && pool.length; i++) {
         const idx = Math.floor(Math.random() * pool.length);
         const id = pool.splice(idx, 1)[0];
@@ -1025,17 +1045,34 @@ function distributeRoles() {
         G.trueRoles[id] = 'CHARLATÁN';
         G.charlatans.push(id);
     }
+    
+    // CORRECCIÓN: Los ciudadanos son TODOS los que quedan en el pool
     pool.forEach(id => {
         roles[id] = { role: 'CIUDADANO', icon: ICONS.citizen, word: wordData.secretWord };
         G.trueRoles[id] = 'CIUDADANO';
         G.citizens.push(id);
     });
+    
+    // Verificación final
+    const totalAssigned = G.impostors.length + G.charlatans.length + G.citizens.length;
+    if (totalAssigned !== playerIds.length) {
+        console.error('ERROR: Roles mal asignados', {
+            total: playerIds.length,
+            infiltrados: G.impostors.length,
+            charlatanes: G.charlatans.length,
+            ciudadanos: G.citizens.length
+        });
+        toast('Error en asignación de roles', 'error');
+        return;
+    }
+    
     G.activePlayers = [...playerIds];
     G.eliminated = [];
     G.fullRoles = roles;
     G.gamePhase = 'roles';
     G.isFirstRound = true;
     G.starterPlayerId = G.activePlayers[Math.floor(Math.random() * G.activePlayers.length)];
+    
     G.pubnub.publish({
         channel: G.channel,
         message: {
@@ -1050,6 +1087,13 @@ function distributeRoles() {
             usedWords: G.usedWords,
             isFirstRound: true
         }
+    });
+    
+    console.log('✓ Roles distribuidos:', {
+        total: playerIds.length,
+        infiltrados: numImp,
+        charlatanes: numChar,
+        ciudadanos: numCit
     });
 }
 
