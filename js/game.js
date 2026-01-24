@@ -1,9 +1,13 @@
 /**
- * INFILTRA - Game Logic v0.9.9.1
- * Cambios:
- * - Nuevos avatares PNG hexagonales (avatar-01 a avatar-14)
- * - 10 colores de marcos adaptados a forma hexagonal
- * - Sistema de clip-path para marcos hexagonales
+ * INFILTRA - Game Logic v1.0.0 (Robust Edition)
+ * 
+ * CORRECCIONES APLICADAS:
+ * ✓ Sistema de persistencia de estado en sessionStorage
+ * ✓ Prevención de "pull to refresh" y navegación accidental
+ * ✓ Host en modo espectador mantiene controles completos
+ * ✓ Mejor manejo de reconexiones
+ * ✓ Botón "Cambiar Palabra" visible para host espectador
+ * ✓ Protección contra gestos accidentales en móvil
  */
 
 const ICONS = {
@@ -40,78 +44,19 @@ const POINTS = {
 };
 
 const DB = {
-  "Animales": [
-    "León", "Tigre", "Elefante", "Zebra", "Delfín", "Lobo", "Gorila", "Águila",
-    "Jirafa", "Oso", "Zorro", "Panda", "Tiburón", "Canguro", "Hipopótamo",
-    "Serpiente", "Cocodrilo", "Mono", "Tortuga", "Pulpo", "Rinoceronte"
-  ],
-
-  "Comida": [
-    "Pizza", "Tacos", "Sushi", "Hamburguesa", "Pasta", "Ensalada", "Helado",
-    "Pollo", "Pescado", "Chocolate", "Empanadas", "Ramen", "Curry", "Paella",
-    "Burrito", "Croissant", "Queso", "Arroz", "Sopa", "Tarta"
-  ],
-
-  "Países": [
-    "México", "Japón", "Brasil", "España", "Francia", "Italia", "Alemania",
-    "Australia", "Argentina", "Canadá", "China", "India", "Rusia",
-    "Estados Unidos", "Reino Unido", "Egipto", "Corea del Sur", "Turquía",
-    "Chile", "Colombia"
-  ],
-
-  "Profesiones": [
-    "Médico", "Abogado", "Ingeniero", "Profesor", "Chef", "Piloto",
-    "Arquitecto", "Programador", "Fotógrafo", "Enfermero", "Diseñador",
-    "Periodista", "Músico", "Actor", "Científico", "Veterinario",
-    "Contador", "Psicólogo", "Bombero", "Policía"
-  ],
-
-  "Celebridades": [
-    "Elon Musk", "Oprah Winfrey", "Kim Kardashian", "Cristiano Ronaldo",
-    "Lionel Messi", "Taylor Swift", "Kanye West", "Shakira",
-    "Dwayne Johnson", "Beyoncé", "Bill Gates", "Rihanna",
-    "Jeff Bezos", "Bad Bunny", "MrBeast"
-  ],
-
-  "Actores": [
-    "Leonardo DiCaprio", "Brad Pitt", "Tom Cruise", "Johnny Depp",
-    "Robert Downey Jr.", "Scarlett Johansson", "Natalie Portman",
-    "Will Smith", "Keanu Reeves", "Ryan Gosling", "Margot Robbie",
-    "Christian Bale", "Joaquin Phoenix"
-  ],
-
-  "Cantantes": [
-    "Michael Jackson", "Madonna", "Taylor Swift", "Adele", "Ed Sheeran",
-    "Shakira", "Bad Bunny", "Drake", "The Weeknd", "Bruno Mars",
-    "Beyoncé", "Justin Bieber", "Lady Gaga"
-  ],
-
-  "Series": [
-    "Breaking Bad", "Game of Thrones", "Stranger Things", "The Office",
-    "Friends", "Dark", "The Walking Dead", "Narcos",
-    "Black Mirror", "House of the Dragon"
-  ],
-
-  "Videojuegos": [
-    "Minecraft", "Fortnite", "The Legend of Zelda", "GTA V",
-    "Call of Duty", "League of Legends", "Pokémon",
-    "Elden Ring", "God of War", "Among Us"
-  ],
-
-  "Personajes Ficticios": [
-    "Harry Potter", "Darth Vader", "Spider-Man", "Batman",
-    "Goku", "Homer Simpson", "Iron Man",
-    "Sherlock Holmes", "Joker", "Link"
-  ],
-
-  "Marcas": [
-    "Apple", "Samsung", "Nike", "Adidas", "Coca-Cola",
-    "Pepsi", "Amazon", "Google", "Microsoft", "Tesla"
-  ]
+    "Animales": ["León", "Tigre", "Elefante", "Zebra", "Delfín", "Lobo", "Gorila", "Águila", "Jirafa", "Oso", "Zorro", "Panda", "Tiburón", "Canguro", "Hipopótamo", "Serpiente", "Cocodrilo", "Mono", "Tortuga", "Pulpo", "Rinoceronte"],
+    "Comida": ["Pizza", "Tacos", "Sushi", "Hamburguesa", "Pasta", "Ensalada", "Helado", "Pollo", "Pescado", "Chocolate", "Empanadas", "Ramen", "Curry", "Paella", "Burrito", "Croissant", "Queso", "Arroz", "Sopa", "Tarta"],
+    "Países": ["México", "Japón", "Brasil", "España", "Francia", "Italia", "Alemania", "Australia", "Argentina", "Canadá", "China", "India", "Rusia", "Estados Unidos", "Reino Unido", "Egipto", "Corea del Sur", "Turquía", "Chile", "Colombia"],
+    "Profesiones": ["Médico", "Abogado", "Ingeniero", "Profesor", "Chef", "Piloto", "Arquitecto", "Programador", "Fotógrafo", "Enfermero", "Diseñador", "Periodista", "Músico", "Actor", "Científico", "Veterinario", "Contador", "Psicólogo", "Bombero", "Policía"],
+    "Celebridades": ["Elon Musk", "Oprah Winfrey", "Kim Kardashian", "Cristiano Ronaldo", "Lionel Messi", "Taylor Swift", "Kanye West", "Shakira", "Dwayne Johnson", "Beyoncé", "Bill Gates", "Rihanna", "Jeff Bezos", "Bad Bunny", "MrBeast"],
+    "Actores": ["Leonardo DiCaprio", "Brad Pitt", "Tom Cruise", "Johnny Depp", "Robert Downey Jr.", "Scarlett Johansson", "Natalie Portman", "Will Smith", "Keanu Reeves", "Ryan Gosling", "Margot Robbie", "Christian Bale", "Joaquin Phoenix"],
+    "Cantantes": ["Michael Jackson", "Madonna", "Taylor Swift", "Adele", "Ed Sheeran", "Shakira", "Bad Bunny", "Drake", "The Weeknd", "Bruno Mars", "Beyoncé", "Justin Bieber", "Lady Gaga"],
+    "Series": ["Breaking Bad", "Game of Thrones", "Stranger Things", "The Office", "Friends", "Dark", "The Walking Dead", "Narcos", "Black Mirror", "House of the Dragon"],
+    "Videojuegos": ["Minecraft", "Fortnite", "The Legend of Zelda", "GTA V", "Call of Duty", "League of Legends", "Pokémon", "Elden Ring", "God of War", "Among Us"],
+    "Personajes Ficticios": ["Harry Potter", "Darth Vader", "Spider-Man", "Batman", "Goku", "Homer Simpson", "Iron Man", "Sherlock Holmes", "Joker", "Link"],
+    "Marcas": ["Apple", "Samsung", "Nike", "Adidas", "Coca-Cola", "Pepsi", "Amazon", "Google", "Microsoft", "Tesla"]
 };
 
-
-// Nuevos avatares PNG hexagonales
 const AVATARS = [
     { id: 'avatar-01', image: 'assets/avatars/avatar-01.png' },
     { id: 'avatar-02', image: 'assets/avatars/avatar-02.png' },
@@ -123,7 +68,6 @@ const AVATARS = [
     { id: 'avatar-14', image: 'assets/avatars/avatar-14.png' }
 ];
 
-// 10 colores de marcos para avatares hexagonales
 const FRAMES = [
     { id: 'fr-none', color: 'transparent', name: 'Sin Marco', locked: false },
     { id: 'fr-silver', color: '#a8b5c4', name: 'Plata', locked: false },
@@ -141,49 +85,201 @@ const RESULT_DISPLAY_TIME = 5000;
 const ROUND_START_DISPLAY_TIME = 3500;
 
 let G = {
-    pubnub: null,
-    channel: null,
-    myId: null,
-    playerName: '',
-    avatar: 'avatar-01',
-    frame: 'fr-none',
-    isHost: false,
-    hostId: null,
-    maxPlayers: 10,
-    roundTime: 60,
-    selectedCategories: Object.keys(DB),
-    players: {},
-    activePlayers: [],
-    eliminated: [],
-    impostors: [],
-    charlatans: [],
-    citizens: [],
-    myRole: null,
-    fullRoles: {},
-    trueRoles: {},
-    scores: {},
-    usedWords: [],
-    currentCategory: null,
-    currentSecretWord: null,
-    currentFakeWord: null,
-    starterPlayerId: null,
-    gamePhase: 'home',
-    isSpectator: false,
-    votes: {},
-    votedPlayers: new Set(),
-    voteTargets: {},
-    timerInterval: null,
-    voteTimerInterval: null,
-    refreshInterval: null,
-    voteTimeout: null,
-    spectatorTimerInterval: null,
-    soundEnabled: true,
-    screenStack: [],
-    roleRevealed: false,
-    isFirstRound: true,
-    roundStarting: false,
-    roundInProgress: false
+    pubnub: null, channel: null, myId: null, playerName: '', avatar: 'avatar-01', frame: 'fr-none',
+    isHost: false, hostId: null, maxPlayers: 10, roundTime: 60, selectedCategories: Object.keys(DB),
+    players: {}, activePlayers: [], eliminated: [], impostors: [], charlatans: [], citizens: [],
+    myRole: null, fullRoles: {}, trueRoles: {}, scores: {}, usedWords: [],
+    currentCategory: null, currentSecretWord: null, currentFakeWord: null, starterPlayerId: null,
+    gamePhase: 'home', isSpectator: false, votes: {}, votedPlayers: new Set(), voteTargets: {},
+    timerInterval: null, voteTimerInterval: null, refreshInterval: null, voteTimeout: null,
+    spectatorTimerInterval: null, soundEnabled: true, screenStack: [], roleRevealed: false,
+    isFirstRound: true, roundStarting: false, roundInProgress: false, reconnecting: false
 };
+
+// ============================================
+// SISTEMA DE PERSISTENCIA DE ESTADO
+// ============================================
+
+function saveGameState() {
+    if (!G.channel) return;
+    try {
+        const state = {
+            channel: G.channel, myId: G.myId, playerName: G.playerName, avatar: G.avatar, frame: G.frame,
+            isHost: G.isHost, hostId: G.hostId, maxPlayers: G.maxPlayers, roundTime: G.roundTime,
+            players: G.players, activePlayers: G.activePlayers, eliminated: G.eliminated,
+            impostors: G.impostors, charlatans: G.charlatans, citizens: G.citizens,
+            myRole: G.myRole, fullRoles: G.fullRoles, trueRoles: G.trueRoles, scores: G.scores,
+            usedWords: G.usedWords, gamePhase: G.gamePhase, isSpectator: G.isSpectator,
+            roleRevealed: G.roleRevealed, isFirstRound: G.isFirstRound, timestamp: Date.now()
+        };
+        sessionStorage.setItem('infiltra_game_state', JSON.stringify(state));
+    } catch (e) { console.error('Error guardando estado:', e); }
+}
+
+function loadGameState() {
+    try {
+        const saved = sessionStorage.getItem('infiltra_game_state');
+        if (!saved) return null;
+        const state = JSON.parse(saved);
+        if (Date.now() - state.timestamp > 3600000) {
+            sessionStorage.removeItem('infiltra_game_state');
+            return null;
+        }
+        return state;
+    } catch (e) { return null; }
+}
+
+function clearGameState() { sessionStorage.removeItem('infiltra_game_state'); }
+
+function restoreGameState(state) {
+    if (!state) return false;
+    Object.keys(state).forEach(key => { if (G.hasOwnProperty(key) && key !== 'timestamp') G[key] = state[key]; });
+    if (G.votedPlayers && Array.isArray(G.votedPlayers)) G.votedPlayers = new Set(G.votedPlayers);
+    return true;
+}
+
+// ============================================
+// PROTECCIÓN CONTRA ACTUALIZACIÓN ACCIDENTAL
+// ============================================
+
+function setupRefreshProtection() {
+    let lastTouchY = 0, preventPullToRefresh = false;
+    
+    document.addEventListener('touchstart', function(e) {
+        if (e.touches.length !== 1) return;
+        lastTouchY = e.touches[0].clientY;
+        preventPullToRefresh = window.scrollY === 0 && G.gamePhase !== 'home';
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', function(e) {
+        if (!preventPullToRefresh) return;
+        if (e.touches[0].clientY - lastTouchY > 0 && window.scrollY === 0) e.preventDefault();
+    }, { passive: false });
+    
+    document.addEventListener('keydown', function(e) {
+        if (G.gamePhase !== 'home' && G.gamePhase !== 'lobby') {
+            if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+                e.preventDefault();
+                toast('Actualizar deshabilitado durante el juego', 'warning');
+            }
+        }
+    });
+    
+    window.addEventListener('beforeunload', function(e) {
+        if (G.gamePhase !== 'home' && G.channel) {
+            e.preventDefault();
+            e.returnValue = '¿Seguro que quieres salir?';
+            return e.returnValue;
+        }
+    });
+    
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible' && G.channel && G.pubnub) handleReconnection();
+    });
+    
+    window.addEventListener('online', function() { if (G.channel) handleReconnection(); });
+    
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) e.preventDefault();
+        lastTouchEnd = now;
+    }, false);
+    
+    const style = document.createElement('style');
+    style.textContent = 'html,body{overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}*{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}input,textarea{-webkit-user-select:text;user-select:text}';
+    document.head.appendChild(style);
+}
+
+function handleReconnection() {
+    if (G.reconnecting) return;
+    G.reconnecting = true;
+    toast('Reconectando...', 'info');
+    
+    if (!G.pubnub || !G.channel) {
+        const savedState = loadGameState();
+        if (savedState && savedState.channel) {
+            restoreGameState(savedState);
+            initPubNub(true);
+        }
+    } else {
+        requestSync();
+    }
+    setTimeout(() => { G.reconnecting = false; }, 3000);
+}
+
+// ============================================
+// SISTEMA DE HOST ESPECTADOR
+// ============================================
+
+function createSpectatorControls() {
+    const spectatorScreen = document.getElementById('screen-spectator');
+    if (!spectatorScreen || document.getElementById('btn-spectator-skip')) return;
+    
+    const skipBtn = document.createElement('button');
+    skipBtn.id = 'btn-spectator-skip';
+    skipBtn.className = 'btn btn-secondary';
+    skipBtn.textContent = 'Cambiar Palabra';
+    skipBtn.style.display = 'none';
+    skipBtn.onclick = skipWord;
+    
+    const controls = spectatorScreen.querySelector('.spectator-controls');
+    if (controls) {
+        const nextBtn = document.getElementById('btn-spectator-next');
+        if (nextBtn) controls.insertBefore(skipBtn, nextBtn);
+        else controls.appendChild(skipBtn);
+    }
+}
+
+function updateSpectatorHostControls() {
+    const btnNext = document.getElementById('btn-spectator-next');
+    const btnLobby = document.getElementById('btn-spectator-lobby');
+    const btnSkip = document.getElementById('btn-spectator-skip');
+    
+    if (G.isHost && G.isSpectator) {
+        if (btnNext) {
+            btnNext.style.display = 'block';
+            btnNext.disabled = false;
+            btnNext.textContent = (G.gamePhase === 'results' || G.gamePhase === 'voting') ? 'Siguiente Ronda' : 'Iniciar Ronda';
+            btnNext.className = 'btn ' + ((G.gamePhase === 'results' || G.gamePhase === 'voting') ? 'btn-next-round' : 'btn-start-round');
+        }
+        if (btnLobby) btnLobby.style.display = 'block';
+        if (btnSkip) btnSkip.style.display = G.gamePhase === 'roles' ? 'block' : 'none';
+    } else {
+        if (btnNext) btnNext.style.display = 'none';
+        if (btnLobby) btnLobby.style.display = 'none';
+        if (btnSkip) btnSkip.style.display = 'none';
+    }
+}
+
+function updateHostUI() {
+    const btnDistribute = document.getElementById('btn-distribute');
+    const btnStartRound = document.getElementById('btn-start-round');
+    const btnSkipWord = document.getElementById('btn-skip-word');
+    const btnNextRound = document.getElementById('btn-next-round');
+    const btnBackLobby = document.getElementById('btn-back-lobby');
+    
+    if (btnDistribute) btnDistribute.style.display = G.isHost && G.gamePhase === 'lobby' ? 'block' : 'none';
+    
+    if (G.gamePhase === 'roles' && !G.isSpectator) {
+        if (btnStartRound) btnStartRound.style.display = G.isHost ? 'block' : 'none';
+        if (btnSkipWord) btnSkipWord.style.display = G.isHost ? 'block' : 'none';
+    }
+    
+    if (G.gamePhase === 'results' && !G.isSpectator) {
+        if (btnNextRound) btnNextRound.style.display = G.isHost ? 'block' : 'none';
+        if (btnBackLobby) btnBackLobby.style.display = G.isHost ? 'block' : 'none';
+    }
+    
+    if (G.isSpectator) updateSpectatorHostControls();
+    
+    renderPlayerList();
+    saveGameState();
+}
+
+// ============================================
+// INICIALIZACIÓN
+// ============================================
 
 document.addEventListener('DOMContentLoaded', init);
 
@@ -193,6 +289,18 @@ function init() {
         G.myId = 'P-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
         sessionStorage.setItem('infiltra_myId', G.myId);
     }
+    
+    setupRefreshProtection();
+    
+    const savedState = loadGameState();
+    if (savedState && savedState.channel && savedState.gamePhase !== 'home') {
+        if (confirm('Se detectó una partida en progreso. ¿Deseas reconectarte?')) {
+            restoreGameState(savedState);
+            initPubNub(true);
+            return;
+        } else { clearGameState(); }
+    }
+    
     loadProfile();
     initAvatars();
     initFrames();
@@ -202,17 +310,15 @@ function init() {
     checkURLParams();
     updateProfilePreview();
     createPlayersSidebar();
-    console.log('INFILTRA v0.9.9.1 iniciado');
+    createSpectatorControls();
+    console.log('INFILTRA v1.0.0 (Robust Edition) iniciado');
 }
 
 function loadProfile() {
     const name = localStorage.getItem('infiltra_name');
     const avatar = localStorage.getItem('infiltra_avatar');
     const frame = localStorage.getItem('infiltra_frame');
-    if (name) {
-        document.getElementById('input-name').value = name;
-        G.playerName = name;
-    }
+    if (name) { document.getElementById('input-name').value = name; G.playerName = name; }
     G.avatar = (avatar && AVATARS.find(a => a.id === avatar)) ? avatar : AVATARS[0].id;
     G.frame = (frame && FRAMES.find(f => f.id === frame)) ? frame : FRAMES[0].id;
     updateProfilePreview();
@@ -232,11 +338,7 @@ function updateProfilePreview() {
     if (!previewAvatar || !previewWrapper) return;
     const avatar = AVATARS.find(a => a.id === G.avatar) || AVATARS[0];
     const frame = FRAMES.find(f => f.id === G.frame);
-    
-    // Avatar hexagonal con marco
     previewAvatar.innerHTML = '<img src="' + avatar.image + '" alt="avatar" class="hex-avatar-img">';
-    
-    // Aplicar marco hexagonal
     if (frame && frame.color !== 'transparent') {
         previewWrapper.className = 'preview-avatar-wrapper hex-frame';
         previewWrapper.style.setProperty('--frame-color', frame.color);
@@ -244,7 +346,6 @@ function updateProfilePreview() {
         previewWrapper.className = 'preview-avatar-wrapper hex-frame no-frame';
         previewWrapper.style.setProperty('--frame-color', 'transparent');
     }
-    
     if (previewName) previewName.textContent = document.getElementById('input-name')?.value || 'Tu Nombre';
 }
 
@@ -278,7 +379,6 @@ function initFrames() {
         div.className = 'frame-option-new hex-frame-option' + (frame.id === G.frame ? ' selected' : '') + (frame.locked ? ' locked' : '');
         const preview = document.createElement('div');
         preview.className = 'frame-preview hex-frame-preview';
-        
         if (frame.color !== 'transparent') {
             preview.style.setProperty('--frame-color', frame.color);
             preview.innerHTML = '<div class="hex-frame-inner"><img src="' + ICONS.citizen + '" alt="" class="frame-preview-img"></div>';
@@ -286,7 +386,6 @@ function initFrames() {
             preview.classList.add('no-frame');
             preview.innerHTML = '<div class="hex-frame-inner"><img src="' + ICONS.citizen + '" alt="" class="frame-preview-img"></div>';
         }
-        
         div.appendChild(preview);
         const check = document.createElement('div');
         check.className = 'frame-check';
@@ -308,16 +407,13 @@ function initFrames() {
 function initCategories() {
     const list = document.getElementById('categories-list');
     if (!list) return;
-    list.innerHTML = Object.keys(DB).map(cat => 
-        '<div class="category-item"><input type="checkbox" id="cat-' + cat + '" value="' + cat + '" checked><label for="cat-' + cat + '">' + cat + '</label></div>'
-    ).join('');
+    list.innerHTML = Object.keys(DB).map(cat => '<div class="category-item"><input type="checkbox" id="cat-' + cat + '" value="' + cat + '" checked><label for="cat-' + cat + '">' + cat + '</label></div>').join('');
 }
 
 function validateRoleConfiguration() {
     const maxPlayers = parseInt(document.getElementById('config-max-players')?.value) || 10;
     const impostors = parseInt(document.getElementById('config-impostors')?.value) || 1;
     const charlatans = parseInt(document.getElementById('config-charlatans')?.value) || 0;
-    
     const specialRoles = impostors + charlatans;
     const citizens = maxPlayers - specialRoles;
     
@@ -325,55 +421,29 @@ function validateRoleConfiguration() {
     const summaryCharlatans = document.getElementById('summary-charlatans');
     const summaryCitizens = document.getElementById('summary-citizens');
     const summaryTotal = document.getElementById('summary-total');
+    const errorElement = document.getElementById('summary-error');
+    const createButton = document.getElementById('btn-create-room');
     
     if (summaryImpostors) summaryImpostors.textContent = impostors;
     if (summaryCharlatans) summaryCharlatans.textContent = charlatans;
     if (summaryCitizens) summaryCitizens.textContent = Math.max(0, citizens);
     if (summaryTotal) summaryTotal.textContent = maxPlayers;
     
-    const errorElement = document.getElementById('summary-error');
-    const createButton = document.getElementById('btn-create-room');
-    
     if (specialRoles >= maxPlayers) {
-        if (errorElement) {
-            errorElement.textContent = '❌ Debe haber al menos 1 ciudadano';
-            errorElement.style.display = 'block';
-            errorElement.style.color = '#ff4757';
-        }
-        if (createButton) {
-            createButton.disabled = true;
-            createButton.style.opacity = '0.5';
-            createButton.style.cursor = 'not-allowed';
-        }
+        if (errorElement) { errorElement.textContent = '❌ Debe haber al menos 1 ciudadano'; errorElement.style.display = 'block'; errorElement.style.color = '#ff4757'; }
+        if (createButton) { createButton.disabled = true; createButton.style.opacity = '0.5'; }
         return false;
     }
-    
     if (citizens === 1) {
-        if (errorElement) {
-            errorElement.textContent = '⚠️ Se recomienda tener al menos 2 ciudadanos';
-            errorElement.style.display = 'block';
-            errorElement.style.color = '#ffa502';
-        }
-        if (createButton) {
-            createButton.disabled = false;
-            createButton.style.opacity = '1';
-            createButton.style.cursor = 'pointer';
-        }
-        return true;
+        if (errorElement) { errorElement.textContent = '⚠️ Se recomienda tener al menos 2 ciudadanos'; errorElement.style.display = 'block'; errorElement.style.color = '#ffa502'; }
+    } else {
+        if (errorElement) errorElement.style.display = 'none';
     }
-    
-    if (errorElement) errorElement.style.display = 'none';
-    if (createButton) {
-        createButton.disabled = false;
-        createButton.style.opacity = '1';
-        createButton.style.cursor = 'pointer';
-    }
+    if (createButton) { createButton.disabled = false; createButton.style.opacity = '1'; }
     return true;
 }
 
-function updateSelectedCategories() {
-    G.selectedCategories = Array.from(document.querySelectorAll('.category-item input:checked')).map(cb => cb.value);
-}
+function updateSelectedCategories() { G.selectedCategories = Array.from(document.querySelectorAll('.category-item input:checked')).map(cb => cb.value); }
 
 function initParticles() {
     const container = document.getElementById('particles');
@@ -400,42 +470,29 @@ function createPlayersSidebar() {
 function updateRolePlayersList() {
     const list = document.getElementById('role-players-list');
     if (!list) return;
-    
     const allPlayerIds = G.activePlayers.length > 0 ? G.activePlayers : Object.keys(G.players);
-    
     list.innerHTML = allPlayerIds.map(id => {
         const p = G.players[id];
         const isEliminated = G.eliminated.includes(id);
         const isMe = id === G.myId;
-        
-        return '<div class="role-player-item' + (isEliminated ? ' eliminated' : '') + (isMe ? ' is-me' : '') + '">' +
-            '<div class="role-player-avatar">' + renderHexAvatar(id, 32) + '</div>' +
-            '<span class="role-player-name">' + (p?.name || id.substring(0, 8)) + (isMe ? ' (Tú)' : '') + '</span>' +
-            '</div>';
+        return '<div class="role-player-item' + (isEliminated ? ' eliminated' : '') + (isMe ? ' is-me' : '') + '"><div class="role-player-avatar">' + renderHexAvatar(id, 32) + '</div><span class="role-player-name">' + (p?.name || id.substring(0, 8)) + (isMe ? ' (Tú)' : '') + '</span></div>';
     }).join('');
 }
 
 function updatePlayersSidebar() {
     const list = document.getElementById('sidebar-players-list');
-    const sidebar = document.getElementById('players-sidebar');
-    if (!list || !sidebar) return;
-    
-    const allPlayerIds = Object.keys(G.players);
-    list.innerHTML = allPlayerIds.map(id => {
+    if (!list) return;
+    list.innerHTML = Object.keys(G.players).map(id => {
         const p = G.players[id];
         const isEliminated = G.eliminated.includes(id);
-        return '<div class="sidebar-player' + (isEliminated ? ' eliminated' : '') + '">' +
-            '<div class="sidebar-player-avatar">' + renderHexAvatar(id, 28) + '</div>' +
-            '<span class="sidebar-player-name">' + (p?.name || id.substring(0, 8)) + '</span></div>';
+        const isHost = id === G.hostId;
+        return '<div class="sidebar-player' + (isEliminated ? ' eliminated' : '') + '"><div class="sidebar-player-avatar">' + renderHexAvatar(id, 28) + '</div><span class="sidebar-player-name">' + (p?.name || id.substring(0, 8)) + (isHost ? ' ⭐' : '') + '</span></div>';
     }).join('');
 }
 
 function showPlayersSidebar() {
     const sidebar = document.getElementById('players-sidebar');
-    if (sidebar && window.innerWidth > 768) {
-        updatePlayersSidebar();
-        sidebar.classList.add('visible');
-    }
+    if (sidebar && window.innerWidth > 768) { updatePlayersSidebar(); sidebar.classList.add('visible'); }
 }
 
 function hidePlayersSidebar() {
@@ -444,10 +501,7 @@ function hidePlayersSidebar() {
 }
 
 function bindEvents() {
-    const bind = (id, fn) => {
-        const el = document.getElementById(id);
-        if (el) el.onclick = fn;
-    };
+    const bind = (id, fn) => { const el = document.getElementById(id); if (el) el.onclick = fn; };
     bind('btn-show-config', showConfig);
     bind('btn-back-home', function() { showScreen('screen-home'); });
     bind('btn-join-room', joinRoom);
@@ -462,80 +516,38 @@ function bindEvents() {
     bind('btn-exit-game', exitGame);
     bind('btn-spectator-next', spectatorNextAction);
     bind('btn-spectator-lobby', backToLobby);
+    bind('btn-spectator-skip', skipWord);
     bind('role-card', revealRole);
     bind('btn-leave-role', leaveRoom);
     bind('btn-leave-voting', leaveRoom);
     bind('btn-leave-results', leaveRoom);
     bind('btn-leave-spectator', leaveRoom);
-    bind('btn-cat-all', function() {
-        document.querySelectorAll('.category-item input').forEach(cb => cb.checked = true);
-        updateSelectedCategories();
-    });
-    bind('btn-cat-none', function() {
-        document.querySelectorAll('.category-item input').forEach(cb => cb.checked = false);
-        updateSelectedCategories();
-    });
+    bind('btn-cat-all', function() { document.querySelectorAll('.category-item input').forEach(cb => cb.checked = true); updateSelectedCategories(); });
+    bind('btn-cat-none', function() { document.querySelectorAll('.category-item input').forEach(cb => cb.checked = false); updateSelectedCategories(); });
     bind('btn-sound', function() {
         G.soundEnabled = !G.soundEnabled;
         const btn = document.getElementById('btn-sound');
-        if (btn) {
-            btn.querySelector('img').src = G.soundEnabled ? ICONS.soundOn : ICONS.soundOff;
-            btn.classList.toggle('muted', !G.soundEnabled);
-        }
+        if (btn) { btn.querySelector('img').src = G.soundEnabled ? ICONS.soundOn : ICONS.soundOff; btn.classList.toggle('muted', !G.soundEnabled); }
     });
-    bind('btn-help', function() {
-        const current = document.querySelector('.screen.active')?.id || 'screen-home';
-        if (current !== 'screen-help') G.screenStack.push(current);
-        showScreen('screen-help');
-    });
-    bind('btn-help-back', function() {
-        showScreen(G.screenStack.pop() || 'screen-home');
-    });
+    bind('btn-help', function() { const current = document.querySelector('.screen.active')?.id || 'screen-home'; if (current !== 'screen-help') G.screenStack.push(current); showScreen('screen-help'); });
+    bind('btn-help-back', function() { showScreen(G.screenStack.pop() || 'screen-home'); });
 
     const maxPlayersInput = document.getElementById('config-max-players');
     const impostorsInput = document.getElementById('config-impostors');
     const charlatansInput = document.getElementById('config-charlatans');
-
-    if (maxPlayersInput) {
-        maxPlayersInput.addEventListener('input', function() {
-            const maxPlayers = parseInt(this.value) || 3;
-            if (impostorsInput) impostorsInput.max = maxPlayers - 1;
-            if (charlatansInput) charlatansInput.max = maxPlayers - 1;
-            
-            const currentImpostors = parseInt(impostorsInput?.value) || 1;
-            const currentCharlatans = parseInt(charlatansInput?.value) || 0;
-            
-            if (currentImpostors >= maxPlayers && impostorsInput) {
-                impostorsInput.value = Math.max(1, Math.floor(maxPlayers / 3));
-            }
-            if (currentCharlatans >= maxPlayers && charlatansInput) {
-                charlatansInput.value = 0;
-            }
-            validateRoleConfiguration();
-        });
-    }
-
-    if (impostorsInput) {
-        impostorsInput.addEventListener('input', function() {
-            const maxPlayers = parseInt(maxPlayersInput?.value) || 10;
-            const impostors = parseInt(this.value) || 1;
-            const remainingSpace = maxPlayers - impostors - 1;
-            
-            if (charlatansInput) {
-                charlatansInput.max = Math.max(0, remainingSpace);
-                const currentCharlatans = parseInt(charlatansInput.value) || 0;
-                if (currentCharlatans > remainingSpace) {
-                    charlatansInput.value = Math.max(0, remainingSpace);
-                }
-            }
-            validateRoleConfiguration();
-        });
-    }
-
-    if (charlatansInput) {
-        charlatansInput.addEventListener('input', validateRoleConfiguration);
-    }
-    
+    if (maxPlayersInput) maxPlayersInput.addEventListener('input', function() {
+        const maxPlayers = parseInt(this.value) || 3;
+        if (impostorsInput) impostorsInput.max = maxPlayers - 1;
+        if (charlatansInput) charlatansInput.max = maxPlayers - 1;
+        validateRoleConfiguration();
+    });
+    if (impostorsInput) impostorsInput.addEventListener('input', function() {
+        const maxPlayers = parseInt(maxPlayersInput?.value) || 10;
+        const impostors = parseInt(this.value) || 1;
+        if (charlatansInput) charlatansInput.max = Math.max(0, maxPlayers - impostors - 1);
+        validateRoleConfiguration();
+    });
+    if (charlatansInput) charlatansInput.addEventListener('input', validateRoleConfiguration);
     const nameInput = document.getElementById('input-name');
     if (nameInput) nameInput.addEventListener('input', updateProfilePreview);
 }
@@ -543,33 +555,20 @@ function bindEvents() {
 function checkURLParams() {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code') || params.get('room');
-    if (code) {
-        const input = document.getElementById('input-join-code');
-        if (input) {
-            input.value = code.toUpperCase();
-            toast('Código detectado');
-        }
-    }
+    if (code) { const input = document.getElementById('input-join-code'); if (input) { input.value = code.toUpperCase(); toast('Código detectado'); } }
 }
 
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const screen = document.getElementById(id);
     if (screen) screen.classList.add('active');
-    
-    if (id === 'screen-voting') {
-        showPlayersSidebar();
-    } else {
-        hidePlayersSidebar();
-    }
+    if (id === 'screen-voting') showPlayersSidebar(); else hidePlayersSidebar();
+    saveGameState();
 }
 
 function showConfig() {
     G.playerName = document.getElementById('input-name')?.value.trim() || '';
-    if (!G.playerName) {
-        toast('Ingresa tu nombre', 'error');
-        return;
-    }
+    if (!G.playerName) { toast('Ingresa tu nombre', 'error'); return; }
     saveProfile();
     showScreen('screen-config');
     setTimeout(validateRoleConfiguration, 100);
@@ -577,10 +576,7 @@ function showConfig() {
 
 function createRoom() {
     updateSelectedCategories();
-    if (G.selectedCategories.length === 0) {
-        toast('Selecciona categorías', 'error');
-        return;
-    }
+    if (G.selectedCategories.length === 0) { toast('Selecciona categorías', 'error'); return; }
     G.isHost = true;
     G.hostId = G.myId;
     G.maxPlayers = Math.min(parseInt(document.getElementById('config-max-players')?.value) || 10, 10);
@@ -590,25 +586,19 @@ function createRoom() {
     G.usedWords = [];
     G.isFirstRound = true;
     G.gamePhase = 'lobby';
-    initPubNub();
+    initPubNub(false);
 }
 
 function joinRoom() {
     G.playerName = document.getElementById('input-name')?.value.trim() || '';
-    if (!G.playerName) {
-        toast('Ingresa tu nombre', 'error');
-        return;
-    }
+    if (!G.playerName) { toast('Ingresa tu nombre', 'error'); return; }
     const code = (document.getElementById('input-join-code')?.value || '').toUpperCase().trim();
-    if (code.length !== 4) {
-        toast('Código de 4 letras', 'error');
-        return;
-    }
+    if (code.length !== 4) { toast('Código de 4 letras', 'error'); return; }
     saveProfile();
     G.isHost = false;
     G.channel = code;
     G.gamePhase = 'lobby';
-    initPubNub();
+    initPubNub(false);
 }
 
 function generateCode() {
@@ -617,153 +607,120 @@ function generateCode() {
     for (let i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
     return code;
 }
+// ============================================
+// INFILTRA v1.0.0 - PARTE 2
+// PubNub, Mensajes y Lógica del Juego
+// ============================================
 
-function initPubNub() {
+function initPubNub(isReconnection) {
     clearAllTimers();
-    if (G.pubnub) {
-        G.pubnub.unsubscribeAll();
-        G.pubnub = null;
-    }
-    G.pubnub = new PubNub({
-        publishKey: 'demo',
-        subscribeKey: 'demo',
-        userId: G.myId
-    });
-    G.pubnub.addListener({
-        status: onStatus,
-        message: onMessage,
-        presence: onPresence
-    });
-    G.pubnub.subscribe({
-        channels: [G.channel],
-        withPresence: true
-    });
+    if (G.pubnub) { G.pubnub.unsubscribeAll(); G.pubnub = null; }
+    G.pubnub = new PubNub({ publishKey: 'demo', subscribeKey: 'demo', userId: G.myId, restore: true, keepAlive: true });
+    G.pubnub.addListener({ status: function(status) { onStatus(status, isReconnection); }, message: onMessage, presence: onPresence });
+    G.pubnub.subscribe({ channels: [G.channel], withPresence: true });
 }
 
-function onStatus(status) {
+function onStatus(status, isReconnection) {
     if (status.category === 'PNConnectedCategory') {
         setPlayerState();
-        document.getElementById('display-room-code').textContent = G.channel;
-        showScreen('screen-lobby');
-        generateQR();
-        if (G.isHost) {
-            document.getElementById('btn-distribute').style.display = 'block';
-            setTimeout(publishConfig, 300);
-        } else {
-            setTimeout(requestSync, 500);
-        }
+        if (isReconnection) { toast('Reconectado', 'success'); restoreScreenForPhase(); }
+        else { document.getElementById('display-room-code').textContent = G.channel; showScreen('screen-lobby'); generateQR(); }
+        if (G.isHost) { document.getElementById('btn-distribute').style.display = 'block'; setTimeout(publishConfig, 300); }
+        else { setTimeout(requestSync, 500); }
         setTimeout(refreshPlayers, 500);
         G.refreshInterval = setInterval(refreshPlayers, 3000);
-    } else if (status.error) {
-        toast('Error de conexión', 'error');
+        saveGameState();
+    } else if (status.category === 'PNNetworkDownCategory') { toast('Conexión perdida...', 'warning'); }
+    else if (status.category === 'PNNetworkUpCategory') { toast('Conexión restaurada', 'info'); handleReconnection(); }
+    else if (status.error) { toast('Error de conexión', 'error'); }
+}
+
+function restoreScreenForPhase() {
+    switch (G.gamePhase) {
+        case 'lobby': showScreen('screen-lobby'); document.getElementById('display-room-code').textContent = G.channel; generateQR(); break;
+        case 'roles': case 'round':
+            if (G.isSpectator) { showScreen('screen-spectator'); updateSpectatorRoles(); }
+            else { showScreen('screen-role'); restoreRoleScreen(); }
+            break;
+        case 'voting': if (G.isSpectator) { showScreen('screen-spectator'); } else { showScreen('screen-voting'); renderVotingList(); } break;
+        case 'results': showScreen('screen-results'); break;
+        case 'gameover': showScreen('screen-gameover'); break;
+        default: showScreen('screen-lobby');
     }
+    updateHostUI();
+}
+
+function restoreRoleScreen() {
+    if (!G.myRole) return;
+    const card = document.getElementById('role-card');
+    if (G.roleRevealed) {
+        const roleClass = G.myRole.role === 'INFILTRADO' ? 'impostor' : G.myRole.role === 'CHARLATÁN' ? 'charlatan' : 'citizen';
+        if (card) card.className = 'role-card ' + roleClass;
+        document.getElementById('role-icon').innerHTML = '<img src="' + G.myRole.icon + '" alt="" class="role-icon-img">';
+        document.getElementById('role-title').textContent = G.myRole.role;
+        document.getElementById('role-word').textContent = G.myRole.word;
+        document.getElementById('role-instruction').textContent = 'Tu rol (ya revelado)';
+    } else {
+        if (card) card.className = 'role-card blurred';
+        document.getElementById('role-icon').innerHTML = '<img src="' + ICONS.help + '" alt="?" class="role-icon-img">';
+        document.getElementById('role-title').textContent = 'SECRETO';
+        document.getElementById('role-word').textContent = '???';
+        document.getElementById('role-instruction').textContent = 'Toca la carta para revelar';
+    }
+    updateRolePlayersList();
 }
 
 function onMessage(event) {
-    const msg = event.message;
-    const sender = event.publisher;
+    const msg = event.message, sender = event.publisher;
     switch (msg.type) {
-        case 'config':
-            G.maxPlayers = Math.min(msg.maxPlayers, 10);
-            G.roundTime = msg.roundTime;
-            G.hostId = msg.hostId;
-            G.isHost = (G.myId === G.hostId);
-            if (msg.usedWords) G.usedWords = msg.usedWords;
-            if (msg.scores) G.scores = msg.scores;
-            renderPlayerList();
-            break;
-        case 'player_state':
-            const currentCount = Object.keys(G.players).length;
-            const isNewPlayer = !G.players[sender];
-            if (isNewPlayer && currentCount >= G.maxPlayers && sender !== G.myId) {
-                if (G.isHost) {
-                    G.pubnub.publish({ channel: G.channel, message: { type: 'room_full', targetId: sender } });
-                }
-                return;
-            }
-            if (isNewPlayer && currentCount >= G.maxPlayers) {
-                return;
-            }
-            G.players[sender] = { name: msg.name, avatar: msg.avatar, frame: msg.frame };
-            if (G.scores[sender] === undefined) G.scores[sender] = 0;
-            renderPlayerList();
-            break;
-        case 'room_full':
-            if (msg.targetId === G.myId) {
-                toast('Sala llena', 'error');
-                setTimeout(exitGame, 1500);
-            }
-            break;
-        case 'assign':
-            handleAssign(msg);
-            break;
-        case 'start_round':
-            handleStartRound(msg);
-            break;
-        case 'vote':
-            handleVote(sender, msg.target);
-            break;
-        case 'vote_update':
-            G.votes = msg.votes;
-            G.votedPlayers = new Set(msg.voted);
-            if (G.isSpectator) updateSpectatorVotes();
-            break;
-        case 'results':
-            showResults(msg);
-            break;
-        case 'next_round':
-            handleNextRound(msg);
-            break;
-        case 'back_to_lobby':
-            handleBackToLobby(msg);
-            break;
-        case 'game_over':
-            handleGameOver(msg);
-            break;
-        case 'spectator_roles':
-            if (G.isSpectator) {
-                G.fullRoles = msg.roles;
-                G.activePlayers = msg.activePlayers || G.activePlayers;
-                updateSpectatorRoles();
-            }
-            break;
-        case 'host_disconnect':
-            toast('Host desconectado', 'error');
-            setTimeout(exitGame, 2000);
-            break;
-        case 'kick_player':
-            if (msg.targetId === G.myId) {
-                toast('Fuiste expulsado', 'error');
-                setTimeout(exitGame, 1500);
-            } else {
-                delete G.players[msg.targetId];
-                delete G.scores[msg.targetId];
-                renderPlayerList();
-            }
-            break;
-        case 'skip_word':
-            handleSkipWord(msg);
-            break;
-        case 'request_sync':
-            if (G.isHost) publishFullSync();
-            break;
-        case 'full_sync':
-            handleFullSync(msg);
-            break;
+        case 'config': handleConfig(msg); break;
+        case 'player_state': handlePlayerState(sender, msg); break;
+        case 'room_full': if (msg.targetId === G.myId) { toast('Sala llena', 'error'); setTimeout(exitGame, 1500); } break;
+        case 'assign': handleAssign(msg); break;
+        case 'start_round': handleStartRound(msg); break;
+        case 'vote': handleVote(sender, msg.target); break;
+        case 'vote_update': G.votes = msg.votes; G.votedPlayers = new Set(msg.voted); if (G.isSpectator) updateSpectatorVotes(); break;
+        case 'results': showResults(msg); break;
+        case 'next_round': handleNextRound(msg); break;
+        case 'back_to_lobby': handleBackToLobby(msg); break;
+        case 'game_over': handleGameOver(msg); break;
+        case 'spectator_roles': if (G.isSpectator) { G.fullRoles = msg.roles; G.activePlayers = msg.activePlayers || G.activePlayers; updateSpectatorRoles(); } break;
+        case 'host_disconnect': toast('Host desconectado', 'error'); setTimeout(exitGame, 2000); break;
+        case 'kick_player': if (msg.targetId === G.myId) { toast('Fuiste expulsado', 'error'); setTimeout(exitGame, 1500); } else { delete G.players[msg.targetId]; delete G.scores[msg.targetId]; renderPlayerList(); } break;
+        case 'skip_word': handleSkipWord(msg); break;
+        case 'request_sync': if (G.isHost) publishFullSync(); break;
+        case 'full_sync': handleFullSync(msg); break;
     }
 }
 
-function onPresence(event) {
-    if (event.action === 'join' && G.isHost && event.uuid !== G.myId) {
-        setTimeout(publishConfig, 500);
+function handleConfig(msg) {
+    G.maxPlayers = Math.min(msg.maxPlayers, 10);
+    G.roundTime = msg.roundTime;
+    G.hostId = msg.hostId;
+    G.isHost = (G.myId === G.hostId);
+    if (msg.usedWords) G.usedWords = msg.usedWords;
+    if (msg.scores) G.scores = msg.scores;
+    renderPlayerList();
+    saveGameState();
+}
+
+function handlePlayerState(sender, msg) {
+    const currentCount = Object.keys(G.players).length;
+    const isNewPlayer = !G.players[sender];
+    if (isNewPlayer && currentCount >= G.maxPlayers && sender !== G.myId) {
+        if (G.isHost) G.pubnub.publish({ channel: G.channel, message: { type: 'room_full', targetId: sender } });
+        return;
     }
+    G.players[sender] = { name: msg.name, avatar: msg.avatar, frame: msg.frame };
+    if (G.scores[sender] === undefined) G.scores[sender] = 0;
+    renderPlayerList();
+}
+
+function onPresence(event) {
+    if (event.action === 'join' && G.isHost && event.uuid !== G.myId) setTimeout(publishConfig, 500);
     if (event.action === 'leave' || event.action === 'timeout') {
-        if (G.gamePhase === 'lobby' || G.gamePhase === 'home') {
-            delete G.players[event.uuid];
-        } else {
-            G.activePlayers = G.activePlayers.filter(id => id !== event.uuid);
-            if (!G.eliminated.includes(event.uuid)) G.eliminated.push(event.uuid);
-        }
+        if (G.gamePhase === 'lobby' || G.gamePhase === 'home') delete G.players[event.uuid];
+        else { G.activePlayers = G.activePlayers.filter(id => id !== event.uuid); if (!G.eliminated.includes(event.uuid)) G.eliminated.push(event.uuid); }
         renderPlayerList();
         updatePlayersSidebar();
     }
@@ -772,59 +729,23 @@ function onPresence(event) {
 
 function setPlayerState() {
     if (!G.pubnub) return;
-    G.pubnub.setState({
-        state: { name: G.playerName, avatar: G.avatar, frame: G.frame },
-        channels: [G.channel]
-    });
-    G.pubnub.publish({
-        channel: G.channel,
-        message: { type: 'player_state', name: G.playerName, avatar: G.avatar, frame: G.frame }
-    });
+    G.pubnub.setState({ state: { name: G.playerName, avatar: G.avatar, frame: G.frame }, channels: [G.channel] });
+    G.pubnub.publish({ channel: G.channel, message: { type: 'player_state', name: G.playerName, avatar: G.avatar, frame: G.frame } });
 }
 
 function publishConfig() {
     if (!G.pubnub || !G.isHost) return;
-    G.pubnub.publish({
-        channel: G.channel,
-        message: {
-            type: 'config',
-            maxPlayers: G.maxPlayers,
-            roundTime: G.roundTime,
-            hostId: G.hostId,
-            usedWords: G.usedWords,
-            scores: G.scores
-        }
-    });
+    G.pubnub.publish({ channel: G.channel, message: { type: 'config', maxPlayers: G.maxPlayers, roundTime: G.roundTime, hostId: G.hostId, usedWords: G.usedWords, scores: G.scores } });
 }
 
 function requestSync() {
     if (!G.pubnub || G.isHost) return;
-    G.pubnub.publish({
-        channel: G.channel,
-        message: { type: 'request_sync' }
-    });
+    G.pubnub.publish({ channel: G.channel, message: { type: 'request_sync' } });
 }
 
 function publishFullSync() {
     if (!G.pubnub || !G.isHost) return;
-    G.pubnub.publish({
-        channel: G.channel,
-        message: {
-            type: 'full_sync',
-            maxPlayers: G.maxPlayers,
-            roundTime: G.roundTime,
-            hostId: G.hostId,
-            usedWords: G.usedWords,
-            scores: G.scores,
-            gamePhase: G.gamePhase,
-            activePlayers: G.activePlayers,
-            eliminated: G.eliminated,
-            fullRoles: G.fullRoles,
-            impostors: G.impostors,
-            charlatans: G.charlatans,
-            citizens: G.citizens
-        }
-    });
+    G.pubnub.publish({ channel: G.channel, message: { type: 'full_sync', maxPlayers: G.maxPlayers, roundTime: G.roundTime, hostId: G.hostId, usedWords: G.usedWords, scores: G.scores, gamePhase: G.gamePhase, activePlayers: G.activePlayers, eliminated: G.eliminated, fullRoles: G.fullRoles, impostors: G.impostors, charlatans: G.charlatans, citizens: G.citizens } });
 }
 
 function handleFullSync(msg) {
@@ -847,6 +768,7 @@ function handleFullSync(msg) {
         if (G.fullRoles[G.myId]) G.myRole = G.fullRoles[G.myId];
     }
     renderPlayerList();
+    saveGameState();
 }
 
 function generateQR() {
@@ -855,34 +777,19 @@ function generateQR() {
     const qr = qrcode(0, 'M');
     qr.addData('https://crissarroyo.github.io/infiltra/game.html?code=' + G.channel);
     qr.make();
-    container.innerHTML = qr.createImgTag(4) + 
-        '<div class="qr-instructions"><strong>Comparte el código de arriba</strong>para que tus amigos se unan</div>';
+    container.innerHTML = qr.createImgTag(4) + '<div class="qr-instructions"><strong>Comparte el código de arriba</strong>para que tus amigos se unan</div>';
 }
 
 function refreshPlayers() {
     if (!G.pubnub) return;
-    G.pubnub.hereNow({
-        channels: [G.channel],
-        includeState: true
-    }, function(status, response) {
+    G.pubnub.hereNow({ channels: [G.channel], includeState: true }, function(status, response) {
         if (response && response.channels && response.channels[G.channel]) {
             const occupants = response.channels[G.channel].occupants;
             const currentIds = occupants.map(o => o.uuid);
-            Object.keys(G.players).forEach(id => {
-                if (!currentIds.includes(id)) delete G.players[id];
-            });
+            Object.keys(G.players).forEach(id => { if (!currentIds.includes(id)) delete G.players[id]; });
             occupants.forEach(o => {
-                if (!G.players[o.uuid]) {
-                    G.players[o.uuid] = {
-                        name: o.state?.name || o.uuid.substring(0, 8),
-                        avatar: o.state?.avatar || 'avatar-01',
-                        frame: o.state?.frame || 'fr-none'
-                    };
-                } else if (o.state) {
-                    G.players[o.uuid].name = o.state.name || G.players[o.uuid].name;
-                    G.players[o.uuid].avatar = o.state.avatar || G.players[o.uuid].avatar;
-                    G.players[o.uuid].frame = o.state.frame || G.players[o.uuid].frame;
-                }
+                if (!G.players[o.uuid]) G.players[o.uuid] = { name: o.state?.name || o.uuid.substring(0, 8), avatar: o.state?.avatar || 'avatar-01', frame: o.state?.frame || 'fr-none' };
+                else if (o.state) { G.players[o.uuid].name = o.state.name || G.players[o.uuid].name; G.players[o.uuid].avatar = o.state.avatar || G.players[o.uuid].avatar; G.players[o.uuid].frame = o.state.frame || G.players[o.uuid].frame; }
                 if (G.scores[o.uuid] === undefined) G.scores[o.uuid] = 0;
             });
             renderPlayerList();
@@ -890,59 +797,33 @@ function refreshPlayers() {
     });
 }
 
-// Función para renderizar avatar hexagonal con marco
 function renderHexAvatar(playerId, size) {
     size = size || 40;
     const p = G.players[playerId];
     const avatar = AVATARS.find(a => a.id === p?.avatar) || AVATARS[0];
     const frame = FRAMES.find(f => f.id === p?.frame);
     const hasFrame = frame && frame.color !== 'transparent';
-    const frameColor = hasFrame ? frame.color : 'transparent';
-    
-    return '<div class="hex-avatar-container" style="width:' + size + 'px;height:' + (size * 1.15) + 'px;--frame-color:' + frameColor + '">' +
-        '<img src="' + avatar.image + '" alt="" class="hex-avatar-img">' +
-        (hasFrame ? '<div class="hex-avatar-frame"></div>' : '') +
-        '</div>';
+    return '<div class="hex-avatar-container" style="width:' + size + 'px;height:' + (size * 1.15) + 'px;--frame-color:' + (hasFrame ? frame.color : 'transparent') + '"><img src="' + avatar.image + '" alt="" class="hex-avatar-img">' + (hasFrame ? '<div class="hex-avatar-frame"></div>' : '') + '</div>';
 }
 
-// Mantener compatibilidad con renderPlayerAvatar pero usando hexagonal
-function renderPlayerAvatar(playerId, size) {
-    return renderHexAvatar(playerId, size);
-}
+function renderPlayerAvatar(playerId, size) { return renderHexAvatar(playerId, size); }
 
 function renderPlayerList() {
     const list = document.getElementById('player-list');
     const countEl = document.getElementById('player-count');
     if (!list) return;
-    
     const playerIds = Object.keys(G.players).sort((a, b) => (G.scores[b] || 0) - (G.scores[a] || 0));
-    
     if (countEl) countEl.textContent = playerIds.length + '/' + G.maxPlayers;
-    
     let headerHtml = '<div class="player-list-score-header"><span>Jugador</span><span>Puntos</span></div>';
-    
     list.innerHTML = headerHtml + playerIds.map((id, index) => {
-        const p = G.players[id];
-        const isMe = id === G.myId;
-        const isHostPlayer = id === G.hostId;
-        const score = G.scores[id] || 0;
-        
-        let rankHtml = '';
-        if (index === 0) rankHtml = '<div class="player-rank"><img src="' + ICONS.medalGold + '" alt="1"></div>';
-        else if (index === 1) rankHtml = '<div class="player-rank"><img src="' + ICONS.medalSilver + '" alt="2"></div>';
-        else if (index === 2) rankHtml = '<div class="player-rank"><img src="' + ICONS.medalBronze + '" alt="3"></div>';
-        else rankHtml = '<div class="player-rank"><span class="player-rank-number">' + (index + 1) + '</span></div>';
-        
-        const kickBtn = (G.isHost && !isMe && (G.gamePhase === 'lobby' || G.gamePhase === 'home')) ?
-            '<button class="btn-kick" onclick="kickPlayer(\'' + id + '\')" title="Expulsar"><img src="' + ICONS.kick + '" alt="Kick"></button>' : '';
-        
-        return '<div class="player-item">' + rankHtml +
-            '<div class="player-avatar">' + renderHexAvatar(id, 40) + '</div>' +
-            '<div class="player-info"><div class="player-name">' + p.name + (isMe ? ' (Tú)' : '') + '</div>' +
-            (isHostPlayer ? '<div class="player-tag">Host</div>' : '') + '</div>' +
-            '<div class="player-score">' + score + '</div>' + kickBtn + '</div>';
+        const p = G.players[id], isMe = id === G.myId, isHostPlayer = id === G.hostId, score = G.scores[id] || 0;
+        let rankHtml = index === 0 ? '<div class="player-rank"><img src="' + ICONS.medalGold + '" alt="1"></div>' :
+                       index === 1 ? '<div class="player-rank"><img src="' + ICONS.medalSilver + '" alt="2"></div>' :
+                       index === 2 ? '<div class="player-rank"><img src="' + ICONS.medalBronze + '" alt="3"></div>' :
+                       '<div class="player-rank"><span class="player-rank-number">' + (index + 1) + '</span></div>';
+        const kickBtn = (G.isHost && !isMe && (G.gamePhase === 'lobby' || G.gamePhase === 'home')) ? '<button class="btn-kick" onclick="kickPlayer(\'' + id + '\')" title="Expulsar"><img src="' + ICONS.kick + '" alt="Kick"></button>' : '';
+        return '<div class="player-item">' + rankHtml + '<div class="player-avatar">' + renderHexAvatar(id, 40) + '</div><div class="player-info"><div class="player-name">' + p.name + (isMe ? ' (Tú)' : '') + '</div>' + (isHostPlayer ? '<div class="player-tag">Host</div>' : '') + '</div><div class="player-score">' + score + '</div>' + kickBtn + '</div>';
     }).join('');
-    
     const btnDistribute = document.getElementById('btn-distribute');
     if (btnDistribute) btnDistribute.style.display = G.isHost ? 'block' : 'none';
 }
@@ -954,10 +835,7 @@ function kickPlayer(playerId) {
         delete G.players[playerId];
         delete G.scores[playerId];
         renderPlayerList();
-        G.pubnub.publish({
-            channel: G.channel,
-            message: { type: 'kick_player', targetId: playerId, targetName: playerName }
-        });
+        G.pubnub.publish({ channel: G.channel, message: { type: 'kick_player', targetId: playerId, targetName: playerName } });
     }
 }
 window.kickPlayer = kickPlayer;
@@ -965,21 +843,8 @@ window.kickPlayer = kickPlayer;
 function selectNewWord() {
     updateSelectedCategories();
     let availableWords = [];
-    G.selectedCategories.forEach(cat => {
-        DB[cat].forEach(word => {
-            if (!G.usedWords.includes(word)) availableWords.push({ category: cat, word: word });
-        });
-    });
-    if (availableWords.length < 2) {
-        G.usedWords = [];
-        availableWords = [];
-        G.selectedCategories.forEach(cat => {
-            DB[cat].forEach(word => {
-                availableWords.push({ category: cat, word: word });
-            });
-        });
-        toast('Palabras reiniciadas');
-    }
+    G.selectedCategories.forEach(cat => { DB[cat].forEach(word => { if (!G.usedWords.includes(word)) availableWords.push({ category: cat, word: word }); }); });
+    if (availableWords.length < 2) { G.usedWords = []; availableWords = []; G.selectedCategories.forEach(cat => { DB[cat].forEach(word => { availableWords.push({ category: cat, word: word }); }); }); toast('Palabras reiniciadas'); }
     const secretIdx = Math.floor(Math.random() * availableWords.length);
     const secretData = availableWords[secretIdx];
     G.currentCategory = secretData.category;
@@ -993,78 +858,35 @@ function selectNewWord() {
 
 function distributeRoles() {
     if (!G.pubnub) return;
-    
     const playerIds = Object.keys(G.players);
-    if (playerIds.length < 3) {
-        toast('Mínimo 3 jugadores', 'error');
-        return;
-    }
-    
+    if (playerIds.length < 3) { toast('Mínimo 3 jugadores', 'error'); return; }
     const numImp = parseInt(document.getElementById('config-impostors')?.value) || 1;
     const numChar = parseInt(document.getElementById('config-charlatans')?.value) || 0;
-    const specialRoles = numImp + numChar;
-    
-    if (specialRoles >= playerIds.length) {
-        toast('Configuración inválida: debe haber al menos 1 ciudadano', 'error');
-        return;
-    }
-    
-    // CORRECCIÓN CRÍTICA: Calcular ciudadanos correctamente
-    const numCit = playerIds.length - specialRoles;
-    
-    if (numCit < 1) {
-        toast('Error: no hay espacio para ciudadanos', 'error');
-        return;
-    }
-    
+    if (numImp + numChar >= playerIds.length) { toast('Configuración inválida', 'error'); return; }
     updateSelectedCategories();
-    if (G.selectedCategories.length === 0) {
-        toast('Selecciona categorías', 'error');
-        return;
-    }
+    if (G.selectedCategories.length === 0) { toast('Selecciona categorías', 'error'); return; }
     
     const wordData = selectNewWord();
-    let roles = {};
-    let pool = [...playerIds];
-    G.impostors = [];
-    G.charlatans = [];
-    G.citizens = [];
+    let roles = {}, pool = [...playerIds];
+    G.impostors = []; G.charlatans = []; G.citizens = []; G.trueRoles = {};
     
     for (let i = 0; i < numImp && pool.length; i++) {
-        const idx = Math.floor(Math.random() * pool.length);
-        const id = pool.splice(idx, 1)[0];
+        const idx = Math.floor(Math.random() * pool.length), id = pool.splice(idx, 1)[0];
         roles[id] = { role: 'INFILTRADO', icon: ICONS.impostor, word: 'Categoría: ' + wordData.category };
         G.trueRoles[id] = 'INFILTRADO';
         G.impostors.push(id);
     }
-    
     for (let i = 0; i < numChar && pool.length; i++) {
-        const idx = Math.floor(Math.random() * pool.length);
-        const id = pool.splice(idx, 1)[0];
+        const idx = Math.floor(Math.random() * pool.length), id = pool.splice(idx, 1)[0];
         roles[id] = { role: 'CIUDADANO', icon: ICONS.citizen, word: wordData.fakeWord };
         G.trueRoles[id] = 'CHARLATÁN';
         G.charlatans.push(id);
     }
-    
-    // CORRECCIÓN: Los ciudadanos son TODOS los que quedan en el pool
     pool.forEach(id => {
         roles[id] = { role: 'CIUDADANO', icon: ICONS.citizen, word: wordData.secretWord };
         G.trueRoles[id] = 'CIUDADANO';
         G.citizens.push(id);
     });
-    
-    // Verificación final
-    const totalAssigned = G.impostors.length + G.charlatans.length + G.citizens.length;
-    if (totalAssigned !== playerIds.length) {
-        console.error('ERROR: Roles mal asignados', {
-            total: playerIds.length,
-            infiltrados: G.impostors.length,
-            charlatanes: G.charlatans.length,
-            ciudadanos: G.citizens.length
-        });
-        toast('Error en asignación de roles', 'error');
-        return;
-    }
     
     G.activePlayers = [...playerIds];
     G.eliminated = [];
@@ -1073,60 +895,22 @@ function distributeRoles() {
     G.isFirstRound = true;
     G.starterPlayerId = G.activePlayers[Math.floor(Math.random() * G.activePlayers.length)];
     
-    G.pubnub.publish({
-        channel: G.channel,
-        message: {
-            type: 'assign',
-            roles: roles,
-            activePlayers: G.activePlayers,
-            impostors: G.impostors,
-            charlatans: G.charlatans,
-            citizens: G.citizens,
-            hostId: G.hostId,
-            starterPlayerId: G.starterPlayerId,
-            usedWords: G.usedWords,
-            isFirstRound: true
-        }
-    });
-    
-    console.log('✓ Roles distribuidos:', {
-        total: playerIds.length,
-        infiltrados: numImp,
-        charlatanes: numChar,
-        ciudadanos: numCit
-    });
+    G.pubnub.publish({ channel: G.channel, message: { type: 'assign', roles: roles, activePlayers: G.activePlayers, impostors: G.impostors, charlatans: G.charlatans, citizens: G.citizens, hostId: G.hostId, starterPlayerId: G.starterPlayerId, usedWords: G.usedWords, isFirstRound: true } });
+    saveGameState();
 }
 
 function skipWord() {
     if (!G.isHost || !G.pubnub) return;
     const wordData = selectNewWord();
     Object.keys(G.fullRoles).forEach(id => {
-        const role = G.fullRoles[id];
         const trueRole = G.trueRoles[id];
-        
-        if (trueRole === 'INFILTRADO') {
-            role.word = 'Categoría: ' + wordData.category;
-        } else if (trueRole === 'CHARLATÁN') {
-            role.word = wordData.fakeWord;
-        } else {
-            role.word = wordData.secretWord;
-        }
+        if (trueRole === 'INFILTRADO') G.fullRoles[id].word = 'Categoría: ' + wordData.category;
+        else if (trueRole === 'CHARLATÁN') G.fullRoles[id].word = wordData.fakeWord;
+        else G.fullRoles[id].word = wordData.secretWord;
     });
     G.starterPlayerId = G.activePlayers[Math.floor(Math.random() * G.activePlayers.length)];
-    G.pubnub.publish({
-        channel: G.channel,
-        message: {
-            type: 'skip_word',
-            roles: G.fullRoles,
-            activePlayers: G.activePlayers,
-            impostors: G.impostors,
-            charlatans: G.charlatans,
-            citizens: G.citizens,
-            hostId: G.hostId,
-            starterPlayerId: G.starterPlayerId,
-            usedWords: G.usedWords
-        }
-    });
+    G.pubnub.publish({ channel: G.channel, message: { type: 'skip_word', roles: G.fullRoles, activePlayers: G.activePlayers, impostors: G.impostors, charlatans: G.charlatans, citizens: G.citizens, hostId: G.hostId, starterPlayerId: G.starterPlayerId, usedWords: G.usedWords } });
+    toast('Palabra cambiada', 'info');
 }
 
 function handleSkipWord(msg) {
@@ -1134,76 +918,60 @@ function handleSkipWord(msg) {
     G.starterPlayerId = msg.starterPlayerId;
     G.usedWords = msg.usedWords || G.usedWords;
     if (G.fullRoles[G.myId]) G.myRole = G.fullRoles[G.myId];
-    G.roleRevealed = false;
-    const card = document.getElementById('role-card');
-    if (card) card.className = 'role-card blurred';
-    document.getElementById('role-icon').innerHTML = '<img src="' + ICONS.help + '" alt="?" class="role-icon-img">';
-    document.getElementById('role-title').textContent = 'SECRETO';
-    document.getElementById('role-word').textContent = '???';
-    document.getElementById('role-instruction').textContent = 'Toca la carta para revelar';
-    const starterInfo = document.getElementById('starter-info');
-    if (starterInfo) {
-        starterInfo.textContent = 'Inicia: ' + (G.players[G.starterPlayerId]?.name || 'Alguien');
-        starterInfo.style.display = 'block';
+    if (!G.isSpectator) {
+        G.roleRevealed = false;
+        const card = document.getElementById('role-card');
+        if (card) card.className = 'role-card blurred';
+        document.getElementById('role-icon').innerHTML = '<img src="' + ICONS.help + '" alt="?" class="role-icon-img">';
+        document.getElementById('role-title').textContent = 'SECRETO';
+        document.getElementById('role-word').textContent = '???';
+        document.getElementById('role-instruction').textContent = 'Toca la carta para revelar';
+        const starterInfo = document.getElementById('starter-info');
+        if (starterInfo) { starterInfo.textContent = 'Inicia: ' + (G.players[G.starterPlayerId]?.name || 'Alguien'); starterInfo.style.display = 'block'; }
     }
     toast('Palabra cambiada', 'info');
 }
 
 function handleAssign(msg) {
-    G.activePlayers = msg.activePlayers;
-    G.impostors = msg.impostors;
-    G.charlatans = msg.charlatans;
-    G.citizens = msg.citizens;
-    G.fullRoles = msg.roles;
-    G.hostId = msg.hostId || G.hostId;
-    G.isHost = (G.myId === G.hostId);
-    G.starterPlayerId = msg.starterPlayerId;
-    G.usedWords = msg.usedWords || G.usedWords;
-    G.gamePhase = 'roles';
-    G.isSpectator = false;
-    G.isFirstRound = msg.isFirstRound !== false;
+    G.activePlayers = msg.activePlayers; G.impostors = msg.impostors; G.charlatans = msg.charlatans; G.citizens = msg.citizens;
+    G.fullRoles = msg.roles; G.hostId = msg.hostId || G.hostId; G.isHost = (G.myId === G.hostId);
+    G.starterPlayerId = msg.starterPlayerId; G.usedWords = msg.usedWords || G.usedWords;
+    G.gamePhase = 'roles'; G.isSpectator = false; G.isFirstRound = msg.isFirstRound !== false;
     if (G.isFirstRound) G.roleRevealed = false;
+    
     const myRoleData = msg.roles[G.myId];
     if (!myRoleData) return;
     G.myRole = myRoleData;
+    
     const card = document.getElementById('role-card');
-    const roleIcon = document.getElementById('role-icon');
-    const roleTitle = document.getElementById('role-title');
-    const roleWord = document.getElementById('role-word');
-    const roleInst = document.getElementById('role-instruction');
-    const starterInfo = document.getElementById('starter-info');
-    const btnStart = document.getElementById('btn-start-round');
-    const btnSkip = document.getElementById('btn-skip-word');
-    if (starterInfo) starterInfo.style.display = 'none';
+    const btnStart = document.getElementById('btn-start-round'), btnSkip = document.getElementById('btn-skip-word');
+    document.getElementById('starter-info').style.display = 'none';
+    
     if (G.isFirstRound) {
         if (card) card.className = 'role-card blurred';
-        roleIcon.innerHTML = '<img src="' + ICONS.help + '" alt="?" class="role-icon-img">';
-        roleTitle.textContent = 'SECRETO';
-        roleWord.textContent = '???';
-        roleInst.textContent = 'Toca la carta para revelar';
+        document.getElementById('role-icon').innerHTML = '<img src="' + ICONS.help + '" alt="?" class="role-icon-img">';
+        document.getElementById('role-title').textContent = 'SECRETO';
+        document.getElementById('role-word').textContent = '???';
+        document.getElementById('role-instruction').textContent = 'Toca la carta para revelar';
     } else {
         G.roleRevealed = true;
         const roleClass = G.myRole.role === 'INFILTRADO' ? 'impostor' : G.myRole.role === 'CHARLATÁN' ? 'charlatan' : 'citizen';
         if (card) card.className = 'role-card ' + roleClass;
-        roleIcon.innerHTML = '<img src="' + G.myRole.icon + '" alt="" class="role-icon-img">';
-        roleTitle.textContent = G.myRole.role;
-        roleWord.textContent = G.myRole.word;
-        roleInst.textContent = 'Tu rol (ya revelado)';
+        document.getElementById('role-icon').innerHTML = '<img src="' + G.myRole.icon + '" alt="" class="role-icon-img">';
+        document.getElementById('role-title').textContent = G.myRole.role;
+        document.getElementById('role-word').textContent = G.myRole.word;
+        document.getElementById('role-instruction').textContent = 'Tu rol (ya revelado)';
     }
     document.getElementById('points-box').style.display = 'none';
     document.getElementById('timer').style.display = 'none';
     document.getElementById('wait-message').style.display = 'block';
-    if (btnStart) {
-        btnStart.style.display = G.isHost ? 'block' : 'none';
-        btnStart.disabled = false;
-        btnStart.className = 'btn btn-start-round';
-        btnStart.textContent = 'Iniciar Ronda';
-    }
+    if (btnStart) { btnStart.style.display = G.isHost ? 'block' : 'none'; btnStart.disabled = false; btnStart.textContent = 'Iniciar Ronda'; }
     if (btnSkip) btnSkip.style.display = G.isHost ? 'block' : 'none';
     showScreen('screen-role');
     clearInterval(G.refreshInterval);
     updatePlayersSidebar();
     updateRolePlayersList();
+    saveGameState();
 }
 
 function revealRole() {
@@ -1218,43 +986,35 @@ function revealRole() {
     const roleClass = G.myRole.role === 'INFILTRADO' ? 'impostor' : G.myRole.role === 'CHARLATÁN' ? 'charlatan' : 'citizen';
     if (card) card.classList.add(roleClass);
     showPointsReminder();
+    saveGameState();
 }
 
 function showPointsReminder() {
-    const box = document.getElementById('points-box');
-    const list = document.getElementById('points-list');
+    const box = document.getElementById('points-box'), list = document.getElementById('points-list');
     if (!box || !list) return;
     let html = '';
-    if (G.myRole.role === 'CIUDADANO') {
-        html = '<li><span class="points-value positive">+' + POINTS.CITIZEN_SURVIVE + '</span> Sobrevivir</li>' +
-               '<li><span class="points-value positive">+' + POINTS.CITIZEN_CORRECT_VOTE + '</span> Votar bien</li>' +
-               '<li><span class="points-value negative">' + POINTS.CITIZEN_WRONG_VOTE + '</span> Votar mal</li>';
-    } else if (G.myRole.role === 'INFILTRADO') {
-        html = '<li><span class="points-value positive">+' + POINTS.IMPOSTOR_WIN + '</span> Ganar</li>' +
-               '<li><span class="points-value positive">+' + POINTS.IMPOSTOR_SURVIVE_ROUND + '</span> Sobrevivir ronda</li>';
-    } else {
-        html = '<li><span class="points-value positive">+' + POINTS.CHARLATAN_SURVIVE + '</span> Sobrevivir</li>' +
-               '<li><span class="points-value positive">+' + POINTS.CITIZEN_CORRECT_VOTE + '</span> Votar bien</li>';
-    }
+    if (G.myRole.role === 'CIUDADANO') html = '<li><span class="points-value positive">+' + POINTS.CITIZEN_SURVIVE + '</span> Sobrevivir</li><li><span class="points-value positive">+' + POINTS.CITIZEN_CORRECT_VOTE + '</span> Votar bien</li><li><span class="points-value negative">' + POINTS.CITIZEN_WRONG_VOTE + '</span> Votar mal</li>';
+    else if (G.myRole.role === 'INFILTRADO') html = '<li><span class="points-value positive">+' + POINTS.IMPOSTOR_WIN + '</span> Ganar</li><li><span class="points-value positive">+' + POINTS.IMPOSTOR_SURVIVE_ROUND + '</span> Sobrevivir ronda</li>';
+    else html = '<li><span class="points-value positive">+' + POINTS.CHARLATAN_SURVIVE + '</span> Sobrevivir</li><li><span class="points-value positive">+' + POINTS.CITIZEN_CORRECT_VOTE + '</span> Votar bien</li>';
     list.innerHTML = html;
     box.style.display = 'block';
 }
 
+// ============================================
+// RONDAS, VOTACIÓN Y FINALIZACIÓN
+// ============================================
+
 function startRound() {
     if (!G.pubnub || !G.isHost || G.roundStarting) return;
     G.roundStarting = true;
-    const btnStart = document.getElementById('btn-start-round');
-    const btnSkip = document.getElementById('btn-skip-word');
-    if (btnStart) {
-        btnStart.disabled = true;
-        btnStart.textContent = 'Iniciando...';
-    }
+    const btnStart = document.getElementById('btn-start-round'), btnSkip = document.getElementById('btn-skip-word');
+    const btnSpecNext = document.getElementById('btn-spectator-next'), btnSpecSkip = document.getElementById('btn-spectator-skip');
+    if (btnStart) { btnStart.disabled = true; btnStart.textContent = 'Iniciando...'; }
     if (btnSkip) btnSkip.style.display = 'none';
+    if (btnSpecNext) { btnSpecNext.disabled = true; btnSpecNext.textContent = 'Iniciando...'; }
+    if (btnSpecSkip) btnSpecSkip.style.display = 'none';
     const newStarter = G.activePlayers[Math.floor(Math.random() * G.activePlayers.length)];
-    G.pubnub.publish({
-        channel: G.channel,
-        message: { type: 'start_round', time: G.roundTime, starterPlayerId: newStarter }
-    });
+    G.pubnub.publish({ channel: G.channel, message: { type: 'start_round', time: G.roundTime, starterPlayerId: newStarter } });
     setTimeout(() => { G.roundStarting = false; }, 2000);
 }
 
@@ -1264,24 +1024,14 @@ function showRoundStartOverlay(starterName, starterAvatar, starterFrame) {
     const avatar = AVATARS.find(a => a.id === starterAvatar) || AVATARS[0];
     const frame = FRAMES.find(f => f.id === starterFrame);
     const hasFrame = frame && frame.color !== 'transparent';
-    const frameColor = hasFrame ? frame.color : 'transparent';
-    
     const overlay = document.createElement('div');
     overlay.id = 'round-start-overlay';
     overlay.className = 'round-start-overlay';
-    overlay.innerHTML = '<div class="round-start-message"><h2>¡COMIENZA LA RONDA!</h2>' +
-        '<div class="round-start-avatar hex-avatar-container" style="width:100px;height:115px;--frame-color:' + frameColor + '">' +
-        '<img src="' + avatar.image + '" alt="avatar" class="hex-avatar-img">' +
-        (hasFrame ? '<div class="hex-avatar-frame"></div>' : '') +
-        '</div>' +
-        '<p>Empieza: <span class="starter-name">' + starterName + '</span></p></div>';
+    overlay.innerHTML = '<div class="round-start-message"><h2>¡COMIENZA LA RONDA!</h2><div class="round-start-avatar hex-avatar-container" style="width:100px;height:115px;--frame-color:' + (hasFrame ? frame.color : 'transparent') + '"><img src="' + avatar.image + '" alt="avatar" class="hex-avatar-img">' + (hasFrame ? '<div class="hex-avatar-frame"></div>' : '') + '</div><p>Empieza: <span class="starter-name">' + starterName + '</span></p></div>';
     document.body.appendChild(overlay);
 }
 
-function hideRoundStartOverlay() {
-    const overlay = document.getElementById('round-start-overlay');
-    if (overlay) overlay.remove();
-}
+function hideRoundStartOverlay() { const overlay = document.getElementById('round-start-overlay'); if (overlay) overlay.remove(); }
 
 function showStarterBanner(starterName) {
     const existing = document.getElementById('starter-banner');
@@ -1293,39 +1043,31 @@ function showStarterBanner(starterName) {
     document.body.appendChild(banner);
 }
 
-function hideStarterBanner() {
-    const banner = document.getElementById('starter-banner');
-    if (banner) banner.remove();
-}
+function hideStarterBanner() { const banner = document.getElementById('starter-banner'); if (banner) banner.remove(); }
 
 function handleStartRound(msg) {
     clearAllTimers();
     G.starterPlayerId = msg.starterPlayerId;
     G.gamePhase = 'round';
     G.roundStarting = false;
-    const btnStart = document.getElementById('btn-start-round');
-    const btnSkip = document.getElementById('btn-skip-word');
-    if (btnStart) {
-        btnStart.style.display = 'none';
-        btnStart.disabled = false;
-        btnStart.textContent = 'Iniciar Ronda';
-    }
+    const btnStart = document.getElementById('btn-start-round'), btnSkip = document.getElementById('btn-skip-word');
+    if (btnStart) { btnStart.style.display = 'none'; btnStart.disabled = false; btnStart.textContent = 'Iniciar Ronda'; }
     if (btnSkip) btnSkip.style.display = 'none';
     const starterName = G.players[G.starterPlayerId]?.name || 'Alguien';
+    
     if (G.isSpectator) {
-        const btnSpecNext = document.getElementById('btn-spectator-next');
+        const btnSpecNext = document.getElementById('btn-spectator-next'), btnSpecSkip = document.getElementById('btn-spectator-skip');
         if (btnSpecNext) { btnSpecNext.style.display = 'none'; btnSpecNext.disabled = true; }
+        if (btnSpecSkip) btnSpecSkip.style.display = 'none';
         document.getElementById('spectator-status').textContent = starterName + ' inicia!';
         setTimeout(function() { startSpectatorTimer(msg.time); }, ROUND_START_DISPLAY_TIME);
+        saveGameState();
         return;
     }
     const starter = G.players[G.starterPlayerId] || {};
     showRoundStartOverlay(starterName, starter.avatar || 'avatar-01', starter.frame || 'fr-none');
-    setTimeout(function() {
-        hideRoundStartOverlay();
-        showStarterBanner(starterName);
-        startTimer(msg.time);
-    }, ROUND_START_DISPLAY_TIME);
+    setTimeout(function() { hideRoundStartOverlay(); showStarterBanner(starterName); startTimer(msg.time); }, ROUND_START_DISPLAY_TIME);
+    saveGameState();
 }
 
 function clearAllTimers() {
@@ -1349,12 +1091,7 @@ function startTimer(duration) {
         if (remaining < 0) { clearInterval(G.timerInterval); return; }
         updateTimerDisplay(remaining);
         if (remaining <= 10) timer.classList.add('warning');
-        if (remaining <= 0) {
-            clearInterval(G.timerInterval);
-            timer.textContent = '¡TIEMPO!';
-            if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
-            startVoting();
-        }
+        if (remaining <= 0) { clearInterval(G.timerInterval); timer.textContent = '¡TIEMPO!'; if (navigator.vibrate) navigator.vibrate([500, 200, 500]); startVoting(); }
     }, 1000);
 }
 
@@ -1362,64 +1099,36 @@ function startSpectatorTimer(duration) {
     if (G.spectatorTimerInterval) clearInterval(G.spectatorTimerInterval);
     let remaining = duration;
     const specStatus = document.getElementById('spectator-status');
-    function updateDisplay() {
-        const mins = Math.floor(remaining / 60);
-        const secs = remaining % 60;
-        specStatus.textContent = 'Ronda: ' + mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
-    }
+    function updateDisplay() { const mins = Math.floor(remaining / 60), secs = remaining % 60; specStatus.textContent = 'Ronda: ' + mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0'); }
     updateDisplay();
-    G.spectatorTimerInterval = setInterval(function() {
-        remaining--;
-        if (remaining < 0) {
-            clearInterval(G.spectatorTimerInterval);
-            specStatus.textContent = 'Votación...';
-            return;
-        }
-        updateDisplay();
-    }, 1000);
+    G.spectatorTimerInterval = setInterval(function() { remaining--; if (remaining < 0) { clearInterval(G.spectatorTimerInterval); specStatus.textContent = 'Votación...'; return; } updateDisplay(); }, 1000);
 }
 
 function updateTimerDisplay(seconds) {
     if (seconds < 0) seconds = 0;
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    const mins = Math.floor(seconds / 60), secs = seconds % 60;
     document.getElementById('timer').textContent = mins.toString().padStart(2, '0') + ':' + secs.toString().padStart(2, '0');
 }
 
 function startVoting() {
     if (G.timerInterval) clearInterval(G.timerInterval);
     hideStarterBanner();
-    if (G.isSpectator) {
-        document.getElementById('spectator-status').textContent = 'Votación...';
-        showScreen('screen-spectator');
-        return;
-    }
+    if (G.isSpectator) { document.getElementById('spectator-status').textContent = 'Votación...'; showScreen('screen-spectator'); return; }
     G.gamePhase = 'voting';
-    G.votes = {};
-    G.votedPlayers = new Set();
-    G.voteTargets = {};
+    G.votes = {}; G.votedPlayers = new Set(); G.voteTargets = {};
     showScreen('screen-voting');
     renderVotingList();
     startVoteTimer(30);
-    if (G.isHost) {
-        if (G.voteTimeout) clearTimeout(G.voteTimeout);
-        G.voteTimeout = setTimeout(publishResults, 32000);
-    }
+    if (G.isHost) { if (G.voteTimeout) clearTimeout(G.voteTimeout); G.voteTimeout = setTimeout(publishResults, 32000); }
+    saveGameState();
 }
 
 function renderVotingList() {
     const list = document.getElementById('voting-list');
     if (!list) return;
     const votable = G.activePlayers.filter(id => id !== G.myId && !G.eliminated.includes(id));
-    list.innerHTML = votable.map(id => 
-        '<div class="vote-item">' +
-        '<div class="vote-avatar">' + renderHexAvatar(id, 48) + '</div>' +
-        '<div class="player-info"><div class="player-name">' + (G.players[id]?.name || id) + '</div></div>' +
-        '<button class="btn-vote" data-target="' + id + '">Votar</button></div>'
-    ).join('');
-    list.querySelectorAll('.btn-vote').forEach(btn => {
-        btn.onclick = function() { sendVote(btn.dataset.target, btn); };
-    });
+    list.innerHTML = votable.map(id => '<div class="vote-item"><div class="vote-avatar">' + renderHexAvatar(id, 48) + '</div><div class="player-info"><div class="player-name">' + (G.players[id]?.name || id) + '</div></div><button class="btn-vote" data-target="' + id + '">Votar</button></div>').join('');
+    list.querySelectorAll('.btn-vote').forEach(btn => { btn.onclick = function() { sendVote(btn.dataset.target, btn); }; });
 }
 
 function startVoteTimer(seconds) {
@@ -1427,41 +1136,25 @@ function startVoteTimer(seconds) {
     let remaining = seconds;
     const display = document.getElementById('vote-timer');
     display.textContent = '00:' + remaining.toString().padStart(2, '0');
-    G.voteTimerInterval = setInterval(function() {
-        remaining--;
-        if (remaining < 0) { clearInterval(G.voteTimerInterval); return; }
-        display.textContent = '00:' + remaining.toString().padStart(2, '0');
-    }, 1000);
+    G.voteTimerInterval = setInterval(function() { remaining--; if (remaining < 0) { clearInterval(G.voteTimerInterval); return; } display.textContent = '00:' + remaining.toString().padStart(2, '0'); }, 1000);
 }
 
 function sendVote(targetId, button) {
     if (!G.pubnub || G.eliminated.includes(targetId) || !G.activePlayers.includes(targetId)) return;
-    G.pubnub.publish({
-        channel: G.channel,
-        message: { type: 'vote', target: targetId }
-    });
-    button.classList.add('voted');
-    button.textContent = 'Votado';
-    button.disabled = true;
+    G.pubnub.publish({ channel: G.channel, message: { type: 'vote', target: targetId } });
+    button.classList.add('voted'); button.textContent = 'Votado'; button.disabled = true;
     document.querySelectorAll('.btn-vote').forEach(btn => btn.disabled = true);
     document.getElementById('vote-status').textContent = 'Voto registrado. Esperando...';
 }
 
 function handleVote(voterId, targetId) {
-    if (!G.activePlayers.includes(targetId) || G.eliminated.includes(targetId) ||
-        !G.activePlayers.includes(voterId) || G.votedPlayers.has(voterId) || voterId === targetId) return;
+    if (!G.activePlayers.includes(targetId) || G.eliminated.includes(targetId) || !G.activePlayers.includes(voterId) || G.votedPlayers.has(voterId) || voterId === targetId) return;
     G.votes[targetId] = (G.votes[targetId] || 0) + 1;
     G.votedPlayers.add(voterId);
     G.voteTargets[voterId] = targetId;
     if (G.isHost && G.pubnub) {
-        G.pubnub.publish({
-            channel: G.channel,
-            message: { type: 'vote_update', votes: G.votes, voted: Array.from(G.votedPlayers) }
-        });
-        if (G.votedPlayers.size >= G.activePlayers.length) {
-            if (G.voteTimeout) clearTimeout(G.voteTimeout);
-            setTimeout(publishResults, 500);
-        }
+        G.pubnub.publish({ channel: G.channel, message: { type: 'vote_update', votes: G.votes, voted: Array.from(G.votedPlayers) } });
+        if (G.votedPlayers.size >= G.activePlayers.length) { if (G.voteTimeout) clearTimeout(G.voteTimeout); setTimeout(publishResults, 500); }
     }
     if (G.isSpectator) updateSpectatorVotes();
 }
@@ -1469,61 +1162,30 @@ function handleVote(voterId, targetId) {
 function publishResults() {
     if (!G.pubnub) return;
     clearAllTimers();
-    let maxVotes = 0;
-    let mostVoted = [];
-    Object.entries(G.votes).forEach(function([id, count]) {
-        if (count > maxVotes) { maxVotes = count; mostVoted = [id]; }
-        else if (count === maxVotes) mostVoted.push(id);
-    });
+    let maxVotes = 0, mostVoted = [];
+    Object.entries(G.votes).forEach(function([id, count]) { if (count > maxVotes) { maxVotes = count; mostVoted = [id]; } else if (count === maxVotes) mostVoted.push(id); });
     const isTie = mostVoted.length > 1 || maxVotes === 0;
-    let eliminatedId = null;
-    let eliminatedRole = null;
+    let eliminatedId = null, eliminatedRole = null;
+    
     if (!isTie) {
         eliminatedId = mostVoted[0];
         G.eliminated.push(eliminatedId);
         G.activePlayers = G.activePlayers.filter(id => id !== eliminatedId);
-        if (G.impostors.includes(eliminatedId)) {
-            eliminatedRole = 'INFILTRADO';
-            G.impostors = G.impostors.filter(id => id !== eliminatedId);
-        } else if (G.charlatans.includes(eliminatedId)) {
-            eliminatedRole = 'CHARLATÁN';
-            G.charlatans = G.charlatans.filter(id => id !== eliminatedId);
-        } else {
-            eliminatedRole = 'CIUDADANO';
-            G.citizens = G.citizens.filter(id => id !== eliminatedId);
-        }
+        if (G.impostors.includes(eliminatedId)) { eliminatedRole = 'INFILTRADO'; G.impostors = G.impostors.filter(id => id !== eliminatedId); }
+        else if (G.charlatans.includes(eliminatedId)) { eliminatedRole = 'CHARLATÁN'; G.charlatans = G.charlatans.filter(id => id !== eliminatedId); }
+        else { eliminatedRole = 'CIUDADANO'; G.citizens = G.citizens.filter(id => id !== eliminatedId); }
         Object.entries(G.voteTargets).forEach(function([voterId, targetId]) {
             if (targetId === eliminatedId) {
-                if (eliminatedRole === 'INFILTRADO') {
-                    G.scores[voterId] = (G.scores[voterId] || 0) + POINTS.CITIZEN_CORRECT_VOTE;
-                } else if (!G.impostors.includes(voterId)) {
-                    G.scores[voterId] = (G.scores[voterId] || 0) + POINTS.CITIZEN_WRONG_VOTE;
-                }
+                if (eliminatedRole === 'INFILTRADO') G.scores[voterId] = (G.scores[voterId] || 0) + POINTS.CITIZEN_CORRECT_VOTE;
+                else if (!G.impostors.includes(voterId)) G.scores[voterId] = (G.scores[voterId] || 0) + POINTS.CITIZEN_WRONG_VOTE;
             }
         });
-        G.impostors.forEach(id => {
-            G.scores[id] = (G.scores[id] || 0) + POINTS.IMPOSTOR_SURVIVE_ROUND;
-        });
+        G.impostors.forEach(id => { G.scores[id] = (G.scores[id] || 0) + POINTS.IMPOSTOR_SURVIVE_ROUND; });
     }
-    G.pubnub.publish({
-        channel: G.channel,
-        message: {
-            type: 'results',
-            votes: G.votes,
-            eliminatedId: eliminatedId,
-            eliminatedName: eliminatedId ? G.players[eliminatedId]?.name : null,
-            eliminatedRole: eliminatedRole,
-            isTie: isTie,
-            scores: G.scores,
-            activePlayers: G.activePlayers,
-            impostors: G.impostors,
-            fullRoles: G.fullRoles
-        }
-    });
-    G.pubnub.publish({
-        channel: G.channel,
-        message: { type: 'spectator_roles', roles: G.fullRoles, activePlayers: G.activePlayers }
-    });
+    
+    G.pubnub.publish({ channel: G.channel, message: { type: 'results', votes: G.votes, eliminatedId: eliminatedId, eliminatedName: eliminatedId ? G.players[eliminatedId]?.name : null, eliminatedRole: eliminatedRole, isTie: isTie, scores: G.scores, activePlayers: G.activePlayers, impostors: G.impostors, fullRoles: G.fullRoles } });
+    G.pubnub.publish({ channel: G.channel, message: { type: 'spectator_roles', roles: G.fullRoles, activePlayers: G.activePlayers } });
+    saveGameState();
     setTimeout(checkGameOver, RESULT_DISPLAY_TIME);
 }
 
@@ -1533,30 +1195,21 @@ function showYouEliminatedOverlay(role) {
     const overlay = document.createElement('div');
     overlay.id = 'you-eliminated-overlay';
     overlay.className = 'you-eliminated-overlay';
-    overlay.innerHTML = '<div class="you-eliminated-message">' +
-        '<h1>HAS SIDO EXPULSADO</h1>' +
-        '<p>Eras ' + role + '</p>' +
-        '</div>';
+    overlay.innerHTML = '<div class="you-eliminated-message"><h1>HAS SIDO EXPULSADO</h1><p>Eras ' + role + '</p></div>';
     document.body.appendChild(overlay);
 }
 
-function hideYouEliminatedOverlay() {
-    const overlay = document.getElementById('you-eliminated-overlay');
-    if (overlay) overlay.remove();
-}
+function hideYouEliminatedOverlay() { const overlay = document.getElementById('you-eliminated-overlay'); if (overlay) overlay.remove(); }
 
 function showResults(msg) {
     clearAllTimers();
     hideStarterBanner();
-    G.votes = msg.votes;
-    G.scores = msg.scores || G.scores;
-    G.activePlayers = msg.activePlayers;
-    G.impostors = msg.impostors;
-    if (msg.eliminatedId && !G.eliminated.includes(msg.eliminatedId)) {
-        G.eliminated.push(msg.eliminatedId);
-    }
+    G.votes = msg.votes; G.scores = msg.scores || G.scores; G.activePlayers = msg.activePlayers; G.impostors = msg.impostors;
+    if (msg.eliminatedId && !G.eliminated.includes(msg.eliminatedId)) G.eliminated.push(msg.eliminatedId);
     updatePlayersSidebar();
     updateRolePlayersList();
+    
+    // Si fui eliminado - IMPORTANTE: Mantener isHost si lo era
     if (msg.eliminatedId === G.myId) {
         G.isSpectator = true;
         G.fullRoles = msg.fullRoles || G.fullRoles;
@@ -1566,19 +1219,20 @@ function showResults(msg) {
             showScreen('screen-spectator');
             document.getElementById('spectator-status').textContent = 'Eliminado (' + msg.eliminatedRole + ')';
             updateSpectatorRoles();
-            if (G.isHost) {
-                document.getElementById('btn-spectator-next').style.display = 'block';
-                document.getElementById('btn-spectator-lobby').style.display = 'block';
-            }
+            updateSpectatorHostControls(); // Mostrar controles si soy host
         }, 3000);
+        saveGameState();
         return;
     }
+    
     if (G.isSpectator) {
         document.getElementById('spectator-status').textContent = msg.isTie ? 'Empate' : msg.eliminatedName + ' eliminado';
         updateSpectatorRoles();
-        if (G.isHost) document.getElementById('btn-spectator-next').style.display = 'block';
+        updateSpectatorHostControls();
+        saveGameState();
         return;
     }
+    
     showScreen('screen-results');
     G.gamePhase = 'results';
     const resultsList = document.getElementById('results-list');
@@ -1586,59 +1240,30 @@ function showResults(msg) {
         const voteEntries = Object.entries(msg.votes);
         const maxVotes = voteEntries.length > 0 ? Math.max(...Object.values(msg.votes), 1) : 1;
         resultsList.innerHTML = voteEntries.map(function([id, count]) {
-            return '<div class="result-item">' +
-                '<div class="result-header">' +
-                '<div class="result-player">' +
-                '<div class="result-avatar">' + renderHexAvatar(id, 36) + '</div>' +
-                '<span class="result-name">' + (G.players[id]?.name || id) + '</span>' +
-                '</div>' +
-                '<span class="result-votes">' + count + ' votos</span>' +
-                '</div>' +
-                '<div class="result-bar"><div class="result-bar-fill" style="width:' + (count / maxVotes * 100) + '%"></div></div>' +
-                '</div>';
+            return '<div class="result-item"><div class="result-header"><div class="result-player"><div class="result-avatar">' + renderHexAvatar(id, 36) + '</div><span class="result-name">' + (G.players[id]?.name || id) + '</span></div><span class="result-votes">' + count + ' votos</span></div><div class="result-bar"><div class="result-bar-fill" style="width:' + (count / maxVotes * 100) + '%"></div></div></div>';
         }).join('');
     }
     const elimBox = document.getElementById('eliminated-box');
     if (elimBox) {
-        if (msg.isTie) {
-            elimBox.innerHTML = '<div class="eliminated-message">Empate en la votación</div>' +
-                '<div class="eliminated-name">NADIE ELIMINADO</div>' +
-                '<div class="eliminated-role-container">' +
-                '<img src="' + ICONS.tie + '" alt="" class="eliminated-role-icon">' +
-                '</div>';
-        } else {
-            const iconSrc = msg.eliminatedRole === 'INFILTRADO' ? ICONS.impostor :
-                           msg.eliminatedRole === 'CHARLATÁN' ? ICONS.charlatan : ICONS.citizen;
-            elimBox.innerHTML = '<div class="eliminated-message">Ha sido expulsado</div>' +
-                '<div class="eliminated-name">' + msg.eliminatedName + '</div>' +
-                '<div class="eliminated-role-container">' +
-                '<img src="' + iconSrc + '" alt="" class="eliminated-role-icon">' +
-                '<span class="eliminated-role">Era <strong>' + msg.eliminatedRole + '</strong></span>' +
-                '</div>';
+        if (msg.isTie) elimBox.innerHTML = '<div class="eliminated-message">Empate en la votación</div><div class="eliminated-name">NADIE ELIMINADO</div><div class="eliminated-role-container"><img src="' + ICONS.tie + '" alt="" class="eliminated-role-icon"></div>';
+        else {
+            const iconSrc = msg.eliminatedRole === 'INFILTRADO' ? ICONS.impostor : msg.eliminatedRole === 'CHARLATÁN' ? ICONS.charlatan : ICONS.citizen;
+            elimBox.innerHTML = '<div class="eliminated-message">Ha sido expulsado</div><div class="eliminated-name">' + msg.eliminatedName + '</div><div class="eliminated-role-container"><img src="' + iconSrc + '" alt="" class="eliminated-role-icon"><span class="eliminated-role">Era <strong>' + msg.eliminatedRole + '</strong></span></div>';
         }
     }
     const btnNext = document.getElementById('btn-next-round');
-    if (btnNext) {
-        btnNext.style.display = 'none';
-        btnNext.disabled = false;
-        btnNext.className = 'btn btn-next-round';
-    }
     document.getElementById('btn-back-lobby').style.display = 'none';
-    if (G.isHost) {
-        setTimeout(function() {
-            if (btnNext) btnNext.style.display = 'block';
-        }, RESULT_DISPLAY_TIME);
-    }
+    if (btnNext) { btnNext.style.display = 'none'; btnNext.disabled = false; }
+    if (G.isHost) setTimeout(function() { if (btnNext) btnNext.style.display = 'block'; }, RESULT_DISPLAY_TIME);
+    saveGameState();
 }
 
 function nextRound() {
     if (!G.pubnub || !G.isHost) return;
-    const btnNext = document.getElementById('btn-next-round');
+    const btnNext = document.getElementById('btn-next-round'), btnSpecNext = document.getElementById('btn-spectator-next');
     if (btnNext) btnNext.disabled = true;
-    G.pubnub.publish({
-        channel: G.channel,
-        message: { type: 'next_round', activePlayers: G.activePlayers, fullRoles: G.fullRoles }
-    });
+    if (btnSpecNext) btnSpecNext.disabled = true;
+    G.pubnub.publish({ channel: G.channel, message: { type: 'next_round', activePlayers: G.activePlayers, fullRoles: G.fullRoles } });
 }
 
 function spectatorNextAction() {
@@ -1651,33 +1276,22 @@ function spectatorNextAction() {
 function handleNextRound(msg) {
     clearAllTimers();
     hideStarterBanner();
-    G.votes = {};
-    G.votedPlayers = new Set();
-    G.voteTargets = {};
+    G.votes = {}; G.votedPlayers = new Set(); G.voteTargets = {};
     G.isFirstRound = false;
     G.gamePhase = 'roles';
     if (msg && msg.activePlayers) G.activePlayers = msg.activePlayers;
-    if (msg && msg.fullRoles) {
-        G.fullRoles = msg.fullRoles;
-        if (G.fullRoles[G.myId]) G.myRole = G.fullRoles[G.myId];
-    }
+    if (msg && msg.fullRoles) { G.fullRoles = msg.fullRoles; if (G.fullRoles[G.myId]) G.myRole = G.fullRoles[G.myId]; }
+    
     if (G.isSpectator) {
         document.getElementById('spectator-status').textContent = 'Esperando inicio...';
-        const btnSpecNext = document.getElementById('btn-spectator-next');
-        if (btnSpecNext) btnSpecNext.style.display = 'none';
-        if (G.isHost && btnSpecNext) {
-            btnSpecNext.textContent = 'Iniciar Ronda';
-            btnSpecNext.style.display = 'block';
-            btnSpecNext.disabled = false;
-            btnSpecNext.className = 'btn btn-start-round';
-        }
-        showScreen('screen-spectator');
         updateSpectatorRoles();
+        updateSpectatorHostControls();
+        showScreen('screen-spectator');
+        saveGameState();
         return;
     }
-    const card = document.getElementById('role-card');
-    const btnStart = document.getElementById('btn-start-round');
-    const btnSkip = document.getElementById('btn-skip-word');
+    
+    const card = document.getElementById('role-card'), btnStart = document.getElementById('btn-start-round'), btnSkip = document.getElementById('btn-skip-word');
     G.roleRevealed = true;
     const roleClass = G.myRole.role === 'INFILTRADO' ? 'impostor' : G.myRole.role === 'CHARLATÁN' ? 'charlatan' : 'citizen';
     if (card) card.className = 'role-card ' + roleClass;
@@ -1687,57 +1301,34 @@ function handleNextRound(msg) {
     document.getElementById('role-instruction').textContent = 'Tu rol (conocido)';
     document.getElementById('points-box').style.display = 'none';
     const timer = document.getElementById('timer');
-    timer.style.display = 'none';
-    timer.classList.remove('warning');
+    timer.style.display = 'none'; timer.classList.remove('warning');
     document.getElementById('wait-message').style.display = 'block';
     document.getElementById('starter-info').style.display = 'none';
-    if (btnStart) {
-        btnStart.style.display = G.isHost ? 'block' : 'none';
-        btnStart.disabled = false;
-        btnStart.className = 'btn btn-start-round';
-        btnStart.textContent = 'Iniciar Ronda';
-    }
+    if (btnStart) { btnStart.style.display = G.isHost ? 'block' : 'none'; btnStart.disabled = false; btnStart.textContent = 'Iniciar Ronda'; }
     if (btnSkip) btnSkip.style.display = G.isHost ? 'block' : 'none';
     showScreen('screen-role');
     updatePlayersSidebar();
     updateRolePlayersList();
+    saveGameState();
 }
 
 function checkGameOver() {
     if (!G.isHost || !G.pubnub) return;
-    let winner = null;
-    let reason = '';
+    let winner = null, reason = '';
     if (G.impostors.length === 0) {
-        winner = 'CIUDADANOS';
-        reason = 'Infiltrados eliminados';
-        G.citizens.forEach(id => {
-            if (G.activePlayers.includes(id)) G.scores[id] = (G.scores[id] || 0) + POINTS.CITIZEN_SURVIVE;
-        });
-        G.charlatans.forEach(id => {
-            if (G.activePlayers.includes(id)) G.scores[id] = (G.scores[id] || 0) + POINTS.CHARLATAN_SURVIVE;
-        });
+        winner = 'CIUDADANOS'; reason = 'Infiltrados eliminados';
+        G.citizens.forEach(id => { if (G.activePlayers.includes(id)) G.scores[id] = (G.scores[id] || 0) + POINTS.CITIZEN_SURVIVE; });
+        G.charlatans.forEach(id => { if (G.activePlayers.includes(id)) G.scores[id] = (G.scores[id] || 0) + POINTS.CHARLATAN_SURVIVE; });
     } else if (G.activePlayers.length - G.impostors.length <= G.impostors.length) {
-        winner = 'INFILTRADOS';
-        reason = 'Infiltrados dominan';
-        G.impostors.forEach(id => {
-            G.scores[id] = (G.scores[id] || 0) + POINTS.IMPOSTOR_WIN;
-        });
+        winner = 'INFILTRADOS'; reason = 'Infiltrados dominan';
+        G.impostors.forEach(id => { G.scores[id] = (G.scores[id] || 0) + POINTS.IMPOSTOR_WIN; });
     }
-    if (winner) {
-        G.pubnub.publish({
-            channel: G.channel,
-            message: { type: 'game_over', winner: winner, reason: reason, scores: G.scores, roles: G.fullRoles }
-        });
-    }
+    if (winner) G.pubnub.publish({ channel: G.channel, message: { type: 'game_over', winner: winner, reason: reason, scores: G.scores, roles: G.fullRoles } });
 }
 
 function handleGameOver(msg) {
-    clearAllTimers();
-    hideStarterBanner();
-    hidePlayersSidebar();
-    G.gamePhase = 'gameover';
-    G.scores = msg.scores || G.scores;
-    G.fullRoles = msg.roles || G.fullRoles;
+    clearAllTimers(); hideStarterBanner(); hidePlayersSidebar();
+    G.gamePhase = 'gameover'; G.scores = msg.scores || G.scores; G.fullRoles = msg.roles || G.fullRoles;
     showScreen('screen-gameover');
     document.getElementById('gameover-title').textContent = '¡' + msg.winner + ' GANAN!';
     document.getElementById('gameover-reason').textContent = msg.reason;
@@ -1745,138 +1336,71 @@ function handleGameOver(msg) {
     const scoresList = document.getElementById('final-scores');
     const sorted = Object.entries(G.scores).sort((a, b) => b[1] - a[1]);
     scoresList.innerHTML = '<div class="final-scores-list">' + sorted.map(function([id, score], idx) {
-        const p = G.players[id];
-        const role = G.fullRoles[id];
-        let rankHtml = '';
-        if (idx === 0) rankHtml = '<div class="score-rank"><img src="' + ICONS.medalGold + '" alt="1"></div>';
-        else if (idx === 1) rankHtml = '<div class="score-rank"><img src="' + ICONS.medalSilver + '" alt="2"></div>';
-        else if (idx === 2) rankHtml = '<div class="score-rank"><img src="' + ICONS.medalBronze + '" alt="3"></div>';
-        else rankHtml = '<div class="score-rank"><span class="score-rank-number">' + (idx + 1) + '</span></div>';
-        return '<div class="score-item">' + rankHtml +
-            '<div class="score-avatar">' + renderHexAvatar(id, 44) + '</div>' +
-            '<div class="score-info">' +
-            '<div class="score-name">' + (p?.name || id) + '</div>' +
-            '<div class="score-role">' + (role?.role || '') + '</div>' +
-            '</div>' +
-            '<div class="score-points">' + score + '</div>' +
-            '</div>';
+        const p = G.players[id], role = G.fullRoles[id];
+        let rankHtml = idx === 0 ? '<div class="score-rank"><img src="' + ICONS.medalGold + '" alt="1"></div>' :
+                       idx === 1 ? '<div class="score-rank"><img src="' + ICONS.medalSilver + '" alt="2"></div>' :
+                       idx === 2 ? '<div class="score-rank"><img src="' + ICONS.medalBronze + '" alt="3"></div>' :
+                       '<div class="score-rank"><span class="score-rank-number">' + (idx + 1) + '</span></div>';
+        return '<div class="score-item">' + rankHtml + '<div class="score-avatar">' + renderHexAvatar(id, 44) + '</div><div class="score-info"><div class="score-name">' + (p?.name || id) + '</div><div class="score-role">' + (role?.role || '') + '</div></div><div class="score-points">' + score + '</div></div>';
     }).join('') + '</div>';
+    saveGameState();
 }
 
 function backToLobby() {
-    if (G.isHost && G.pubnub) {
-        G.pubnub.publish({
-            channel: G.channel,
-            message: { type: 'back_to_lobby', scores: G.scores, hostId: G.hostId, usedWords: G.usedWords }
-        });
-    }
+    if (G.isHost && G.pubnub) G.pubnub.publish({ channel: G.channel, message: { type: 'back_to_lobby', scores: G.scores, hostId: G.hostId, usedWords: G.usedWords } });
     resetGameState();
     showScreen('screen-lobby');
-    const btn = document.getElementById('btn-distribute');
-    if (btn) btn.style.display = G.isHost ? 'block' : 'none';
+    document.getElementById('btn-distribute').style.display = G.isHost ? 'block' : 'none';
     G.refreshInterval = setInterval(refreshPlayers, 3000);
     refreshPlayers();
+    saveGameState();
 }
 
 function handleBackToLobby(msg) {
-    clearAllTimers();
-    hideStarterBanner();
-    G.scores = msg.scores || G.scores;
-    G.hostId = msg.hostId || G.hostId;
-    G.isHost = (G.myId === G.hostId);
-    G.usedWords = msg.usedWords || G.usedWords;
+    clearAllTimers(); hideStarterBanner();
+    G.scores = msg.scores || G.scores; G.hostId = msg.hostId || G.hostId; G.isHost = (G.myId === G.hostId); G.usedWords = msg.usedWords || G.usedWords;
     resetGameState();
     showScreen('screen-lobby');
-    const btn = document.getElementById('btn-distribute');
-    if (btn) btn.style.display = G.isHost ? 'block' : 'none';
+    document.getElementById('btn-distribute').style.display = G.isHost ? 'block' : 'none';
     G.refreshInterval = setInterval(refreshPlayers, 3000);
     refreshPlayers();
+    saveGameState();
 }
 
 function resetGameState() {
-    clearAllTimers();
-    hideStarterBanner();
-    hidePlayersSidebar();
-    G.gamePhase = 'lobby';
-    G.isSpectator = false;
-    G.activePlayers = [];
-    G.eliminated = [];
-    G.impostors = [];
-    G.charlatans = [];
-    G.citizens = [];
-    G.myRole = null;
-    G.fullRoles = {};
-    G.votes = {};
-    G.votedPlayers = new Set();
-    G.voteTargets = {};
-    G.roleRevealed = false;
-    G.starterPlayerId = null;
-    G.isFirstRound = true;
-    G.roundStarting = false;
+    clearAllTimers(); hideStarterBanner(); hidePlayersSidebar();
+    G.gamePhase = 'lobby'; G.isSpectator = false; G.activePlayers = []; G.eliminated = [];
+    G.impostors = []; G.charlatans = []; G.citizens = []; G.myRole = null; G.fullRoles = {};
+    G.votes = {}; G.votedPlayers = new Set(); G.voteTargets = {}; G.roleRevealed = false;
+    G.starterPlayerId = null; G.isFirstRound = true; G.roundStarting = false;
 }
 
 function updateSpectatorRoles() {
     const list = document.getElementById('spectator-roles');
     if (!list || !G.fullRoles) return;
     list.innerHTML = Object.entries(G.fullRoles).map(function([id, role]) {
-        const p = G.players[id];
-        const isActive = G.activePlayers.includes(id);
-        const statusIcon = isActive ? ICONS.active : ICONS.eliminated;
-        return '<div class="player-item" style="opacity:' + (isActive ? 1 : 0.5) + '">' +
-            '<div class="player-avatar">' + renderHexAvatar(id, 36) + '</div>' +
-            '<div class="player-info">' +
-            '<div class="player-name">' + (p?.name || id) + '</div>' +
-            '<div class="player-tag">' + role.role + ' - ' + role.word + '</div>' +
-            '</div>' +
-            '<img src="' + statusIcon + '" alt="" class="player-status-icon">' +
-            '</div>';
+        const p = G.players[id], isActive = G.activePlayers.includes(id);
+        return '<div class="player-item" style="opacity:' + (isActive ? 1 : 0.5) + '"><div class="player-avatar">' + renderHexAvatar(id, 36) + '</div><div class="player-info"><div class="player-name">' + (p?.name || id) + '</div><div class="player-tag">' + role.role + ' - ' + role.word + '</div></div><img src="' + (isActive ? ICONS.active : ICONS.eliminated) + '" alt="" class="player-status-icon"></div>';
     }).join('');
+    updateSpectatorHostControls();
 }
 
 function updateSpectatorVotes() {
     const list = document.getElementById('spectator-votes');
     if (!list) return;
     list.innerHTML = G.activePlayers.map(function(id) {
-        const p = G.players[id];
-        const votes = G.votes[id] || 0;
-        const hasVoted = G.votedPlayers.has(id);
-        const statusIcon = hasVoted ? ICONS.voted : ICONS.pending;
-        return '<div class="player-item">' +
-            '<div class="player-avatar">' + renderHexAvatar(id, 36) + '</div>' +
-            '<div class="player-info">' +
-            '<div class="player-name">' + (p?.name || id) + '</div>' +
-            '<div class="player-tag">' + (hasVoted ? 'Ha votado' : 'Pendiente') + '</div>' +
-            '</div>' +
-            '<span>' + votes + ' votos</span>' +
-            '</div>';
+        const p = G.players[id], votes = G.votes[id] || 0, hasVoted = G.votedPlayers.has(id);
+        return '<div class="player-item"><div class="player-avatar">' + renderHexAvatar(id, 36) + '</div><div class="player-info"><div class="player-name">' + (p?.name || id) + '</div><div class="player-tag">' + (hasVoted ? 'Ha votado' : 'Pendiente') + '</div></div><span>' + votes + ' votos</span></div>';
     }).join('');
 }
 
-function leaveRoom() {
-    if (confirm('¿Abandonar?')) exitGame();
-}
+function leaveRoom() { if (confirm('¿Abandonar?')) exitGame(); }
 
 function exitGame() {
-    clearAllTimers();
-    clearInterval(G.refreshInterval);
-    hideStarterBanner();
-    hidePlayersSidebar();
-    if (G.isHost && G.pubnub) {
-        G.pubnub.publish({
-            channel: G.channel,
-            message: { type: 'host_disconnect' }
-        });
-    }
-    if (G.pubnub) {
-        G.pubnub.unsubscribeAll();
-        G.pubnub = null;
-    }
-    G.channel = null;
-    G.isHost = false;
-    G.hostId = null;
-    G.players = {};
-    G.scores = {};
-    G.usedWords = [];
+    clearAllTimers(); clearInterval(G.refreshInterval); hideStarterBanner(); hidePlayersSidebar(); clearGameState();
+    if (G.isHost && G.pubnub) G.pubnub.publish({ channel: G.channel, message: { type: 'host_disconnect' } });
+    if (G.pubnub) { G.pubnub.unsubscribeAll(); G.pubnub = null; }
+    G.channel = null; G.isHost = false; G.hostId = null; G.players = {}; G.scores = {}; G.usedWords = [];
     resetGameState();
     showScreen('screen-home');
 }
@@ -1892,4 +1416,4 @@ function toast(message, type) {
 }
 
 window.G = G;
-console.log('INFILTRA v0.9.9.1 cargado completamente');
+console.log('INFILTRA v1.0.0 (Robust Edition) cargado completamente');
