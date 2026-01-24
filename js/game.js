@@ -143,19 +143,33 @@ function restoreGameState(state) {
 // ============================================
 
 function setupRefreshProtection() {
-    let lastTouchY = 0, preventPullToRefresh = false;
+    let lastTouchY = 0;
+    let touchStartTime = 0;
     
+    // Solo prevenir pull-to-refresh (arrastre hacia abajo desde arriba)
     document.addEventListener('touchstart', function(e) {
         if (e.touches.length !== 1) return;
         lastTouchY = e.touches[0].clientY;
-        preventPullToRefresh = window.scrollY === 0 && G.gamePhase !== 'home';
+        touchStartTime = Date.now();
     }, { passive: true });
     
     document.addEventListener('touchmove', function(e) {
-        if (!preventPullToRefresh) return;
-        if (e.touches[0].clientY - lastTouchY > 0 && window.scrollY === 0) e.preventDefault();
+        // Solo bloquear si es un arrastre largo hacia abajo desde la parte superior
+        if (G.gamePhase === 'home') return;
+        if (window.scrollY !== 0) return;
+        
+        const touchY = e.touches[0].clientY;
+        const deltaY = touchY - lastTouchY;
+        const timeDelta = Date.now() - touchStartTime;
+        
+        // Solo bloquear si es un arrastre significativo (no un tap)
+        // y está en la parte superior de la página
+        if (deltaY > 30 && timeDelta > 100 && window.scrollY === 0) {
+            e.preventDefault();
+        }
     }, { passive: false });
     
+    // Bloquear F5 y Ctrl+R durante el juego
     document.addEventListener('keydown', function(e) {
         if (G.gamePhase !== 'home' && G.gamePhase !== 'lobby') {
             if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
@@ -165,6 +179,7 @@ function setupRefreshProtection() {
         }
     });
     
+    // Advertir antes de cerrar/recargar
     window.addEventListener('beforeunload', function(e) {
         if (G.gamePhase !== 'home' && G.channel) {
             e.preventDefault();
@@ -173,21 +188,26 @@ function setupRefreshProtection() {
         }
     });
     
+    // Reconectar cuando la página vuelve a ser visible
     document.addEventListener('visibilitychange', function() {
         if (document.visibilityState === 'visible' && G.channel && G.pubnub) handleReconnection();
     });
     
+    // Reconectar cuando recupera conexión
     window.addEventListener('online', function() { if (G.channel) handleReconnection(); });
     
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', function(e) {
-        const now = Date.now();
-        if (now - lastTouchEnd <= 300) e.preventDefault();
-        lastTouchEnd = now;
-    }, false);
-    
+    // CSS para prevenir overscroll pero permitir interacciones normales
     const style = document.createElement('style');
-    style.textContent = 'html,body{overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}*{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}input,textarea{-webkit-user-select:text;user-select:text}';
+    style.textContent = `
+        html, body {
+            overscroll-behavior-y: contain;
+        }
+        .role-card {
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+            touch-action: manipulation;
+        }
+    `;
     document.head.appendChild(style);
 }
 
