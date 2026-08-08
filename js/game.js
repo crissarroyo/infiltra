@@ -1,5 +1,9 @@
 /**
- * INFILTRA - Game Logic v2.0.0 (Definitive Edition)
+ * INFILTRA - Game Logic v2.1.0 (Definitive Edition)
+ *
+ * v2.1.0: base de palabras ampliada — 19 categorías, 481 palabras
+ * (7 categorías nuevas: Objetos, Lugares, Naturaleza, Tecnología,
+ * Dibujos Animados, Bebidas, Videojuegos).
  *
  * Base: Firebase RTDB Edition (estado de sala en rooms/{CODIGO},
  * onValue para sync, onDisconnect para presencia, QR dinámico,
@@ -59,18 +63,25 @@ const POINTS = {
 };
 
 const DB = {
-    "Animales": ["León", "Tigre", "Elefante", "Zebra", "Delfín", "Lobo", "Gorila", "Águila", "Jirafa", "Oso", "Zorro", "Panda", "Tiburón", "Canguro", "Hipopótamo", "Serpiente", "Cocodrilo", "Pájaro", "Mono", "Tortuga"],
-    "Comida": ["Pizza", "Tacos", "Sushi", "Hamburguesa", "Pasta", "Ensalada", "Helado", "Pollo", "Pescado", "Chocolate", "Empanadas", "Ramen", "Curry", "Paella", "Burrito", "Croissant", "Queso", "Arroz", "Sopa", "Tarta"],
-    "Países": ["México", "Japón", "Brasil", "España", "Francia", "Italia", "Alemania", "Australia", "Argentina", "Canadá", "China", "India", "Rusia", "Estados Unidos", "Reino Unido", "Sudáfrica", "Egipto", "Nueva Zelanda", "Corea del Sur", "Turquía"],
-    "Profesiones": ["Médico", "Abogado", "Ingeniero", "Profesor", "Chef", "Piloto", "Arquitecto", "Programador", "Fotógrafo", "Enfermero", "Diseñador", "Periodista", "Músico", "Actor", "Científico", "Veterinario", "Contador", "Psicólogo", "Bombero", "Policía"],
-    "Deportes": ["Fútbol", "Baloncesto", "Tenis", "Natación", "Boxeo", "Golf", "Voleibol", "Surf", "Ciclismo", "Atletismo", "Esquí", "Karate", "Béisbol", "Rugby", "Gimnasia", "Escalada", "Patinaje", "Hockey"],
-    "Ciudades": ["París", "Tokio", "Nueva York", "Londres", "Roma", "Berlín", "Madrid", "Dubai", "Barcelona", "México DF", "Sídney", "Río de Janeiro", "Los Ángeles", "Toronto", "Estambul", "Singapur", "Ámsterdam", "Seúl"],
-    "Frutas": ["Manzana", "Banana", "Naranja", "Uva", "Fresa", "Piña", "Mango", "Sandía", "Kiwi", "Melón", "Pera", "Durazno", "Cereza", "Limón", "Papaya", "Granada", "Coco", "Mora"],
-    "Vehículos": ["Coche", "Bicicleta", "Avión", "Barco", "Tren", "Helicóptero", "Motocicleta", "Camión", "Submarino", "Cohete", "Autobús", "Patineta", "Tractor", "Yate"],
-    "Instrumentos": ["Guitarra", "Piano", "Batería", "Violín", "Flauta", "Trompeta", "Saxofón", "Arpa", "Bajo", "Ukelele", "Acordeón", "Cello", "Clarinete", "Órgano"],
-    "Películas": ["Titanic", "Star Wars", "Avatar", "Frozen", "Shrek", "Batman", "Avengers", "Coco", "Inception", "The Matrix", "Jurassic Park", "Harry Potter", "Toy Story"],
-    "Colores": ["Rojo", "Azul", "Verde", "Amarillo", "Naranja", "Morado", "Rosa", "Negro", "Blanco", "Gris", "Turquesa", "Violeta", "Dorado", "Plateado"],
-    "Superhéroes": ["Superman", "Batman", "Spider-Man", "Wonder Woman", "Iron Man", "Captain America", "Thor", "Hulk", "Flash", "Aquaman", "Wolverine", "Deadpool"]
+    "Animales": ["León", "Tigre", "Elefante", "Zebra", "Delfín", "Lobo", "Gorila", "Águila", "Jirafa", "Oso", "Zorro", "Panda", "Tiburón", "Canguro", "Hipopótamo", "Serpiente", "Cocodrilo", "Pájaro", "Mono", "Tortuga", "Pingüino", "Camello", "Murciélago", "Pulpo", "Ballena", "Caballo", "Conejo", "Ardilla", "Flamenco", "Erizo", "Koala", "Búho"],
+    "Comida": ["Pizza", "Tacos", "Sushi", "Hamburguesa", "Pasta", "Ensalada", "Helado", "Pollo", "Pescado", "Chocolate", "Empanadas", "Ramen", "Curry", "Paella", "Burrito", "Croissant", "Queso", "Arroz", "Sopa", "Tarta", "Ceviche", "Lasaña", "Quesadilla", "Hot dog", "Donas", "Galletas", "Pozole", "Mole", "Tamales", "Elote", "Cereal", "Sándwich"],
+    "Países": ["México", "Japón", "Brasil", "España", "Francia", "Italia", "Alemania", "Australia", "Argentina", "Canadá", "China", "India", "Rusia", "Estados Unidos", "Reino Unido", "Sudáfrica", "Egipto", "Nueva Zelanda", "Corea del Sur", "Turquía", "Perú", "Chile", "Colombia", "Cuba", "Grecia", "Suiza", "Suecia", "Noruega", "Portugal", "Marruecos", "Tailandia", "Vietnam"],
+    "Profesiones": ["Médico", "Abogado", "Ingeniero", "Profesor", "Chef", "Piloto", "Arquitecto", "Programador", "Fotógrafo", "Enfermero", "Diseñador", "Periodista", "Músico", "Actor", "Científico", "Veterinario", "Contador", "Psicólogo", "Bombero", "Policía", "Dentista", "Carpintero", "Electricista", "Plomero", "Astronauta", "Granjero", "Peluquero", "Taxista", "Mesero", "Juez", "Panadero", "Cartero"],
+    "Deportes": ["Fútbol", "Baloncesto", "Tenis", "Natación", "Boxeo", "Golf", "Voleibol", "Surf", "Ciclismo", "Atletismo", "Esquí", "Karate", "Béisbol", "Rugby", "Gimnasia", "Escalada", "Patinaje", "Hockey", "Ajedrez", "Ping pong", "Bádminton", "Esgrima", "Judo", "Taekwondo", "Lucha libre", "Parkour", "Skate", "Buceo", "Cricket", "Remo"],
+    "Ciudades": ["París", "Tokio", "Nueva York", "Londres", "Roma", "Berlín", "Madrid", "Dubai", "Barcelona", "México DF", "Sídney", "Río de Janeiro", "Los Ángeles", "Toronto", "Estambul", "Singapur", "Ámsterdam", "Seúl", "Cancún", "Guadalajara", "Monterrey", "Miami", "Chicago", "Buenos Aires", "Lima", "Bogotá", "Praga", "Viena", "Atenas", "El Cairo"],
+    "Frutas": ["Manzana", "Banana", "Naranja", "Uva", "Fresa", "Piña", "Mango", "Sandía", "Kiwi", "Melón", "Pera", "Durazno", "Cereza", "Limón", "Papaya", "Granada", "Coco", "Mora", "Guayaba", "Maracuyá", "Higo", "Ciruela", "Mandarina", "Toronja", "Mamey", "Guanábana", "Tuna", "Frambuesa"],
+    "Vehículos": ["Coche", "Bicicleta", "Avión", "Barco", "Tren", "Helicóptero", "Motocicleta", "Camión", "Submarino", "Cohete", "Autobús", "Patineta", "Tractor", "Yate", "Ambulancia", "Metro", "Tranvía", "Globo aerostático", "Camioneta", "Grúa", "Limusina", "Carruaje", "Kayak", "Trineo"],
+    "Instrumentos": ["Guitarra", "Piano", "Batería", "Violín", "Flauta", "Trompeta", "Saxofón", "Arpa", "Bajo", "Ukelele", "Acordeón", "Cello", "Clarinete", "Órgano", "Tambor", "Maracas", "Pandereta", "Xilófono", "Armónica", "Gaita", "Banjo", "Marimba", "Trombón", "Castañuelas"],
+    "Películas": ["Titanic", "Star Wars", "Avatar", "Frozen", "Shrek", "Avengers", "Coco", "Inception", "The Matrix", "Jurassic Park", "Harry Potter", "Toy Story", "Los Increíbles", "Up", "Ratatouille", "Buscando a Nemo", "El Rey León", "Piratas del Caribe", "Volver al Futuro", "E.T.", "Moana", "Encanto", "Intensamente", "Kung Fu Panda", "Madagascar", "Cars"],
+    "Colores": ["Rojo", "Azul", "Verde", "Amarillo", "Naranja", "Morado", "Rosa", "Negro", "Blanco", "Gris", "Turquesa", "Violeta", "Dorado", "Plateado", "Beige", "Marfil", "Lavanda", "Cian"],
+    "Superhéroes": ["Superman", "Batman", "Spider-Man", "Wonder Woman", "Iron Man", "Captain America", "Thor", "Hulk", "Flash", "Aquaman", "Wolverine", "Deadpool", "Doctor Strange", "Pantera Negra", "Ant-Man", "Shazam", "Robin", "Linterna Verde", "Groot", "Capitana Marvel"],
+    "Objetos": ["Silla", "Espejo", "Reloj", "Paraguas", "Tijeras", "Almohada", "Escalera", "Martillo", "Cepillo de dientes", "Llaves", "Mochila", "Linterna", "Vela", "Peine", "Cuchara", "Escoba", "Ventilador", "Candado", "Maleta", "Lápiz", "Libreta", "Taza", "Sartén", "Control remoto"],
+    "Lugares": ["Playa", "Hospital", "Biblioteca", "Cine", "Supermercado", "Museo", "Aeropuerto", "Gimnasio", "Castillo", "Granja", "Desierto", "Selva", "Cueva", "Faro", "Estadio", "Circo", "Zoológico", "Escuela", "Oficina", "Panadería", "Parque de diversiones", "Iglesia", "Mercado"],
+    "Naturaleza": ["Montaña", "Río", "Cascada", "Arcoíris", "Tormenta", "Nube", "Luna", "Sol", "Estrella", "Bosque", "Isla", "Nieve", "Rayo", "Terremoto", "Glaciar", "Pantano", "Duna", "Coral", "Marea", "Volcán", "Aurora boreal", "Eclipse", "Cometa", "Manantial"],
+    "Tecnología": ["Celular", "Computadora", "Audífonos", "Dron", "Robot", "Impresora", "Tablet", "Cargador", "Wifi", "Batería portátil", "Pantalla", "Teclado", "Cámara", "Consola", "Memoria USB", "Satélite", "Antena", "Micrófono", "Bocina", "Router", "Videollamada", "Smartwatch"],
+    "Dibujos Animados": ["Bob Esponja", "Homero Simpson", "Goku", "Pikachu", "Doraemon", "Tom y Jerry", "Scooby-Doo", "Los Pitufos", "Mickey Mouse", "Bugs Bunny", "Garfield", "Popeye", "Dora la Exploradora", "Phineas y Ferb", "Gumball", "Naruto", "Minions", "Pato Donald", "Snoopy", "Winnie Pooh", "Peppa Pig", "Hora de Aventura"],
+    "Bebidas": ["Café", "Leche", "Jugo de naranja", "Limonada", "Horchata", "Agua mineral", "Refresco", "Malteada", "Smoothie", "Té helado", "Chocolate caliente", "Atole", "Ponche", "Agua de coco", "Capuchino", "Frappé", "Té verde", "Agua de jamaica"],
+    "Videojuegos": ["Mario Bros", "Zelda", "Minecraft", "Fortnite", "Pokémon", "Tetris", "Pac-Man", "Sonic", "FIFA", "Among Us", "Roblox", "Kirby", "Halo", "Angry Birds", "Candy Crush", "Mario Kart", "Animal Crossing", "Just Dance", "Plants vs Zombies", "Street Fighter"]
 };
 
 const AVATARS = [
@@ -156,6 +167,7 @@ let G = {
     votedPlayers: new Set(),
     voteTargets: {},
     hasVotedThisRound: false,
+    wordImageCache: {},    // palabra → URL de miniatura (o null)
     serverTimeOffset: 0,   // corrección de reloj vía .info/serverTimeOffset
     roundEndTime: null,    // timestamp (servidor) de fin de ronda
     voteEndTime: null,     // timestamp (servidor) de cierre de votación
@@ -428,7 +440,7 @@ function injectDynamicStyles() {
     if (document.getElementById('dynamic-styles-v2')) return;
     const style = document.createElement('style');
     style.id = 'dynamic-styles-v2';
-    style.textContent = 'html,body{overscroll-behavior-y:contain}.player-item.long-press-active{background:rgba(255,255,255,0.1);transform:scale(0.98)}.host-transfer-menu{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;border-top:2px solid #4a4a6a;padding:20px;z-index:1000;animation:slideUp .3s ease}@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}.host-transfer-menu h3{margin:0 0 15px;color:#fff;text-align:center}.host-transfer-btn{width:100%;padding:12px;margin:5px 0;background:#2d2d4a;border:none;border-radius:8px;color:#fff;font-size:16px;cursor:pointer}.host-transfer-btn:hover{background:#3d3d5a}.host-transfer-btn.cancel{background:#4a2d2d}.counting-votes-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:999}.counting-votes-message{text-align:center;color:#fff}.counting-votes-message h2{font-size:28px}';
+    style.textContent = '.role-word-image{margin:10px auto 0;display:none;text-align:center}.role-word-image .word-image{max-width:180px;max-height:120px;border-radius:10px;object-fit:cover;box-shadow:0 4px 12px rgba(0,0,0,.4)}.word-color-swatch{width:120px;height:60px;border-radius:10px;margin:0 auto;border:2px solid rgba(255,255,255,.25)}html,body{overscroll-behavior-y:contain}.player-item.long-press-active{background:rgba(255,255,255,0.1);transform:scale(0.98)}.host-transfer-menu{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;border-top:2px solid #4a4a6a;padding:20px;z-index:1000;animation:slideUp .3s ease}@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}.host-transfer-menu h3{margin:0 0 15px;color:#fff;text-align:center}.host-transfer-btn{width:100%;padding:12px;margin:5px 0;background:#2d2d4a;border:none;border-radius:8px;color:#fff;font-size:16px;cursor:pointer}.host-transfer-btn:hover{background:#3d3d5a}.host-transfer-btn.cancel{background:#4a2d2d}.counting-votes-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:999}.counting-votes-message{text-align:center;color:#fff}.counting-votes-message h2{font-size:28px}';
     document.head.appendChild(style);
 }
 
@@ -1231,12 +1243,14 @@ function restoreRoleScreen() {
         document.getElementById('role-title').textContent = G.myRole.role;
         document.getElementById('role-word').textContent = G.myRole.word;
         document.getElementById('role-instruction').textContent = 'Tu rol (ya revelado)';
+        updateRoleWordImage();
     } else {
         if (card) card.className = 'role-card blurred';
         document.getElementById('role-icon').innerHTML = '<img src="' + ICONS.help + '" alt="?" class="role-icon-img">';
         document.getElementById('role-title').textContent = 'SECRETO';
         document.getElementById('role-word').textContent = '???';
         document.getElementById('role-instruction').textContent = 'Toca la carta para revelar';
+        hideRoleWordImage();
     }
     updateRolePlayersList();
 }
@@ -1595,13 +1609,13 @@ function distributeRoles() {
     for (let i = 0; i < numChar && pool.length; i++) {
         const idx = Math.floor(Math.random() * pool.length);
         const id  = pool.splice(idx, 1)[0];
-        roles[id] = { role: 'CIUDADANO', icon: ICONS.citizen, word: wordData.fakeWord };
+        roles[id] = { role: 'CIUDADANO', icon: ICONS.citizen, word: wordData.fakeWord, cat: wordData.category };
         G.trueRoles[id] = 'CHARLATÁN';
         G.charlatans.push(id);
     }
     // Assign citizens
     pool.forEach(function(id) {
-        roles[id] = { role: 'CIUDADANO', icon: ICONS.citizen, word: wordData.secretWord };
+        roles[id] = { role: 'CIUDADANO', icon: ICONS.citizen, word: wordData.secretWord, cat: wordData.category };
         G.trueRoles[id] = 'CIUDADANO';
         G.citizens.push(id);
     });
@@ -1642,8 +1656,10 @@ function skipWord() {
             G.fullRoles[id].word = 'Categoría: ' + wordData.category;
         } else if (trueRole === 'CHARLATÁN') {
             G.fullRoles[id].word = wordData.fakeWord;
+            G.fullRoles[id].cat  = wordData.category;
         } else {
             G.fullRoles[id].word = wordData.secretWord;
+            G.fullRoles[id].cat  = wordData.category;
         }
     });
     G.starterPlayerId = G.activePlayers[Math.floor(Math.random() * G.activePlayers.length)];
@@ -1654,6 +1670,14 @@ function skipWord() {
         starterPlayerId: G.starterPlayerId,
         usedWords:       G.usedWords,
         rolesVersion:    G.rolesVersion
+    }).catch(function(e) { console.error('Error cambiando palabra:', e); });
+    // El host no recibe su propio cambio de rolesVersion (ya lo tiene
+    // incrementado), así que refresca su carta localmente. Sin esto,
+    // el host seguía viendo la palabra/categoría anterior.
+    handleSkipWord({
+        roles:           G.fullRoles,
+        starterPlayerId: G.starterPlayerId,
+        usedWords:       G.usedWords
     });
 }
 
@@ -1662,6 +1686,11 @@ function handleSkipWord(msg) {
     G.starterPlayerId = msg.starterPlayerId;
     G.usedWords      = msg.usedWords || G.usedWords;
     if (G.fullRoles[G.myId]) G.myRole = G.fullRoles[G.myId];
+    if (G.isSpectator) {
+        updateSpectatorRoles();
+        toast('Palabra cambiada', 'info');
+        return;
+    }
     G.roleRevealed = false;
     const card = document.getElementById('role-card');
     if (card) card.className = 'role-card blurred';
@@ -1669,6 +1698,7 @@ function handleSkipWord(msg) {
     document.getElementById('role-title').textContent = 'SECRETO';
     document.getElementById('role-word').textContent = '???';
     document.getElementById('role-instruction').textContent = 'Toca la carta para revelar';
+    hideRoleWordImage();
     const starterInfo = document.getElementById('starter-info');
     if (starterInfo) {
         starterInfo.textContent = 'Inicia: ' + (G.players[G.starterPlayerId]?.name || 'Alguien');
@@ -1713,6 +1743,7 @@ function handleAssign(msg) {
         roleTitle.textContent = 'SECRETO';
         roleWord.textContent  = '???';
         roleInst.textContent  = 'Toca la carta para revelar';
+        hideRoleWordImage();
     } else {
         G.roleRevealed = true;
         const roleClass = G.myRole.role === 'INFILTRADO' ? 'impostor' : G.myRole.role === 'CHARLATÁN' ? 'charlatan' : 'citizen';
@@ -1721,6 +1752,7 @@ function handleAssign(msg) {
         roleTitle.textContent = G.myRole.role;
         roleWord.textContent  = G.myRole.word;
         roleInst.textContent  = 'Tu rol (ya revelado)';
+        updateRoleWordImage();
     }
 
     document.getElementById('points-box').style.display = 'none';
@@ -1738,6 +1770,60 @@ function handleAssign(msg) {
     updateRolePlayersList();
 }
 
+// ── Ilustración de la palabra (v2.1.0) ───────────────────────────
+// Ciudadanos y charlatán ven una imagen de SU palabra junto a ella;
+// el infiltrado no (solo conoce la categoría). Colores usa una
+// muestra local; el resto se resuelve contra la API de Wikipedia con
+// títulos curados (window.WORD_IMAGE_TITLES). Sin imagen → no pasa nada.
+function hideRoleWordImage() {
+    const box = document.getElementById('role-word-image');
+    if (box) { box.innerHTML = ''; box.style.display = 'none'; }
+}
+
+function updateRoleWordImage() {
+    const box = document.getElementById('role-word-image');
+    if (!box) return;
+    box.innerHTML = '';
+    box.style.display = 'none';
+    if (!G.myRole || !G.roleRevealed) return;
+    const word = G.myRole.word;
+    if (!word || G.myRole.role === 'INFILTRADO' || word.indexOf('Categoría:') === 0) return;
+    const cat = G.myRole.cat;
+    const swatch = (window.COLOR_SWATCHES || {})[word];
+    if (swatch && (!cat || cat === 'Colores')) {
+        box.innerHTML = '<div class="word-color-swatch" style="background:' + swatch + '"></div>';
+        box.style.display = 'block';
+        return;
+    }
+    if (typeof fetch === 'undefined') return;
+    if (G.wordImageCache[word] !== undefined) {
+        renderWordImage(box, G.wordImageCache[word]);
+        return;
+    }
+    const title = (window.WORD_IMAGE_TITLES || {})[word] || word;
+    fetch('https://es.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(title))
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(d) {
+            const url = (d && d.type !== 'disambiguation' && d.thumbnail && d.thumbnail.source) || null;
+            G.wordImageCache[word] = url;
+            // Solo pintar si la carta sigue mostrando esta palabra
+            if (G.myRole && G.myRole.word === word && G.roleRevealed) renderWordImage(box, url);
+        })
+        .catch(function() { G.wordImageCache[word] = null; });
+}
+
+function renderWordImage(box, url) {
+    if (!url) return;
+    const img = document.createElement('img');
+    img.className = 'word-image';
+    img.alt = '';
+    img.onerror = function() { box.style.display = 'none'; };
+    img.src = url;
+    box.innerHTML = '';
+    box.appendChild(img);
+    box.style.display = 'block';
+}
+
 function revealRole() {
     if (G.roleRevealed) return;
     G.roleRevealed = true;
@@ -1749,6 +1835,7 @@ function revealRole() {
     document.getElementById('role-instruction').textContent = 'Memoriza tu información';
     const roleClass = G.myRole.role === 'INFILTRADO' ? 'impostor' : G.myRole.role === 'CHARLATÁN' ? 'charlatan' : 'citizen';
     if (card) card.classList.add(roleClass);
+    updateRoleWordImage();
     showPointsReminder();
     saveSession(); // conservar roleRevealed para restaurar tras F5
 }
@@ -2330,6 +2417,7 @@ function handleNextRound(msg) {
     document.getElementById('role-title').textContent = G.myRole.role;
     document.getElementById('role-word').textContent  = G.myRole.word;
     document.getElementById('role-instruction').textContent = 'Tu rol (conocido)';
+    updateRoleWordImage();
     document.getElementById('points-box').style.display = 'none';
     const timer = document.getElementById('timer');
     timer.style.display = 'none';

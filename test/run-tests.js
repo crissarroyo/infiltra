@@ -1,7 +1,7 @@
 // Matriz de pruebas del paso 5 sobre el arnés multi-cliente.
 'use strict';
 const { FakeDB } = require('./fake-firebase');
-const { SimClient, World, drain } = require('./client');
+const { SimClient, World, drain, DB_SIZES } = require('./client');
 
 let results = [];
 function check(name, cond, detail) {
@@ -267,12 +267,25 @@ async function s8() {
     console.log('S8: agotar palabras de una categoría con skipWord');
     const { db, world } = freshWorld();
     const { host, others, all } = await makeRoom(db, world, ['Ana', 'Beto', 'Caro']);
-    // Solo la categoría más corta: Superhéroes (12 palabras)
-    host.eval(`document.querySelectorAll('.category-item input').forEach(cb => cb.checked = cb.value === 'Superhéroes'); updateSelectedCategories();`);
+    // Solo la categoría más corta (dinámico, robusto a cambios del DB)
+    const sizes = DB_SIZES;
+    const smallest = Object.entries(sizes).sort((a, b) => a[1] - b[1])[0][0];
+    host.eval(`document.querySelectorAll('.category-item input').forEach(cb => cb.checked = cb.value === ${JSON.stringify(smallest)}); updateSelectedCategories();`);
     host.eval('distributeRoles()');
     await world.tick(1000);
+    // Regresión: la carta del PROPIO host debe refrescarse al cambiar palabra
+    host.eval('revealRole()');
+    await world.tick(200);
+    host.eval('skipWord()');
+    await world.tick(500);
+    const hostWordInState = db._get(['rooms', host.G().channel, 'state', 'roles', host.G().myId, 'word']);
+    check('S8 host ve su palabra nueva tras skipWord', host.G().myRole.word === hostWordInState,
+        JSON.stringify({ local: host.G().myRole.word, estado: hostWordInState }));
+    check('S8 carta del host re-oculta tras skipWord', host.G().roleRevealed === false && host.text('role-word') === '???',
+        host.text('role-word'));
     let resets = 0;
-    for (let i = 0; i < 8; i++) {
+    const iters = Math.ceil(sizes[smallest] / 2) + 2;
+    for (let i = 0; i < iters; i++) {
         host.eval('skipWord()');
         await world.tick(500);
         if (host.toasts.some(t => t.m === 'Palabras reiniciadas')) { resets++; host.toasts = host.toasts.filter(t => t.m !== 'Palabras reiniciadas'); }
